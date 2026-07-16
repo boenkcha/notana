@@ -16,10 +16,13 @@ from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 from datetime import datetime
 
-app = Flask(__name__)
-app.secret_key = "secret-nota"
+import os
 
-DB_PATH = "nota_belanja.db"
+app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "secret-nota-kopmrm")
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH  = os.path.join(BASE_DIR, "nota_belanja.db")
 
 # === DB SETUP ===
 def init_db():
