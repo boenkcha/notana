@@ -1,0 +1,601 @@
+/* ================================================================
+   PASTEL THEME OVERRIDE — KopMRM
+   Loaded AFTER inline <style> in each template to override tokens
+   ================================================================ */
+
+/* ── 1. DESIGN TOKENS (override semua :root di setiap template) ── */
+:root {
+  --purple-50:  #F5F3FF;
+  --purple-100: #EDE9FE;
+  --purple-200: #DDD6FE;
+  --purple-400: #A78BFA;
+  --purple-600: #7C3AED;
+  --purple-800: #5B21B6;
+
+  --teal-50:  #ECFDF5;
+  --teal-200: #A7F3D0;
+  --teal-400: #34D399;
+  --teal-600: #059669;
+  --teal-700: #047857;
+  --teal-800: #065F46;
+
+  --amber-50:  #FFF7ED;
+  --amber-200: #FED7AA;
+  --amber-400: #FB923C;
+  --amber-600: #EA580C;
+  --amber-800: #9A3412;
+
+  --coral-50:  #FFF1F2;
+  --coral-200: #FECDD3;
+  --coral-400: #FB7185;
+  --coral-600: #E11D48;
+
+  --pink-50:  #FDF2F8;
+  --pink-400: #EC4899;
+
+  --gray-50:  #FAFAF9;
+  --gray-100: #F5F4F2;
+  --gray-200: #E7E5E0;
+  --gray-300: #D6D3D1;
+  --gray-400: #A8A29E;
+  --gray-600: #78716C;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+}
+
+/* ── 2. BODY — gradient lembut ── */
+body {
+  background: linear-gradient(145deg, #F5F3FF 0%, #EFF6FF 35%, #ECFDF5 70%, #FFF7ED 100%) !important;
+  background-attachment: fixed !important;
+  color: #1E1B2E !important;
+}
+
+/* ── 3. TOPBAR — glassmorphism ── */
+.topbar {
+  background: rgba(255, 255, 255, 0.80) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55) !important;
+  box-shadow: 0 2px 28px rgba(124, 58, 237, 0.07) !important;
+}
+
+.logo-bubble {
+  background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.32) !important;
+}
+
+.topbar-logo { color: #1E1B2E !important; }
+
+.nav-link-item {
+  border-radius: 20px !important;
+  font-weight: 500 !important;
+}
+.nav-link-item:hover {
+  background: rgba(167, 139, 250, 0.12) !important;
+  color: #7C3AED !important;
+}
+.nav-link-item.active {
+  background: linear-gradient(135deg, #F5F3FF, #EDE9FE) !important;
+  color: #7C3AED !important;
+  font-weight: 600 !important;
+}
+
+.avatar-circle {
+  background: linear-gradient(135deg, #FED7AA, #FB923C) !important;
+  color: #fff !important;
+  box-shadow: 0 3px 10px rgba(251, 146, 60, 0.32) !important;
+}
+
+/* ── 4. MAIN CARD / FILTER CARD / RESULT CARD ── */
+.main-card,
+.filter-card,
+.result-card {
+  background: rgba(255, 255, 255, 0.82) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  box-shadow: 0 4px 36px rgba(124, 58, 237, 0.07), 0 1px 6px rgba(0,0,0,0.03) !important;
+  border-radius: 24px !important;
+}
+
+.main-card-header,
+.card-header-bar,
+.result-header {
+  background: linear-gradient(90deg, rgba(245,243,255,0.6) 0%, rgba(239,246,255,0.3) 100%) !important;
+  border-bottom: 1px solid rgba(167, 139, 250, 0.12) !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+
+.header-icon {
+  background: linear-gradient(135deg, #F5F3FF, #EDE9FE) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.14) !important;
+}
+.header-icon i { color: #7C3AED !important; }
+
+/* ── 5. HERO CARDS — gradients ── */
+.hero-card { border-radius: 20px !important; }
+
+.hc-purple {
+  background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%) !important;
+  border: 1px solid rgba(167,139,250,0.22) !important;
+  box-shadow: 0 2px 18px rgba(124,58,237,0.08) !important;
+}
+.hc-teal {
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%) !important;
+  border: 1px solid rgba(52,211,153,0.22) !important;
+  box-shadow: 0 2px 18px rgba(5,150,105,0.08) !important;
+}
+.hc-amber {
+  background: linear-gradient(135deg, #FFF7ED 0%, #FED7AA 100%) !important;
+  border: 1px solid rgba(251,146,60,0.22) !important;
+  box-shadow: 0 2px 18px rgba(234,88,12,0.08) !important;
+}
+.hc-coral {
+  background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%) !important;
+  border: 1px solid rgba(251,113,133,0.22) !important;
+  box-shadow: 0 2px 18px rgba(225,29,72,0.06) !important;
+}
+
+.hc-purple .hero-label { color: #7C3AED !important; }
+.hc-teal   .hero-label { color: #059669 !important; }
+.hc-amber  .hero-label { color: #EA580C !important; }
+.hc-coral  .hero-label { color: #E11D48 !important; }
+
+.hc-purple .hero-val { color: #5B21B6 !important; }
+.hc-teal   .hero-val { color: #065F46 !important; }
+.hc-amber  .hero-val { color: #9A3412 !important; }
+.hc-coral  .hero-val { color: #E11D48 !important; }
+
+/* ── 6. FORM INPUTS ── */
+.field-input {
+  background: rgba(255,255,255,0.9) !important;
+  border: 1.5px solid rgba(167,139,250,0.22) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04) !important;
+  transition: border-color .18s, box-shadow .18s !important;
+}
+.field-input:focus {
+  border-color: #A78BFA !important;
+  box-shadow: 0 0 0 3px rgba(167,139,250,0.16), 0 1px 6px rgba(0,0,0,0.04) !important;
+}
+
+/* ── 7. TABLE CELL INPUTS ── */
+.cell-beli, .cell-rw {
+  background: rgba(255,255,255,0.9) !important;
+  border: 1.5px solid rgba(167,139,250,0.15) !important;
+  border-radius: 10px !important;
+}
+.cell-beli:focus {
+  border-color: #A78BFA !important;
+  box-shadow: 0 0 0 2px rgba(167,139,250,0.15) !important;
+}
+.cell-rw:focus {
+  border-color: #34D399 !important;
+  box-shadow: 0 0 0 2px rgba(52,211,153,0.15) !important;
+}
+
+/* ── 8. BUTTONS ── */
+.btn-save {
+  background: linear-gradient(135deg, #34D399 0%, #059669 100%) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 16px rgba(5,150,105,0.30) !important;
+}
+.btn-save:hover {
+  background: linear-gradient(135deg, #10B981 0%, #047857 100%) !important;
+  box-shadow: 0 6px 22px rgba(5,150,105,0.38) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-add, .btn-add-item {
+  background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(124,58,237,0.24) !important;
+}
+.btn-add:hover, .btn-add-item:hover {
+  filter: brightness(1.06) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 22px rgba(124,58,237,0.32) !important;
+}
+
+.btn-add-row {
+  background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 14px rgba(124,58,237,0.24) !important;
+}
+.btn-add-row:hover {
+  filter: brightness(1.06) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-suggest {
+  background: linear-gradient(135deg, #FFF7ED, #FED7AA) !important;
+  border: 1px solid rgba(251,146,60,0.30) !important;
+  color: #9A3412 !important;
+  border-radius: 20px !important;
+}
+.btn-suggest:hover { filter: brightness(0.95) !important; }
+
+.btn-outline {
+  border-radius: 20px !important;
+  border: 1.5px solid rgba(167,139,250,0.25) !important;
+  background: rgba(255,255,255,0.7) !important;
+}
+.btn-outline:hover {
+  background: rgba(245,243,255,0.8) !important;
+  border-color: rgba(167,139,250,0.5) !important;
+  color: #7C3AED !important;
+}
+
+.btn-excel {
+  background: linear-gradient(135deg, #ECFDF5, #D1FAE5) !important;
+  border: 1px solid rgba(52,211,153,0.3) !important;
+  color: #065F46 !important;
+  border-radius: 20px !important;
+}
+.btn-excel:hover {
+  background: linear-gradient(135deg, #34D399, #059669) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(5,150,105,0.3) !important;
+}
+
+.btn-pdf {
+  background: linear-gradient(135deg, #FFF1F2, #FFE4E6) !important;
+  border: 1px solid rgba(251,113,133,0.3) !important;
+  color: #E11D48 !important;
+  border-radius: 20px !important;
+}
+.btn-pdf:hover { filter: brightness(0.95) !important; }
+
+.btn-blanko {
+  background: linear-gradient(135deg, #F5F3FF, #EDE9FE) !important;
+  border: 1px solid rgba(167,139,250,0.3) !important;
+  color: #7C3AED !important;
+  border-radius: 20px !important;
+}
+
+.btn-master {
+  background: linear-gradient(135deg, #ECFDF5, #D1FAE5) !important;
+  border: 1px solid rgba(52,211,153,0.3) !important;
+  color: #065F46 !important;
+  border-radius: 20px !important;
+}
+
+.btn-reset {
+  background: linear-gradient(135deg, #FFF1F2, #FFE4E6) !important;
+  border: 1px solid rgba(251,113,133,0.3) !important;
+  color: #E11D48 !important;
+  border-radius: 20px !important;
+}
+
+.btn-cari {
+  background: linear-gradient(135deg, #A78BFA 0%, #7C3AED 100%) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 14px rgba(124,58,237,0.25) !important;
+}
+.btn-cari:hover {
+  filter: brightness(1.06) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-tool { transition: all 0.18s cubic-bezier(0.4,0,0.2,1) !important; }
+.btn-tool:hover { filter: none !important; }
+
+/* ── 9. ICON BUTTONS ── */
+.icon-btn {
+  border-radius: 12px !important;
+  border: 1.5px solid rgba(167,139,250,0.2) !important;
+}
+.icon-btn:hover {
+  background: rgba(245,243,255,0.8) !important;
+  border-color: rgba(167,139,250,0.4) !important;
+  color: #7C3AED !important;
+}
+.icon-btn.danger:hover {
+  background: rgba(255,241,242,0.9) !important;
+  border-color: #FB7185 !important;
+  color: #FB7185 !important;
+}
+
+.icon-btn-sm {
+  border-radius: 12px !important;
+  border: 1px solid rgba(251,113,133,0.28) !important;
+  background: rgba(255,241,242,0.8) !important;
+  color: #FB7185 !important;
+}
+.icon-btn-sm:hover {
+  background: #FB7185 !important;
+  border-color: #FB7185 !important;
+  box-shadow: 0 3px 12px rgba(251,113,133,0.3) !important;
+}
+
+/* ── 10. ITEM ROW ── */
+.item-row {
+  border: 1px solid rgba(167,139,250,0.12) !important;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.03) !important;
+  border-radius: 14px !important;
+  background: rgba(255,255,255,0.82) !important;
+}
+.item-row:hover {
+  border-color: rgba(167,139,250,0.3) !important;
+  box-shadow: 0 3px 18px rgba(124,58,237,0.09) !important;
+  background: rgba(255,255,255,0.95) !important;
+}
+.item-row:focus-within {
+  border-color: #A78BFA !important;
+  box-shadow: 0 0 0 3px rgba(167,139,250,0.12), 0 3px 18px rgba(124,58,237,0.09) !important;
+}
+
+.row-num {
+  background: linear-gradient(135deg, #EDE9FE, #DDD6FE) !important;
+  color: #5B21B6 !important;
+  border-radius: 50% !important;
+}
+
+/* ── 11. GRAND TOTAL / LABA BAR ── */
+.grand-box {
+  background: linear-gradient(135deg, #F5F3FF, #EDE9FE) !important;
+  border: 1px solid rgba(167,139,250,0.22) !important;
+  border-radius: 18px !important;
+}
+.grand-label { color: #7C3AED !important; }
+.grand-value { color: #5B21B6 !important; }
+
+.grand-total-bar {
+  background: linear-gradient(90deg, #ECFDF5, #D1FAE5) !important;
+  border-top: 1px solid rgba(52,211,153,0.22) !important;
+}
+
+.laba-bar { background: rgba(255,255,255,0.6) !important; }
+
+.laba-chip { border-radius: 20px !important; }
+.laba-chip.green {
+  background: linear-gradient(135deg, #ECFDF5, #D1FAE5) !important;
+  color: #065F46 !important;
+}
+.laba-chip.amber {
+  background: linear-gradient(135deg, #FFF7ED, #FED7AA) !important;
+  color: #9A3412 !important;
+}
+
+/* ── 12. TOOLBAR ── */
+.toolbar-section {
+  background: rgba(245,243,255,0.45) !important;
+  border-bottom: 1px solid rgba(167,139,250,0.1) !important;
+}
+.toolbar-sep { background: rgba(167,139,250,0.2) !important; }
+
+/* ── 13. SPLIT PANELS (transaksi_rab / penjualan_rab) ── */
+.split-header { background: rgba(245,243,255,0.4) !important; }
+.panel-header.jual-panel {
+  background: linear-gradient(90deg, #ECFDF5, rgba(209,250,229,0.5)) !important;
+}
+.panel-title.beli {
+  background: rgba(245,244,242,0.6) !important;
+}
+.panel-title.jual {
+  background: linear-gradient(90deg, #ECFDF5, #D1FAE5) !important;
+  color: #065F46 !important;
+}
+.beli-side { background: rgba(250,250,249,0.55) !important; }
+.split-row:hover { background: rgba(167,139,250,0.03) !important; }
+.split-row:focus-within { background: rgba(52,211,153,0.04) !important; }
+
+/* ── 14. AUTOCOMPLETE DROPDOWN ── */
+.ac-dropdown {
+  border: 1px solid rgba(167,139,250,0.22) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 36px rgba(124,58,237,0.12) !important;
+  background: rgba(255,255,255,0.95) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+}
+.ac-item:hover, .ac-item.ac-active {
+  background: linear-gradient(90deg, #F5F3FF, #EDE9FE) !important;
+}
+.ac-item-name { color: #1E1B2E !important; }
+
+/* ── 15. SUGGESTION LIST (index.html) ── */
+.list-suggestions {
+  border: 1px solid rgba(167,139,250,0.22) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 8px 36px rgba(124,58,237,0.12) !important;
+}
+.list-group-item:hover { background: #F5F3FF !important; }
+.list-group-item:hover .sg-nama { color: #5B21B6 !important; }
+
+/* ── 16. DATA TABLE ── */
+.data-table th {
+  background: linear-gradient(90deg, #F5F3FF, #EDE9FE) !important;
+  color: #5B21B6 !important;
+  border-bottom: 1.5px solid rgba(167,139,250,0.2) !important;
+}
+.data-table tbody tr:hover { background: rgba(245,243,255,0.5) !important; }
+.total-row td, .total-row th {
+  background: linear-gradient(90deg, #F5F3FF, #EDE9FE) !important;
+  color: #5B21B6 !important;
+  border-top: 2px solid rgba(167,139,250,0.25) !important;
+}
+.total-badge {
+  background: linear-gradient(135deg, #7C3AED, #5B21B6) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 18px rgba(124,58,237,0.30) !important;
+}
+
+/* ── 17. ITEM CARD (riwayat_barang) ── */
+.item-card {
+  background: rgba(255,255,255,0.82) !important;
+  border: 1px solid rgba(167,139,250,0.12) !important;
+  box-shadow: 0 2px 14px rgba(124,58,237,0.05) !important;
+  border-radius: 18px !important;
+}
+.item-card:hover {
+  border-color: rgba(167,139,250,0.30) !important;
+  box-shadow: 0 4px 22px rgba(124,58,237,0.10) !important;
+  transform: translateY(-1px) !important;
+}
+.item-icon {
+  background: linear-gradient(135deg, #F5F3FF, #EDE9FE) !important;
+  border-radius: 14px !important;
+}
+.item-icon i { color: #7C3AED !important; }
+.item-price { color: #5B21B6 !important; }
+.item-card:active { background: rgba(245,243,255,0.9) !important; }
+
+/* ── 18. SEARCH BOX (riwayat_barang) ── */
+.search-wrap { background: transparent !important; }
+.search-box {
+  background: rgba(255,255,255,0.82) !important;
+  border: 1.5px solid rgba(167,139,250,0.22) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 2px 14px rgba(124,58,237,0.06) !important;
+  backdrop-filter: blur(10px) !important;
+}
+.search-box:focus-within {
+  border-color: #A78BFA !important;
+  box-shadow: 0 0 0 3px rgba(167,139,250,0.14), 0 2px 14px rgba(124,58,237,0.08) !important;
+}
+
+/* ── 19. FLASH ALERTS ── */
+.alert-success-c {
+  background: linear-gradient(90deg, #ECFDF5, #D1FAE5) !important;
+  color: #065F46 !important;
+  border-radius: 16px !important;
+}
+.alert-warning-c {
+  background: linear-gradient(90deg, #FFF7ED, #FED7AA) !important;
+  color: #9A3412 !important;
+  border-radius: 16px !important;
+}
+.alert-danger-c {
+  background: linear-gradient(90deg, #FFF1F2, #FFE4E6) !important;
+  color: #E11D48 !important;
+  border-radius: 16px !important;
+}
+
+/* ── 20. TOAST ── */
+.toast-flash {
+  background: rgba(255,255,255,0.92) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(52,211,153,0.30) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 8px 36px rgba(5,150,105,0.12) !important;
+}
+
+/* ── 21. BOTTOM NAV ── */
+.bottom-nav {
+  background: rgba(255,255,255,0.90) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border-top: 1px solid rgba(255,255,255,0.55) !important;
+  box-shadow: 0 -4px 24px rgba(124,58,237,0.06) !important;
+}
+.bottom-nav-item.active {
+  background: linear-gradient(135deg, #F5F3FF, #EDE9FE) !important;
+  color: #7C3AED !important;
+}
+
+/* ── 22. ADD ITEM BAR ── */
+.add-item-bar {
+  background: rgba(245,243,255,0.45) !important;
+  border-top: 1px dashed rgba(167,139,250,0.30) !important;
+}
+
+/* ── 23. MODAL ── */
+.modal-header-custom {
+  background: linear-gradient(135deg, #7C3AED, #5B21B6) !important;
+  border-radius: 20px 20px 0 0 !important;
+}
+
+/* ── 24. BADGES ── */
+.badge-beli { background: #EDE9FE !important; color: #5B21B6 !important; }
+.badge-jual { background: #D1FAE5 !important; color: #065F46 !important; }
+.badge-jual-rab, .badge-rab { background: #FED7AA !important; color: #9A3412 !important; }
+.badge-pill { border-radius: 20px !important; }
+
+/* ── 25. NOTA SELECT ── */
+.nota-select { border-radius: 12px !important; }
+
+/* ── 26. SYNC BADGE ── */
+.sync-badge {
+  background: #FED7AA !important;
+  color: #9A3412 !important;
+  border: 1px solid rgba(251,146,60,0.3) !important;
+  border-radius: 6px !important;
+}
+
+/* ── 27. RIWAYAT MODAL ROWS ── */
+.riwayat-row:hover { background: rgba(245,243,255,0.5) !important; }
+
+/* ── 28. MINI RIWAYAT BUTTON ── */
+.riwayat-mini {
+  border-radius: 10px !important;
+  border: 1.5px solid rgba(167,139,250,0.18) !important;
+  background: rgba(255,255,255,0.7) !important;
+}
+.riwayat-mini:hover {
+  background: rgba(245,243,255,0.9) !important;
+  border-color: rgba(167,139,250,0.4) !important;
+  color: #7C3AED !important;
+}
+
+/* ── 29. FORM SECTION DIVIDERS ── */
+.divider { background: rgba(167,139,250,0.1) !important; }
+.form-section { border-bottom: 1px solid rgba(167,139,250,0.1) !important; }
+
+/* ── 30. GRAND TOTAL CELL (penjualan_rab) ── */
+.cell-total-jual { color: #065F46 !important; }
+
+/* ── 31. CUSTOM SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(167,139,250,0.30);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(124,58,237,0.40); }
+
+/* ── 32. TEXT SELECTION ── */
+::selection {
+  background: rgba(167,139,250,0.22);
+  color: #5B21B6;
+}
+
+/* ── 33. FOCUS RINGS ── */
+button:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid #A78BFA;
+  outline-offset: 2px;
+}
+
+/* ── 34. SMOOTH TRANSITIONS ── */
+.btn-tool, .item-card, .item-row, .main-card, .hero-card {
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ── 35. EMPTY STATE ── */
+.empty-state i, .empty-icon { color: rgba(167,139,250,0.4) !important; }
+
+/* ── 36. PANEL HEADER LABELS ── */
+.ph-label.teal { color: #059669 !important; }
+.panel-title.jual i { color: #059669 !important; }
+
+/* ── 37. FILTER CARD TITLE ── */
+.filter-title { color: #1E1B2E !important; }
+
+/* ── 38. COUNT BAR & RESULT COUNT ── */
+.count-bar, .result-count { color: #A8A29E !important; }
+
+/* ── 39. SPINNER ── */
+.spinner { border-top-color: #A78BFA !important; }
+
+/* ── 40. LOADING STATE ── */
+.loading-state { color: #A8A29E !important; }

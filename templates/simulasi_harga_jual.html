@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Simulasi Harga Jual</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Bootstrap -->
+<link href="/static/lib/bootstrap.min.css" rel="stylesheet">
+<link href="/static/lib/bootstrap-icons.min.css" rel="stylesheet">
+<script src="/static/lib/jquery.min.js"></script>
+
+<style>
+/* ================= GLOBAL ================= */
+body{
+  background: linear-gradient(135deg,#f8fafc,#eef2ff);
+  font-family: "Segoe UI", system-ui;
+  padding: 24px;
+}
+
+.card-glass{
+  background: rgba(255,255,255,.95);
+  border-radius: 16px;
+  box-shadow: 0 15px 45px rgba(15,23,42,.15);
+  border: 0;
+}
+
+/* ================= HEADER ================= */
+.header-bar{
+  background: linear-gradient(90deg,#2563eb,#4f46e5);
+  color: #fff;
+  border-radius: 16px 16px 0 0;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-bar i{
+  font-size: 22px;
+  background: rgba(255,255,255,.18);
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* ================= TABLE ================= */
+.table thead th{
+  background:#f1f5f9;
+  font-size:.8rem;
+  color:#475569;
+  text-transform: uppercase;
+}
+
+.table-responsive,
+.card-body{
+  overflow: visible !important; /* FIX AUTOSHOW */
+}
+
+.input-ghost{
+  border-radius: 8px;
+  border:1px solid #e5e7eb;
+}
+
+.price{
+  font-weight:600;
+  white-space: nowrap;
+}
+
+/* ================= AUTOCOMPLETE ================= */
+.autocomplete{
+  position:absolute;
+  top:100%;
+  left:0;
+  width:100%;
+  z-index:9999;
+  max-height:260px;
+  overflow-y:auto;
+  box-shadow:0 15px 35px rgba(0,0,0,.18);
+  border-radius:10px;
+}
+
+.autocomplete .list-group-item{
+  cursor:pointer;
+}
+
+/* ================= TOTAL ================= */
+.grand-total{
+  background: linear-gradient(90deg,#ecfeff,#eef2ff);
+  border:1px solid #bae6fd;
+  padding:16px 22px;
+  border-radius:14px;
+  font-size:1.15rem;
+  font-weight:700;
+  color:#1d4ed8;
+  min-width:280px;
+  text-align:right;
+}
+</style>
+</head>
+
+<body>
+<div class="container-fluid" style="max-width:1200px">
+
+<div class="card card-glass">
+  <div class="header-bar">
+    <i class="bi bi-calculator"></i>
+    <div>
+      <h5 class="mb-0">Simulasi Harga Jual</h5>
+      <small>Input list barang & kalkulasi harga jual terbaru</small>
+    </div>
+  </div>
+
+  <div class="card-body">
+
+    <div class="table-responsive">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Nama Barang</th>
+            <th width="90">Qty</th>
+            <th width="110">Satuan</th>
+            <th width="140" class="text-end">Harga Beli</th>
+            <th width="140" class="text-end">Harga Jual</th>
+            <th width="160" class="text-end">Total</th>
+            <th width="50"></th>
+          </tr>
+        </thead>
+        <tbody id="body"></tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <button class="btn btn-outline-primary" onclick="tambahBaris()">
+        <i class="bi bi-plus-lg"></i> Tambah Barang
+      </button>
+
+      <div class="grand-total">
+        TOTAL : <span id="grandTotal">Rp 0</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script>
+function rupiah(n){
+  return "Rp " + Number(n).toLocaleString("id-ID");
+}
+
+function tambahBaris(){
+  const tr = $(`
+    <tr>
+      <td style="position:relative">
+        <input type="text" class="form-control input-ghost nama" autocomplete="off">
+        <div class="list-group autocomplete"></div>
+      </td>
+      <td><input type="number" class="form-control input-ghost qty" value="1"></td>
+      <td><input type="text" class="form-control input-ghost satuan" readonly></td>
+      <td class="text-end price beli">Rp 0</td>
+      <td class="text-end price jual">Rp 0</td>
+      <td class="text-end price total">Rp 0</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-outline-danger">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>
+  `);
+
+  $("#body").append(tr);
+  bindRow(tr);
+}
+
+function bindRow(row){
+  const input = row.find(".nama");
+  const sug = row.find(".autocomplete");
+
+  input.on("keyup", function(){
+    if(this.value.length < 2){
+      sug.hide(); return;
+    }
+
+    $.getJSON("/cari_barang",{q:this.value}, res=>{
+      if(!res.results.length){
+        sug.hide(); return;
+      }
+
+      sug.html(res.results.map(b=>`
+        <button type="button"
+          class="list-group-item list-group-item-action"
+          data-nama="${b.nama}"
+          data-satuan="${b.satuan}">
+          ${b.nama}
+        </button>
+      `)).show();
+    });
+  });
+
+  sug.on("click","button",function(){
+    input.val($(this).data("nama"));
+    row.find(".satuan").val($(this).data("satuan"));
+    sug.hide();
+    hitung(row);
+  });
+
+  row.find(".qty").on("input",()=>hitung(row));
+
+  row.find(".btn-outline-danger").on("click",()=>{
+    row.remove();
+    hitungGrand();
+  });
+}
+
+function hitung(row){
+  const nama = row.find(".nama").val();
+  const satuan = row.find(".satuan").val();
+  const qty = row.find(".qty").val() || 1;
+
+  if(!nama) return;
+
+  $.getJSON("/api/simulasi_harga_jual",{nama,satuan,qty}, res=>{
+    row.find(".beli").text(rupiah(res.harga_beli));
+    row.find(".jual").text(rupiah(res.harga_jual));
+    row.find(".total").text(rupiah(res.total));
+    hitungGrand();
+  });
+}
+
+function hitungGrand(){
+  let total = 0;
+  $(".total").each(function(){
+    total += parseInt($(this).text().replace(/\D/g,"")) || 0;
+  });
+  $("#grandTotal").text(rupiah(total));
+}
+
+tambahBaris();
+</script>
+
+</body>
+</html>

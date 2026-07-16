@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Penjualan RAB — KopMRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    :root {
+      --purple-50:#EEEDFE;--purple-100:#CECBF6;--purple-200:#AFA9EC;
+      --purple-400:#7F77DD;--purple-600:#534AB7;--purple-800:#3C3489;
+      --teal-50:#E1F5EE;--teal-200:#5DCAA5;--teal-400:#1D9E75;
+      --teal-600:#0F6E56;--teal-800:#085041;
+      --amber-50:#FAEEDA;--amber-200:#FAC775;--amber-400:#EF9F27;
+      --amber-600:#BA7517;--amber-800:#633806;
+      --coral-50:#FAECE7;--coral-200:#F0997B;--coral-400:#D85A30;--coral-600:#993C1D;
+      --gray-50:#F8F7F4;--gray-100:#EEECEA;--gray-200:#D3D1C7;
+      --gray-400:#888780;--gray-600:#5F5E5A;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:20px;
+      --font-main:'Plus Jakarta Sans',system-ui,sans-serif;
+      --font-mono:'DM Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;}
+    body{font-family:var(--font-main);background:var(--gray-50);color:#1a1a1a;margin:0;min-height:100vh;}
+
+    /* TOPBAR */
+    .topbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1.5px solid var(--gray-100);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+    .topbar-logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:#1a1a1a;text-decoration:none;}
+    .logo-bubble{width:30px;height:30px;border-radius:10px;background:var(--purple-600);display:flex;align-items:center;justify-content:center;}
+    .logo-bubble i{color:#fff;font-size:14px;}
+    .nav-links{display:flex;align-items:center;gap:2px;}
+    .nav-link-item{padding:6px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--gray-600);text-decoration:none;transition:background .15s,color .15s;white-space:nowrap;}
+    .nav-link-item:hover{background:var(--gray-100);color:#1a1a1a;}
+    .nav-link-item.active{background:var(--teal-50);color:var(--teal-600);}
+    .avatar-circle{width:32px;height:32px;border-radius:50%;background:var(--amber-50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--amber-800);}
+
+    /* PAGE */
+    .page-wrap{max-width:1400px;margin:0 auto;padding:20px 20px 60px;}
+
+    /* HERO */
+    .hero-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px;}
+    .hero-card{border-radius:var(--radius-lg);padding:16px 18px;position:relative;overflow:hidden;}
+    .hc-teal{background:var(--teal-50);} .hc-amber{background:var(--amber-50);}
+    .hc-purple{background:var(--purple-50);} .hc-coral{background:var(--coral-50);}
+    .hero-label{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;}
+    .hc-teal .hero-label{color:var(--teal-400);} .hc-amber .hero-label{color:var(--amber-600);}
+    .hc-purple .hero-label{color:var(--purple-400);} .hc-coral .hero-label{color:var(--coral-600);}
+    .hero-val{font-size:20px;font-weight:600;line-height:1;font-family:var(--font-mono);}
+    .hc-teal .hero-val{color:var(--teal-800);} .hc-amber .hero-val{color:var(--amber-800);}
+    .hc-purple .hero-val{color:var(--purple-800);} .hc-coral .hero-val{color:var(--coral-600);}
+    .hero-sub{font-size:11px;margin-top:4px;color:var(--gray-400);}
+
+    /* MAIN CARD */
+    .main-card{background:#fff;border-radius:var(--radius-xl);border:1.5px solid var(--gray-100);overflow:visible;}
+    .card-header-bar{padding:16px 22px;display:flex;align-items:center;gap:12px;border-bottom:1.5px solid var(--gray-100);flex-wrap:wrap;}
+    .header-icon{width:40px;height:40px;border-radius:var(--radius-md);background:var(--teal-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .header-icon i{font-size:18px;color:var(--teal-600);}
+    .header-title{font-size:15px;font-weight:600;margin:0;}
+    .header-sub{font-size:12px;color:var(--gray-400);margin:1px 0 0;}
+
+    /* FORM SECTION */
+    .form-section{padding:18px 22px;border-bottom:1.5px solid var(--gray-100);}
+    .field-label{font-size:12px;font-weight:600;color:var(--gray-600);letter-spacing:.03em;text-transform:uppercase;margin-bottom:5px;display:block;}
+    .field-input{width:100%;height:40px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;font-family:var(--font-main);background:#fff;color:#1a1a1a;transition:border-color .18s,box-shadow .18s;outline:none;}
+    .field-input:focus{border-color:var(--teal-400);box-shadow:0 0 0 3px rgba(29,158,117,0.15);}
+    .field-input::placeholder{color:var(--gray-400);}
+
+    /* TOOLBAR */
+    .toolbar-section{padding:12px 22px;border-bottom:1.5px solid var(--gray-100);display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--gray-50);}
+    .btn-tool{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-family:var(--font-main);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+    .btn-tool:hover{filter:brightness(0.93);}
+    .btn-search{background:var(--purple-600);color:#fff;}
+    .btn-suggest{background:var(--amber-50);color:var(--amber-800);border:1.5px solid var(--amber-200);}
+    .btn-save{background:var(--teal-400);color:#fff;margin-left:auto;}
+    .btn-history{background:var(--purple-50);color:var(--purple-600);border:1.5px solid var(--purple-100);}
+    .btn-reset{background:var(--coral-50);color:var(--coral-600);border:1.5px solid var(--coral-200);}
+    .btn-pdf   {background:var(--coral-50);color:var(--coral-600);border:1.5px solid var(--coral-200);}
+    .btn-blanko{background:var(--purple-50);color:var(--purple-600);border:1.5px solid var(--purple-100);}
+    .btn-excel {background:var(--teal-50);color:var(--teal-800);border:1.5px solid var(--teal-200);}
+    /* Separator toolbar */
+    .toolbar-sep{width:1px;height:28px;background:var(--gray-200);margin:0 2px;}
+
+    /* ============================================================
+       SPLIT TABLE LAYOUT
+       Kiri  = data BELI (abu-abu/readonly)
+       Kanan = data JUAL (bisa diedit)
+       ============================================================ */
+    .split-wrap{padding:0;}
+
+    /* KOLOM HEADER SPLIT */
+    .split-header{
+      display:grid;
+      grid-template-columns: 18px 1fr;  /* nomor | dua panel */
+      gap:0;
+      background:var(--gray-50);
+      border-bottom:2px solid var(--gray-200);
+      position:sticky;top:56px;z-index:40;
+    }
+    .split-header-num{
+      background:var(--gray-100);
+      display:flex;align-items:center;justify-content:center;
+      font-size:10px;color:var(--gray-400);
+      border-right:1px solid var(--gray-200);
+      padding:0 4px;
+    }
+    .split-header-panels{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      width:100%;
+    }
+    .panel-header{
+      padding:10px 16px;
+      display:grid;
+      gap:6px;
+      border-right:2px solid var(--gray-200);
+    }
+    .panel-header.beli-panel{
+      grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr;
+      background:var(--gray-50);
+    }
+    .panel-header.jual-panel{
+      grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr 1.4fr 36px;
+      background:var(--teal-50);
+      border-right:none;
+    }
+    .ph-label{
+      font-size:10px;font-weight:600;color:var(--gray-400);
+      text-transform:uppercase;letter-spacing:.04em;
+    }
+    .ph-label.teal{color:var(--teal-600);}
+
+    /* PANEL TITLE BADGE */
+    .panel-title-row{
+      display:grid;grid-template-columns:1fr 1fr;
+      border-bottom:1.5px solid var(--gray-200);
+    }
+    .panel-title{
+      padding:8px 16px;font-size:12px;font-weight:600;
+      display:flex;align-items:center;gap:6px;
+    }
+    .panel-title.beli{background:var(--gray-100);color:var(--gray-600);border-right:2px solid var(--gray-200);}
+    .panel-title.jual{background:var(--teal-50);color:var(--teal-700);}
+
+    /* SPLIT ROW */
+    .split-row{
+      display:grid;
+      grid-template-columns:18px 1fr;
+      border-bottom:1px solid var(--gray-100);
+      transition:background .12s;
+      animation:fadeInUp .18s ease both;
+    }
+    .split-row:hover{background:rgba(29,158,117,0.03);}
+    .split-row:focus-within{background:rgba(29,158,117,0.05);}
+
+    .row-num{
+      background:var(--gray-50);border-right:1px solid var(--gray-100);
+      display:flex;align-items:center;justify-content:center;
+      font-size:10px;font-weight:600;color:var(--gray-400);
+      min-height:52px;
+    }
+
+    .row-panels{display:grid;grid-template-columns:1fr 1fr;width:100%;}
+
+    /* BELI PANEL (kiri) */
+    .beli-side{
+      display:grid;
+      grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr;
+      gap:6px;padding:8px 12px;
+      background:#fff;border-right:2px solid var(--gray-200);
+      align-items:center;
+    }
+
+    /* JUAL PANEL (kanan) */
+    .jual-side{
+      display:grid;
+      grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr 1.4fr 36px;
+      gap:6px;padding:8px 12px;
+      background:#fff;
+      align-items:center;
+    }
+    .jual-side:focus-within{background:rgba(29,158,117,0.04);}
+
+    /* INPUTS */
+    .cell-ro{  /* readonly */
+      width:100%;height:34px;
+      border:1.5px solid transparent;border-radius:var(--radius-sm);
+      padding:4px 8px;font-size:12px;font-family:var(--font-mono);
+      background:var(--gray-50);color:var(--gray-600);
+      outline:none;cursor:default;
+    }
+    .cell-rw{  /* editable */
+      width:100%;height:34px;
+      border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);
+      padding:4px 8px;font-size:12px;font-family:var(--font-mono);
+      background:#fff;color:#1a1a1a;
+      outline:none;transition:border-color .15s,box-shadow .15s;
+    }
+    .cell-rw:focus{border-color:var(--teal-400);box-shadow:0 0 0 2px rgba(29,158,117,0.15);}
+    .cell-rw.nama-jual-input{font-family:var(--font-main);font-size:12px;}
+    .cell-rw.warn{background:var(--amber-50)!important;border-color:var(--amber-400)!important;color:var(--amber-800)!important;}
+
+    .cell-total-jual{
+      font-size:12px;font-weight:600;font-family:var(--font-mono);
+      color:var(--teal-800);text-align:right;padding-right:2px;white-space:nowrap;
+    }
+
+    /* SYNC BADGE — indikator nama berubah dari nama beli */
+    .sync-badge{
+      display:none;position:absolute;top:-6px;left:0;
+      font-size:9px;padding:1px 5px;border-radius:4px;
+      background:var(--amber-50);color:var(--amber-600);
+      border:1px solid var(--amber-200);white-space:nowrap;
+    }
+    .nama-jual-wrap{position:relative;}
+
+    /* AUTOCOMPLETE DROPDOWN — fixed portal, tidak terclip oleh overflow parent */
+    .ac-dropdown{
+      position:fixed;z-index:9000;
+      background:#fff;border:1.5px solid var(--purple-100);
+      border-radius:var(--radius-md);box-shadow:0 8px 24px rgba(0,0,0,.14);
+      max-height:200px;overflow-y:auto;display:none;
+      min-width:220px;
+    }
+    .ac-item{
+      padding:8px 12px;font-size:12px;cursor:pointer;
+      border-bottom:1px solid var(--gray-100);
+      display:flex;flex-direction:column;gap:2px;
+      transition:background .1s;
+    }
+    .ac-item:last-child{border-bottom:none;}
+    .ac-item:hover,.ac-item.ac-active{background:var(--purple-50);}
+    .ac-item-name{font-weight:600;color:#1a1a1a;}
+    .ac-item-meta{font-size:11px;color:var(--gray-400);font-family:var(--font-mono);}
+
+    /* TAMBAH ITEM EKSTRA */
+    .extra-row{
+      display:grid;
+      grid-template-columns:18px 1fr;
+      border-bottom:1px solid var(--teal-100);
+      background:rgba(29,158,117,0.03);
+      animation:fadeInUp .18s ease both;
+    }
+    .extra-row .row-num{background:var(--teal-50);color:var(--teal-600);border-right:1px solid var(--teal-100);}
+    .extra-jual-side{
+      display:grid;
+      grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr 1.4fr 36px;
+      gap:6px;padding:8px 12px;
+      background:rgba(29,158,117,0.04);
+      align-items:center;
+    }
+    .extra-row:hover{background:rgba(29,158,117,0.07);}
+
+    /* TAMBAH ITEM BUTTON BAR */
+    .add-item-bar{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 22px;border-top:1px dashed var(--teal-200);
+      background:var(--teal-50);
+    }
+    .btn-add-item{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:7px 16px;border-radius:var(--radius-sm);
+      border:1.5px dashed var(--teal-400);background:var(--teal-50);
+      color:var(--teal-600);font-family:var(--font-main);font-size:13px;font-weight:600;
+      cursor:pointer;transition:background .15s,border-color .15s;
+    }
+    .btn-add-item:hover{background:var(--teal-200);border-color:var(--teal-600);}
+    .btn-del-extra{
+      background:none;border:none;color:var(--coral-400);
+      cursor:pointer;font-size:14px;padding:0;width:32px;height:32px;
+      display:flex;align-items:center;justify-content:center;
+      border-radius:var(--radius-sm);transition:background .12s;
+    }
+    .btn-del-extra:hover{background:var(--coral-50);}
+
+    /* ICON BUTTONS */
+    .icon-btn-sm{
+      width:32px;height:32px;border-radius:var(--radius-sm);
+      display:flex;align-items:center;justify-content:center;
+      border:1.5px solid var(--purple-100);background:var(--purple-50);
+      color:var(--purple-600);font-size:12px;cursor:pointer;
+      transition:all .15s;flex-shrink:0;
+    }
+    .icon-btn-sm:hover{background:var(--purple-600);color:#fff;border-color:var(--purple-600);}
+
+    /* DIVIDER */
+    .divider-section{
+      height:2px;background:linear-gradient(to right,var(--purple-100),var(--teal-100));
+      border:none;margin:0;
+    }
+
+    /* GRAND TOTAL */
+    .laba-bar{display:flex;align-items:center;gap:16px;padding:10px 22px;border-top:1.5px solid var(--gray-100);background:#fff;flex-wrap:wrap;}
+    .laba-chip{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;}
+    .laba-chip.green{background:var(--teal-50);color:var(--teal-800);}
+    .laba-chip.amber{background:var(--amber-50);color:var(--amber-800);}
+    .grand-total-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1.5px solid var(--gray-100);background:var(--teal-50);}
+    .grand-label{font-size:12px;font-weight:600;color:var(--teal-600);letter-spacing:.04em;text-transform:uppercase;}
+    .grand-value{font-size:22px;font-weight:600;color:var(--teal-800);font-family:var(--font-mono);}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:56px 20px;color:var(--gray-400);font-size:14px;}
+    .empty-state i{font-size:44px;display:block;margin-bottom:14px;color:var(--gray-200);}
+
+    /* MODAL */
+    .modal-content{border-radius:var(--radius-xl);border:none;overflow:hidden;}
+    .modal-header-custom{background:var(--purple-600);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .modal-header-custom .modal-title{font-size:15px;font-weight:600;margin:0;}
+    .modal-header-custom .btn-close{filter:brightness(0) invert(1);}
+    .riwayat-row{display:grid;grid-template-columns:1fr 70px 1fr 1fr 1fr;gap:8px;padding:10px 16px;border-bottom:1px solid var(--gray-100);font-size:13px;align-items:center;}
+    .riwayat-row:last-child{border-bottom:none;}
+    .riwayat-row:hover{background:var(--gray-50);}
+    .badge-beli{background:var(--purple-50);color:var(--purple-600);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+    .badge-jual{background:var(--teal-50);color:var(--teal-600);padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600;}
+
+    /* HISTORY PANEL */
+    .history-panel{border-top:1.5px solid var(--gray-100);}
+    .history-panel-header{padding:12px 22px;display:flex;align-items:center;justify-content:space-between;background:var(--gray-50);border-bottom:1.5px solid var(--gray-100);cursor:pointer;}
+    .history-panel-header:hover{background:var(--gray-100);}
+    .history-list{padding:0;max-height:260px;overflow-y:auto;}
+    .history-item{display:flex;align-items:center;justify-content:space-between;padding:10px 22px;border-bottom:1px solid var(--gray-100);font-size:13px;}
+    .history-item:last-child{border-bottom:none;}
+    .history-item:hover{background:var(--gray-50);}
+
+    /* ANIMATIONS */
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+    .main-card{animation:fadeInUp .22s ease both;}
+
+    /* SAVED FLASH */
+    .toast-flash{
+      position:fixed;top:70px;right:20px;z-index:9999;
+      background:#fff;border:1.5px solid var(--teal-200);border-radius:var(--radius-md);
+      padding:12px 18px;font-size:13px;color:var(--teal-800);
+      box-shadow:0 8px 24px rgba(0,0,0,.12);
+      display:flex;align-items:center;gap:10px;
+      transform:translateX(120%);transition:transform .3s ease;
+    }
+    .toast-flash.show{transform:translateX(0);}
+
+    @media(max-width:900px){
+      .nav-links{display:none;}
+      .hero-row{grid-template-columns:1fr 1fr;}
+      .split-header-panels,.row-panels{grid-template-columns:1fr;}
+      .beli-side{border-right:none;border-bottom:1px dashed var(--gray-200);background:var(--gray-50);}
+      .panel-title-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <a href="/" class="topbar-logo">
+    <div class="logo-bubble"><i class="bi bi-receipt"></i></div>
+    <span>KopMRM</span>
+  </a>
+  <div class="nav-links">
+    <a href="/" class="nav-link-item"><i class="bi bi-house me-1"></i>Input Nota</a>
+    <a href="/penjualan" class="nav-link-item"><i class="bi bi-bag me-1"></i>Penjualan</a>
+    <a href="/penjualan_rab" class="nav-link-item active"><i class="bi bi-arrow-left-right me-1"></i>Jual RAB</a>
+    <a href="/report" class="nav-link-item"><i class="bi bi-bar-chart me-1"></i>Laporan</a>
+    <a href="/cek_harga_rab" class="nav-link-item"><i class="bi bi-table me-1"></i>Cek RAB</a>
+    <a href="/layout_wizard" class="nav-link-item"><i class="bi bi-sliders me-1"></i>Pengaturan</a>
+  </div>
+  <div class="avatar-circle">AD</div>
+</nav>
+
+<!-- FLASH TOAST -->
+<div class="toast-flash" id="toastFlash">
+  <i class="bi bi-check-circle-fill" style="color:var(--teal-400);font-size:16px;"></i>
+  <span id="toastMsg">Berhasil disimpan!</span>
+</div>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="hero-row">
+    <div class="hero-card hc-teal">
+      <div class="hero-label">Total Jual</div>
+      <div class="hero-val" id="statTotalJual">Rp 0</div>
+      <div class="hero-sub" id="statItemCount">0 item</div>
+    </div>
+    <div class="hero-card hc-amber">
+      <div class="hero-label">Total Beli</div>
+      <div class="hero-val" id="statTotalBeli">Rp 0</div>
+      <div class="hero-sub">HPP dari nota</div>
+    </div>
+    <div class="hero-card hc-purple">
+      <div class="hero-label">Laba Kotor</div>
+      <div class="hero-val" id="statLaba">Rp 0</div>
+      <div class="hero-sub" id="statMargin">Margin 0%</div>
+    </div>
+    <div class="hero-card hc-coral">
+      <div class="hero-label">Item Diubah</div>
+      <div class="hero-val" id="statDiubah">0</div>
+      <div class="hero-sub">Nama/qty berbeda dari beli</div>
+    </div>
+  </div>
+
+  <!-- MAIN CARD -->
+  <div class="main-card">
+
+    <!-- HEADER -->
+    <div class="card-header-bar">
+      <div class="header-icon"><i class="bi bi-arrow-left-right"></i></div>
+      <div style="flex:1;">
+        <div class="header-title">Penjualan dari Nota Pembelian (RAB)</div>
+        <div class="header-sub">Sisi kiri = data beli (tidak berubah) · Sisi kanan = data jual yang bisa diedit bebas</div>
+      </div>
+    </div>
+
+    <!-- FORM HEADER -->
+    <div class="form-section">
+      <div class="row g-3">
+        <div class="col-12 col-md-3">
+          <label class="field-label">📅 Tanggal Jual</label>
+          <input type="date" id="tanggal" class="field-input" required>
+        </div>
+        <div class="col-12 col-md-3">
+          <label class="field-label">👤 Konsumen / SPPG</label>
+          <input type="text" id="konsumen" class="field-input" placeholder="Nama konsumen atau SPPG">
+        </div>
+        <div class="col-12 col-md-3">
+          <label class="field-label">🔖 Nomor Faktur Pembelian</label>
+          <input type="text" id="nota_beli" class="field-input" placeholder="Ketik nomor nota...">
+        </div>
+        <div class="col-12 col-md-3">
+          <label class="field-label">🔁 Pilih Nota Lama</label>
+          <select id="lanjut_nota" class="field-input" style="height:40px;">
+            <option value="">-- Pilih Nota --</option>
+            {% for n in nota_list %}
+            <option value="{{ n.nomor_faktur }}">{{ n.nomor_faktur }} — {{ n.supplier }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12">
+          <label class="field-label">📝 Catatan (opsional)</label>
+          <input type="text" id="catatan" class="field-input" placeholder="Catatan pengiriman, perihal, dsb.">
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar-section">
+      <button type="button" class="btn-tool btn-search" onclick="cariNota()">
+        <i class="bi bi-search"></i> Cari Nota
+      </button>
+      <button type="button" class="btn-tool btn-suggest" onclick="suggestHarga()">
+        <i class="bi bi-lightbulb"></i> Suggest Harga
+      </button>
+      <button type="button" class="btn-tool btn-reset" onclick="resetForm()">
+        <i class="bi bi-arrow-counterclockwise"></i> Reset
+      </button>
+      <button type="button" class="btn-tool btn-history" onclick="toggleHistoryPanel()">
+        <i class="bi bi-clock-history"></i> Riwayat Simpan
+      </button>
+      <div class="toolbar-sep"></div>
+      <button type="button" class="btn-tool btn-excel" id="btnExportExcel" onclick="exportExcelRAB()" disabled title="Simpan dulu sebelum export">
+        <i class="bi bi-file-excel"></i> Export Excel
+      </button>
+      <button type="button" class="btn-tool btn-pdf" id="btnExportPdf" onclick="exportPdfRAB()" disabled title="Simpan dulu sebelum export">
+        <i class="bi bi-file-pdf"></i> PDF Faktur
+      </button>
+      <button type="button" class="btn-tool btn-blanko" id="btnExportBlanko" onclick="exportBlankoRAB()" disabled title="Simpan dulu sebelum export">
+        <i class="bi bi-file-earmark-spreadsheet"></i> Blanko
+      </button>
+      <button type="button" class="btn-tool btn-save" id="btnSimpan" onclick="simpanPenjualanRAB()">
+        <i class="bi bi-cloud-check"></i> Simpan Penjualan RAB
+      </button>
+    </div>
+
+    <!-- PANEL TITLE ROW -->
+    <div class="panel-title-row" id="panelTitleRow" style="display:none;">
+      <div class="panel-title beli">
+        <i class="bi bi-box-seam" style="color:var(--gray-400);"></i>
+        DATA PEMBELIAN — <span style="font-family:var(--font-mono);font-weight:400;margin-left:4px;" id="labelFakturBeli">—</span>
+        <span style="font-size:11px;color:var(--gray-400);margin-left:6px;">(tidak bisa diubah)</span>
+      </div>
+      <div class="panel-title jual">
+        <i class="bi bi-bag-check" style="color:var(--teal-500);"></i>
+        DATA PENJUALAN — edit bebas nama, qty & harga
+        <span id="savedBadge" style="display:none;background:var(--teal-400);color:#fff;font-size:10px;padding:2px 8px;border-radius:10px;margin-left:8px;">✓ Tersimpan</span>
+      </div>
+    </div>
+
+    <!-- SPLIT TABLE HEADER -->
+    <div class="split-header" id="splitHeader" style="display:none;">
+      <div class="split-header-num">#</div>
+      <div class="split-header-panels">
+        <!-- Beli header -->
+        <div class="panel-header beli-panel">
+          <span class="ph-label">Nama Barang Beli</span>
+          <span class="ph-label" style="text-align:center;">Qty</span>
+          <span class="ph-label" style="text-align:center;">Sat</span>
+          <span class="ph-label" style="text-align:right;">Harga Beli</span>
+        </div>
+        <!-- Jual header -->
+        <div class="panel-header jual-panel">
+          <span class="ph-label teal">Nama Barang Jual ✏️</span>
+          <span class="ph-label teal" style="text-align:center;">Qty ✏️</span>
+          <span class="ph-label teal" style="text-align:center;">Sat</span>
+          <span class="ph-label teal" style="text-align:right;">Harga Jual ✏️</span>
+          <span class="ph-label teal" style="text-align:right;">Total Jual</span>
+          <span class="ph-label teal"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROWS CONTAINER -->
+    <div id="splitRows">
+      <div class="empty-state" id="emptyState">
+        <i class="bi bi-inbox"></i>
+        Masukkan nomor nota pembelian lalu klik <strong>Cari Nota</strong>.<br>
+        <span style="font-size:13px;margin-top:6px;display:block;color:var(--gray-400);">
+          Kolom kiri = data beli (readonly) · Kolom kanan = bisa diedit nama, qty & harga jual
+        </span>
+      </div>
+    </div>
+
+    <!-- TAMBAH ITEM EKSTRA -->
+    <div class="add-item-bar" id="addItemBar" style="display:none;">
+      <button type="button" class="btn-add-item" onclick="tambahItemEkstra()">
+        <i class="bi bi-plus-lg"></i> Tambah Item Jual (di luar nota beli)
+      </button>
+      <div id="extraRows"></div>
+    </div>
+
+    <!-- LABA & GRAND TOTAL -->
+    <div id="totalSection" style="display:none;">
+      <div class="laba-bar">
+        <div class="laba-chip green"><i class="bi bi-graph-up-arrow"></i> Laba: <span id="chipLaba">Rp 0</span></div>
+        <div class="laba-chip amber"><i class="bi bi-percent"></i> <span id="chipMargin">Margin 0%</span></div>
+        <div style="margin-left:auto;font-size:12px;color:var(--gray-400);" id="infoItemDiubah"></div>
+      </div>
+      <div class="grand-total-bar">
+        <div>
+          <div class="grand-label">Grand Total Penjualan RAB</div>
+          <div style="font-size:11px;color:var(--teal-600);margin-top:2px;" id="grandFaktur">—</div>
+        </div>
+        <div class="grand-value" id="grandTotal">Rp 0</div>
+      </div>
+    </div>
+
+    <!-- HISTORY PANEL -->
+    <div class="history-panel" id="historyPanel" style="display:none;">
+      <div class="history-panel-header" onclick="toggleHistoryPanel()">
+        <span style="font-size:13px;font-weight:600;color:var(--gray-600);"><i class="bi bi-clock-history me-2"></i>Riwayat Penjualan RAB Tersimpan</span>
+        <i class="bi bi-chevron-up" id="histChevron"></i>
+      </div>
+      <div class="history-list" id="historyList">
+        <div style="text-align:center;padding:24px;color:var(--gray-400);font-size:13px;">Memuat...</div>
+      </div>
+    </div>
+
+  </div><!-- /main-card -->
+</div><!-- /page-wrap -->
+
+<!-- MODAL RIWAYAT HARGA -->
+<div class="modal fade" id="riwayatModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header-custom">
+        <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Riwayat Harga: <span id="judul-barang" style="color:var(--purple-100);"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding:0;background:var(--gray-50);">
+        <div class="riwayat-row" style="background:var(--gray-100);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-600);">
+          <span>Tanggal</span><span>Jenis</span><span>Pihak</span>
+          <span style="text-align:right;">Harga Beli</span><span style="text-align:right;">Harga Jual</span>
+        </div>
+        <div id="tabel-riwayat"></div>
+      </div>
+      <div class="modal-footer" style="background:#fff;">
+        <button type="button" class="btn-tool btn-history" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// HELPERS
+// ============================================================
+const fmtRp = n => "Rp " + Math.round(n||0).toLocaleString("id-ID");
+let rowData = [];   // data beli mentah
+let histOpen = false;
+
+function showToast(msg, ok=true) {
+  const t = document.getElementById("toastFlash");
+  document.getElementById("toastMsg").textContent = msg;
+  t.style.borderColor = ok ? "var(--teal-200)" : "var(--coral-200)";
+  t.style.color       = ok ? "var(--teal-800)" : "var(--coral-600)";
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+// ============================================================
+// CARI NOTA → populate split rows
+// ============================================================
+async function cariNota() {
+  const nota = document.getElementById("nota_beli").value.trim();
+  if (!nota) { alert("Masukkan nomor faktur pembelian!"); return; }
+
+  const res  = await fetch(`/cari_faktur_penjualan?nomor_faktur=${encodeURIComponent(nota)}`);
+  const data = await res.json();
+
+  if (data.status !== "ok") {
+    document.getElementById("splitRows").innerHTML = `
+      <div class="empty-state"><i class="bi bi-exclamation-circle" style="color:var(--coral-400);"></i>
+      Nota <strong>${nota}</strong> tidak ditemukan di data pembelian.</div>`;
+    document.getElementById("splitHeader").style.display  = "none";
+    document.getElementById("panelTitleRow").style.display = "none";
+    document.getElementById("totalSection").style.display  = "none";
+    return;
+  }
+
+  if (data.tanggal)  document.getElementById("tanggal").value  = data.tanggal;
+  if (data.konsumen) document.getElementById("konsumen").value = data.konsumen;
+  document.getElementById("labelFakturBeli").textContent = nota;
+  document.getElementById("grandFaktur").textContent     = "Faktur: " + nota;
+
+  // Cek apakah sudah ada data tersimpan untuk faktur ini
+  const saved = await fetch(`/api/penjualan_rab/get/${encodeURIComponent(nota)}`).then(r=>r.json());
+
+  // Reset extra rows DULU sebelum populate apa pun
+  document.getElementById("extraRows").innerHTML = "";
+  extraCount = 0; extraItems = [];
+
+  rowData = data.items;
+  renderSplitRows(data.items, saved.status === "ok" ? saved.items : null);
+
+  // Load saved extra items (nama_barang_beli kosong = item di luar nota beli)
+  if (saved.status === "ok") {
+    saved.items.filter(s => !s.nama_barang_beli || s.nama_barang_beli.trim() === "").forEach(s => {
+      const eid = extraCount++;
+      extraItems.push({id: eid});
+      const n = rowData.length;
+      const wrap = document.getElementById("extraRows");
+      const row  = document.createElement("div");
+      row.className = "extra-row"; row.id = `extraRow_${eid}`;
+      row.innerHTML = `
+        <div class="row-num" style="background:var(--teal-50);color:var(--teal-600);">${n+eid+1}</div>
+        <div class="extra-jual-side">
+          <div class="nama-jual-wrap">
+            <input class="cell-rw nama-jual-input" id="eNama_${eid}" type="text"
+              value="${s.nama_barang_jual||""}" autocomplete="off"
+              style="border-color:var(--teal-200);" placeholder="Nama barang tambahan..."
+              oninput="triggerAC('eNama_${eid}','eAc_${eid}','eSatuan_${eid}','eHarga_${eid}'); updateStats();"
+              onkeydown="navAC(event,'eAc_${eid}','eNama_${eid}','eSatuan_${eid}','eHarga_${eid}')"
+              onblur="setTimeout(()=>hideAC('eAc_${eid}'),180)">
+            <div class="ac-dropdown" id="eAc_${eid}"></div>
+          </div>
+          <input class="cell-rw" id="eJumlah_${eid}" type="number" step="any"
+            value="${s.jumlah_jual||1}" style="text-align:center;border-color:var(--teal-200);"
+            oninput="updateExtraTotal(${eid}); updateStats();">
+          <input class="cell-rw" id="eSatuan_${eid}" type="text"
+            value="${s.satuan_jual||""}" style="text-align:center;border-color:var(--teal-200);">
+          <input class="cell-rw" id="eHarga_${eid}" type="number" step="1"
+            value="${s.harga_jual||0}" style="text-align:right;border-color:var(--teal-200);"
+            oninput="updateExtraTotal(${eid}); updateStats();" onfocus="this.select()">
+          <div class="cell-total-jual" id="eTotal_${eid}" style="color:var(--teal-600);">${fmtRp((s.jumlah_jual||0)*(s.harga_jual||0))}</div>
+          <button class="btn-del-extra" onclick="hapusItemEkstra(${eid})" title="Hapus"><i class="bi bi-x-lg"></i></button>
+        </div>`;
+      wrap.appendChild(row);
+    });
+    renumberRows();
+  }
+
+  document.getElementById("splitHeader").style.display   = "";
+  document.getElementById("panelTitleRow").style.display = "";
+  document.getElementById("totalSection").style.display  = "";
+  document.getElementById("addItemBar").style.display    = "";
+  document.getElementById("emptyState").style.display    = "none";
+
+  if (saved.status === "ok") {
+    // Ada data tersimpan — harga sudah terisi dari saved
+    document.getElementById("savedBadge").style.display = "";
+    setExportButtons(true);
+    showToast(`Data penjualan lama ditemukan — ${saved.items.length} item dimuat`);
+    // setTimeout 0 pastikan browser commit semua input.value dulu
+    setTimeout(() => updateStats(), 0);
+  } else {
+    // Belum ada data tersimpan — auto-suggest harga dari riwayat penjualan
+    document.getElementById("savedBadge").style.display = "none";
+    setExportButtons(false);
+    await autoFillHarga();
+  }
+}
+
+// ============================================================
+// AUTO-FILL HARGA JUAL dari riwayat saat nota baru pertama dibuka
+// ============================================================
+async function autoFillHarga() {
+  const n = rowData.length;
+  if (!n) return;
+
+  const items = rowData.map(r => ({ nama: r.nama_barang, satuan: r.satuan }));
+
+  try {
+    const res  = await fetch("/suggest_harga", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ items })
+    });
+    const data = await res.json();
+    if (data.status !== "ok") { updateStats(); return; }
+
+    let filled = 0;
+    data.saran.forEach((harga, i) => {
+      if (!harga) return;
+      const inp = document.getElementById("hargaJual_" + i);
+      if (!inp || parseFloat(inp.value) > 0) return; // jangan overwrite kalau sudah ada isi
+      inp.value = harga;
+      // flash hijau singkat
+      inp.style.transition = "background .5s";
+      inp.style.background = "var(--teal-50)";
+      setTimeout(() => inp.style.background = "", 800);
+      onHargaChange(i);
+      filled++;
+    });
+
+    updateStats();
+    if (filled > 0) showToast(`💡 ${filled} harga jual terisi otomatis dari riwayat`);
+  } catch(e) {
+    updateStats();
+  }
+}
+
+// ============================================================
+// RENDER SPLIT ROWS
+// ============================================================
+// Cache nilai jual per baris — dipakai updateStats sebagai fallback kalau DOM belum commit
+let jualCache = [];  // [{namaJual, jumlahJual, hargaJual}]
+
+function renderSplitRows(items, savedItems) {
+  const container = document.getElementById("splitRows");
+  container.innerHTML = "";
+  jualCache = [];  // reset cache
+
+  // Pisahkan saved items: yg punya nama_barang_beli (terikat nota) vs ekstra (kosong)
+  const savedBound = savedItems ? savedItems.filter(s => s.nama_barang_beli) : [];
+
+  items.forEach((item, i) => {
+    // Match by INDEX — bukan by nama, agar 2 baris nama sama tidak saling tukar qty
+    const sv = savedBound[i] || null;
+
+    // Nilai default sisi jual: pakai data tersimpan jika ada, kalau tidak pakai data beli
+    const namaJual  = sv ? sv.nama_barang_jual  : item.nama_barang;
+    const jumlahJual= sv ? sv.jumlah_jual       : item.jumlah;
+    const satuanJual= sv ? sv.satuan_jual       : item.satuan;
+    const hargaJual = sv ? sv.harga_jual        : (item.harga_jual || "");
+    const totalJual = hargaJual ? jumlahJual * hargaJual : 0;
+
+    // Simpan ke cache untuk updateStats
+    jualCache.push({ namaJual, jumlahJual: parseFloat(jumlahJual)||0, hargaJual: parseFloat(hargaJual)||0 });
+
+    const row = document.createElement("div");
+    row.className  = "split-row";
+    row.dataset.idx = i;
+    row.innerHTML = `
+      <div class="row-num">${i+1}</div>
+      <div class="row-panels">
+
+        <!-- SISI BELI (readonly) -->
+        <div class="beli-side">
+          <input class="cell-ro" readonly value="${escH(item.nama_barang)}" title="${escH(item.nama_barang)}">
+          <input class="cell-ro" readonly value="${item.jumlah}" style="text-align:center;">
+          <input class="cell-ro" readonly value="${item.satuan}" style="text-align:center;">
+          <input class="cell-ro" readonly value="${Math.round(item.harga_beli||0).toLocaleString('id-ID')}" style="text-align:right;">
+        </div>
+
+        <!-- SISI JUAL (editable) -->
+        <div class="jual-side">
+          <div class="nama-jual-wrap">
+            <span class="sync-badge" id="syncBadge_${i}">≠ diubah</span>
+            <input class="cell-rw nama-jual-input"
+              id="namaJual_${i}" type="text"
+              value="${escH(namaJual)}"
+              data-ori="${escH(item.nama_barang)}"
+              placeholder="Nama barang jual"
+              autocomplete="off"
+              oninput="onNamaJualChange(${i}); updateStats(); triggerAC('namaJual_${i}', 'ac_${i}', 'satuanJual_${i}', 'hargaJual_${i}');"
+              onkeydown="navAC(event,'ac_${i}','namaJual_${i}','satuanJual_${i}','hargaJual_${i}')"
+              onblur="setTimeout(()=>hideAC('ac_${i}'),180)"
+              title="Ganti nama untuk sisi jual (data beli tidak berubah)">
+            <div class="ac-dropdown" id="ac_${i}"></div>
+          </div>
+          <input class="cell-rw" id="jumlahJual_${i}" type="number" step="any"
+            value="${jumlahJual}" style="text-align:center;"
+            data-ori="${item.jumlah}"
+            oninput="onJumlahChange(${i}); updateStats();"
+            placeholder="0">
+          <input class="cell-rw" id="satuanJual_${i}" type="text"
+            value="${escH(satuanJual)}" style="text-align:center;"
+            placeholder="sat">
+          <input class="cell-rw" id="hargaJual_${i}" type="number" step="1"
+            value="${hargaJual}" style="text-align:right;"
+            oninput="onHargaChange(${i}); updateStats();"
+            onfocus="this.select()"
+            placeholder="0"
+            onkeydown="handleEnterKey(event,${i})">
+          <div class="cell-total-jual" id="totalJual_${i}">${fmtRp(totalJual)}</div>
+          <button type="button" class="icon-btn-sm" onclick="lihatRiwayat('${escH(item.nama_barang)}')" title="Riwayat harga">
+            <i class="bi bi-graph-up"></i>
+          </button>
+        </div>
+
+      </div>`;
+    container.appendChild(row);
+
+    // Init sync badge state
+    setTimeout(() => onNamaJualChange(i), 10);
+  });
+}
+
+function escH(s){ return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
+
+// ============================================================
+// AUTOCOMPLETE UNTUK NAMA JUAL
+// ============================================================
+let acTimer = null;
+
+function triggerAC(inputId, dropId, satuanId, hargaId) {
+  clearTimeout(acTimer);
+  const q = document.getElementById(inputId)?.value.trim();
+  if (!q || q.length < 2) { hideAC(dropId); return; }
+  acTimer = setTimeout(() => fetchAC(q, inputId, dropId, satuanId, hargaId), 220);
+}
+
+async function fetchAC(q, inputId, dropId, satuanId, hargaId) {
+  const res  = await fetch(`/cari_barang?q=${encodeURIComponent(q)}`);
+  const data = await res.json();
+  const list = data.results || [];
+  let drop = document.getElementById(dropId);
+  if (!drop) return;
+
+  // Pindahkan dropdown ke <body> agar tidak ter-clip oleh overflow/transform parent
+  if (drop.parentElement !== document.body) {
+    document.body.appendChild(drop);
+  }
+
+  if (!list.length) { hideAC(dropId); return; }
+
+  drop.innerHTML = list.map((item, idx) => `
+    <div class="ac-item" data-idx="${idx}"
+      data-nama="${escH(item.nama)}" data-satuan="${escH(item.satuan)}" data-harga="${item.harga}"
+      onmousedown="pickAC('${inputId}','${dropId}','${satuanId}','${hargaId}',${idx})">
+      <span class="ac-item-name">${item.nama}</span>
+      <span class="ac-item-meta">${item.satuan} — Rp ${Math.round(item.harga||0).toLocaleString('id-ID')}</span>
+    </div>`).join("");
+
+  // Simpan referensi inputId ke elemen drop untuk scroll repositioning
+  drop._acInputId = inputId;
+  // Posisikan dropdown tepat di bawah input (fixed portal)
+  positionAC(inputId, drop);
+  drop.style.display = "block";
+}
+
+function positionAC(inputId, drop) {
+  const inp = document.getElementById(inputId);
+  if (!inp || !drop) return;
+  const rect         = inp.getBoundingClientRect();
+  const spaceBelow   = window.innerHeight - rect.bottom;
+  const spaceAbove   = rect.top;
+  const maxDropH     = 200;
+
+  drop.style.width   = Math.max(rect.width, 260) + "px";
+  drop.style.left    = rect.left + "px";
+
+  // position:fixed → top/bottom relatif ke viewport, TANPA scrollY
+  if (spaceBelow >= 120 || spaceBelow >= spaceAbove) {
+    // Muncul ke bawah
+    drop.style.top    = (rect.bottom + 3) + "px";
+    drop.style.bottom = "auto";
+    drop.style.maxHeight = Math.min(maxDropH, spaceBelow - 8) + "px";
+  } else {
+    // Muncul ke atas
+    drop.style.bottom = (window.innerHeight - rect.top + 3) + "px";
+    drop.style.top    = "auto";
+    drop.style.maxHeight = Math.min(maxDropH, spaceAbove - 8) + "px";
+  }
+}
+
+// Reposisi saat scroll/resize agar tidak lepas dari input
+["scroll","resize"].forEach(ev =>
+  window.addEventListener(ev, () => {
+    document.querySelectorAll(".ac-dropdown").forEach(drop => {
+      if (drop.style.display === "block") {
+        const inputId = drop._acInputId;
+        if (inputId) positionAC(inputId, drop);
+      }
+    });
+  }, { passive: true })
+);
+
+function pickAC(inputId, dropId, satuanId, hargaId, idx) {
+  const drop   = document.getElementById(dropId);
+  const items  = drop.querySelectorAll(".ac-item");
+  if (!items[idx]) return;
+  const nama   = items[idx].dataset.nama;
+  const satuan = items[idx].dataset.satuan;
+  const harga  = items[idx].dataset.harga;
+
+  const inp = document.getElementById(inputId);
+  if (inp) inp.value = nama;
+  const sat = document.getElementById(satuanId);
+  if (sat) sat.value = satuan;
+  const hrg = document.getElementById(hargaId);
+  if (hrg) { hrg.value = harga; hrg.style.background="var(--teal-50)"; setTimeout(()=>hrg.style.background="",800); }
+
+  hideAC(dropId);
+  updateStats();
+
+  // Trigger badge sync check
+  const match = inputId.match(/namaJual_(\d+)/);
+  if (match) { onNamaJualChange(parseInt(match[1])); }
+  // Juga trigger extra item update
+  const matchE = inputId.match(/eNama_(\d+)/);
+  if (matchE) updateExtraTotal(parseInt(matchE[1]));
+}
+
+function hideAC(dropId) {
+  const d = document.getElementById(dropId);
+  if (d) d.style.display = "none";
+}
+
+function navAC(e, dropId, inputId, satuanId, hargaId) {
+  const drop  = document.getElementById(dropId);
+  if (!drop || drop.style.display === "none") return;
+  const items = drop.querySelectorAll(".ac-item");
+  let active  = drop.querySelector(".ac-active");
+  let idx     = active ? parseInt(active.dataset.idx) : -1;
+
+  if (e.key === "ArrowDown") {
+    e.preventDefault();
+    if (active) active.classList.remove("ac-active");
+    idx = Math.min(idx+1, items.length-1);
+    items[idx]?.classList.add("ac-active");
+    items[idx]?.scrollIntoView({block:"nearest"});
+  } else if (e.key === "ArrowUp") {
+    e.preventDefault();
+    if (active) active.classList.remove("ac-active");
+    idx = Math.max(idx-1, 0);
+    items[idx]?.classList.add("ac-active");
+    items[idx]?.scrollIntoView({block:"nearest"});
+  } else if (e.key === "Enter" || e.key === "Tab") {
+    if (active) {
+      e.preventDefault();
+      pickAC(inputId, dropId, satuanId, hargaId, idx);
+    } else {
+      hideAC(dropId);
+    }
+  } else if (e.key === "Escape") {
+    hideAC(dropId);
+  }
+}
+
+// ============================================================
+// TAMBAH ITEM EKSTRA (di luar nota beli)
+// ============================================================
+let extraCount = 0;
+let extraItems = [];  // [{namaJual,jumlahJual,satuanJual,hargaJual}]
+
+function tambahItemEkstra() {
+  const eid    = extraCount++;
+  const n      = rowData.length;
+  const dispNo = n + eid + 1;
+
+  extraItems.push({ id: eid });
+
+  const wrap = document.getElementById("extraRows");
+  const row  = document.createElement("div");
+  row.className  = "extra-row";
+  row.id         = `extraRow_${eid}`;
+  row.innerHTML  = `
+    <div class="row-num" style="background:var(--teal-50);color:var(--teal-600);">${dispNo}</div>
+    <div class="extra-jual-side">
+      <div class="nama-jual-wrap">
+        <input class="cell-rw nama-jual-input" id="eNama_${eid}" type="text"
+          placeholder="Nama barang tambahan..." autocomplete="off"
+          style="border-color:var(--teal-200);"
+          oninput="triggerAC('eNama_${eid}','eAc_${eid}','eSatuan_${eid}','eHarga_${eid}'); updateStats();"
+          onkeydown="navAC(event,'eAc_${eid}','eNama_${eid}','eSatuan_${eid}','eHarga_${eid}')"
+          onblur="setTimeout(()=>hideAC('eAc_${eid}'),180)">
+        <div class="ac-dropdown" id="eAc_${eid}"></div>
+      </div>
+      <input class="cell-rw" id="eJumlah_${eid}" type="number" step="any"
+        value="1" style="text-align:center;border-color:var(--teal-200);"
+        placeholder="1" oninput="updateExtraTotal(${eid}); updateStats();">
+      <input class="cell-rw" id="eSatuan_${eid}" type="text"
+        style="text-align:center;border-color:var(--teal-200);" placeholder="sat">
+      <input class="cell-rw" id="eHarga_${eid}" type="number" step="1"
+        style="text-align:right;border-color:var(--teal-200);" placeholder="0"
+        oninput="updateExtraTotal(${eid}); updateStats();"
+        onfocus="this.select()">
+      <div class="cell-total-jual" id="eTotal_${eid}" style="color:var(--teal-600);">Rp 0</div>
+      <button class="btn-del-extra" onclick="hapusItemEkstra(${eid})" title="Hapus baris ini">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>`;
+  wrap.appendChild(row);
+  setTimeout(() => document.getElementById(`eNama_${eid}`)?.focus(), 60);
+  renumberRows();
+}
+
+function hapusItemEkstra(eid) {
+  const row = document.getElementById(`extraRow_${eid}`);
+  if (row) { row.style.opacity="0"; row.style.transition="opacity .15s"; setTimeout(()=>{ row.remove(); renumberRows(); updateStats(); }, 150); }
+  extraItems = extraItems.filter(e => e.id !== eid);
+}
+
+function updateExtraTotal(eid) {
+  const q = parseFloat(document.getElementById(`eJumlah_${eid}`)?.value || 0);
+  const h = parseFloat(document.getElementById(`eHarga_${eid}`)?.value  || 0);
+  const t = document.getElementById(`eTotal_${eid}`);
+  if (t) t.textContent = fmtRp(q * h);
+}
+
+function renumberRows() {
+  // Renumber split rows
+  document.querySelectorAll(".split-row").forEach((r, i) => r.querySelector(".row-num").textContent = i+1);
+  // Renumber extra rows
+  const base = document.querySelectorAll(".split-row").length;
+  document.querySelectorAll(".extra-row").forEach((r, i) => r.querySelector(".row-num").textContent = base + i + 1);
+}
+
+function getExtraItems() {
+  const result = [];
+  document.querySelectorAll(".extra-row").forEach(row => {
+    const eid  = row.id.replace("extraRow_", "");
+    const nama = document.getElementById(`eNama_${eid}`)?.value.trim()   || "";
+    const qty  = parseFloat(document.getElementById(`eJumlah_${eid}`)?.value || 0);
+    const sat  = document.getElementById(`eSatuan_${eid}`)?.value.trim() || "";
+    const hrg  = parseFloat(document.getElementById(`eHarga_${eid}`)?.value  || 0);
+    if (!nama || hrg <= 0) return;
+    result.push({ nama_beli:"", jumlah_beli:0, satuan_beli:"", harga_beli:0,
+      nama_jual:nama, jumlah_jual:qty, satuan_jual:sat, harga_jual:hrg });
+  });
+  return result;
+}
+
+// ============================================================
+// EVENT HANDLERS PER ROW
+// ============================================================
+function onNamaJualChange(i) {
+  const input = document.getElementById("namaJual_" + i);
+  const badge = document.getElementById("syncBadge_" + i);
+  if (!input || !badge) return;
+  const changed = input.value.trim().toLowerCase() !== (input.dataset.ori||"").toLowerCase();
+  badge.style.display = changed ? "inline-block" : "none";
+}
+
+function onJumlahChange(i) {
+  const q = parseFloat(document.getElementById("jumlahJual_" + i)?.value || 0);
+  const h = parseFloat(document.getElementById("hargaJual_"  + i)?.value || 0);
+  const totalEl = document.getElementById("totalJual_" + i);
+  if (totalEl) totalEl.textContent = fmtRp(q * h);
+}
+
+function onHargaChange(i) {
+  const q = parseFloat(document.getElementById("jumlahJual_" + i)?.value || 0);
+  const h = parseFloat(document.getElementById("hargaJual_"  + i)?.value || 0);
+  const totalEl = document.getElementById("totalJual_" + i);
+  if (totalEl) totalEl.textContent = fmtRp(q * h);
+
+  // Warn jika harga jual < harga beli
+  const hargaBeli = rowData[i]?.harga_beli || 0;
+  const inp = document.getElementById("hargaJual_" + i);
+  if (h > 0 && h <= hargaBeli) inp?.classList.add("warn");
+  else inp?.classList.remove("warn");
+}
+
+function handleEnterKey(e, i) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    // Pindah ke harga jual row berikutnya
+    const next = document.getElementById("hargaJual_" + (i+1));
+    if (next) next.focus();
+  }
+}
+
+// ============================================================
+// UPDATE STATS
+// ============================================================
+function updateStats() {
+  let totalJual=0, totalBeli=0, diubah=0;
+  const n = rowData.length;
+
+  for (let i=0; i<n; i++) {
+    // Baca dari DOM input, fallback ke jualCache kalau DOM belum commit value-nya
+    const domQ  = document.getElementById("jumlahJual_"+i);
+    const domH  = document.getElementById("hargaJual_"+i);
+    const domN  = document.getElementById("namaJual_"+i);
+    const q     = parseFloat(domQ?.value||0) || (jualCache[i]?.jumlahJual || 0);
+    const h     = parseFloat(domH?.value||0) || (jualCache[i]?.hargaJual  || 0);
+    const nJual = (domN?.value || jualCache[i]?.namaJual || "").toLowerCase().trim();
+    const hb    = rowData[i]?.harga_beli || 0;
+    const qOri  = rowData[i]?.jumlah || 0;
+    const nOri  = (rowData[i]?.nama_barang||"").toLowerCase();
+
+    totalJual += q * h;
+    totalBeli += qOri * hb;
+    if (nJual !== nOri || q !== qOri) diubah++;
+  }
+
+  // Tambahkan total dari extra items
+  document.querySelectorAll(".extra-row").forEach(row => {
+    const eid = row.id.replace("extraRow_","");
+    const q   = parseFloat(document.getElementById(`eJumlah_${eid}`)?.value||0);
+    const h   = parseFloat(document.getElementById(`eHarga_${eid}`)?.value||0);
+    totalJual += q * h;
+  });
+
+  const laba   = totalJual - totalBeli;
+  const margin = totalJual > 0 ? Math.round((laba/totalJual)*100) : 0;
+
+  // Update semua elemen — hero cards + laba bar + grand total
+  document.getElementById("statTotalJual").textContent = fmtRp(totalJual);
+  document.getElementById("statTotalBeli").textContent = fmtRp(totalBeli);
+  document.getElementById("statLaba").textContent      = fmtRp(laba);
+  document.getElementById("statMargin").textContent    = "Margin " + margin + "%";
+  document.getElementById("statItemCount").textContent = n + " item";
+  document.getElementById("statDiubah").textContent    = diubah;
+  document.getElementById("chipLaba").textContent      = fmtRp(laba);
+  document.getElementById("chipMargin").textContent    = "Margin " + margin + "%";
+  document.getElementById("grandTotal").textContent    = fmtRp(totalJual);
+  document.getElementById("infoItemDiubah").textContent = diubah > 0
+    ? `⚠️ ${diubah} item berbeda dari nota beli` : "";
+}
+
+// ============================================================
+// SUGGEST HARGA
+// ============================================================
+async function suggestHarga() {
+  const n = rowData.length;
+  if (!n) return alert("Cari nota dulu!");
+
+  const items = [];
+  for (let i=0; i<n; i++) {
+    items.push({
+      nama:   document.getElementById("namaJual_"+i)?.value || rowData[i].nama_barang,
+      satuan: document.getElementById("satuanJual_"+i)?.value || rowData[i].satuan
+    });
+  }
+
+  const res  = await fetch("/suggest_harga", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({items})
+  });
+  const data = await res.json();
+  if (data.status !== "ok") return alert("Gagal mengambil saran harga.");
+
+  data.saran.forEach((h, i) => {
+    if (!h) return;
+    const inp = document.getElementById("hargaJual_"+i);
+    if (!inp) return;
+    inp.value = h;
+    inp.style.transition = "background .4s";
+    inp.style.background = "var(--teal-50)";
+    setTimeout(() => inp.style.background = "", 900);
+    onHargaChange(i);
+  });
+  updateStats();
+  showToast("Harga saran berhasil diterapkan.");
+}
+
+// ============================================================
+// SIMPAN PENJUALAN RAB
+// ============================================================
+async function simpanPenjualanRAB() {
+  const tanggal  = document.getElementById("tanggal").value.trim();
+  const konsumen = document.getElementById("konsumen").value.trim();
+  const faktur   = document.getElementById("nota_beli").value.trim();
+  const catatan  = document.getElementById("catatan").value.trim();
+
+  if (!tanggal || !konsumen || !faktur) {
+    alert("Tanggal, konsumen, dan nomor faktur wajib diisi!");
+    return;
+  }
+  if (!rowData.length) {
+    alert("Tidak ada item. Cari nota pembelian terlebih dahulu.");
+    return;
+  }
+
+  const items = [];
+  for (let i=0; i<rowData.length; i++) {
+    const namaJual  = document.getElementById("namaJual_"+i)?.value.trim() || rowData[i].nama_barang;
+    const jumlahJual= parseFloat(document.getElementById("jumlahJual_"+i)?.value||0);
+    const satuanJual= document.getElementById("satuanJual_"+i)?.value.trim() || rowData[i].satuan;
+    const hargaJual = parseFloat(document.getElementById("hargaJual_"+i)?.value||0);
+
+    items.push({
+      nama_beli:   rowData[i].nama_barang,
+      jumlah_beli: rowData[i].jumlah,
+      satuan_beli: rowData[i].satuan,
+      harga_beli:  rowData[i].harga_beli,
+      nama_jual:   namaJual,
+      jumlah_jual: jumlahJual,
+      satuan_jual: satuanJual,
+      harga_jual:  hargaJual
+    });
+  }
+  // Tambahkan item ekstra (di luar nota beli)
+  getExtraItems().forEach(e => items.push(e));
+
+  document.getElementById("btnSimpan").disabled = true;
+  document.getElementById("btnSimpan").innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...`;
+
+  const res  = await fetch("/api/penjualan_rab/simpan", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({tanggal, konsumen, nomor_faktur: faktur, catatan, items})
+  });
+  const data = await res.json();
+
+  document.getElementById("btnSimpan").disabled = false;
+  document.getElementById("btnSimpan").innerHTML = `<i class="bi bi-cloud-check"></i> Simpan Penjualan RAB`;
+
+  if (data.status === "ok") {
+    document.getElementById("savedBadge").style.display = "";
+    showToast("✅ " + data.message);
+    setExportButtons(true);
+    if (histOpen) loadHistory();
+  } else {
+    showToast("❌ " + data.message, false);
+  }
+}
+
+// ============================================================
+// RIWAYAT HARGA MODAL
+// ============================================================
+async function lihatRiwayat(nama) {
+  document.getElementById("judul-barang").textContent = nama;
+  document.getElementById("tabel-riwayat").innerHTML =
+    `<div style="padding:24px;text-align:center;color:var(--gray-400);font-size:13px;">⏳ Memuat...</div>`;
+  new bootstrap.Modal(document.getElementById("riwayatModal")).show();
+
+  const res  = await fetch(`/riwayat_harga?nama=${encodeURIComponent(nama)}`);
+  const data = await res.json();
+  if (data.status !== "ok" || !data.data.length) {
+    document.getElementById("tabel-riwayat").innerHTML =
+      `<div style="padding:24px;text-align:center;color:var(--gray-400);font-size:13px;">Tidak ada riwayat harga.</div>`;
+    return;
+  }
+  document.getElementById("tabel-riwayat").innerHTML = data.data.map(r => `
+    <div class="riwayat-row">
+      <span style="font-size:12px;">${r.tanggal||"—"}</span>
+      <span><span class="${r.jenis==="BELI"?"badge-beli":"badge-jual"}">${r.jenis}</span></span>
+      <span style="font-size:12px;">${r.pihak||"—"}</span>
+      <span style="text-align:right;font-family:var(--font-mono);font-size:12px;">${r.harga_beli ? fmtRp(r.harga_beli) : "—"}</span>
+      <span style="text-align:right;font-family:var(--font-mono);font-size:12px;">${r.harga_jual ? fmtRp(r.harga_jual) : "—"}</span>
+    </div>`).join("");
+}
+
+// ============================================================
+// HISTORY PANEL
+// ============================================================
+function toggleHistoryPanel() {
+  const panel = document.getElementById("historyPanel");
+  histOpen = !histOpen;
+  panel.style.display = histOpen ? "" : "none";
+  document.getElementById("histChevron").className = histOpen ? "bi bi-chevron-down" : "bi bi-chevron-up";
+  if (histOpen) loadHistory();
+}
+
+async function loadHistory() {
+  const list = document.getElementById("historyList");
+  list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:13px;">Memuat...</div>`;
+  const res  = await fetch("/api/penjualan_rab/list");
+  const data = await res.json();
+  if (!data.data || !data.data.length) {
+    list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:13px;">Belum ada riwayat.</div>`;
+    return;
+  }
+  list.innerHTML = data.data.map(d => `
+    <div class="history-item">
+      <div>
+        <div style="font-weight:600;font-size:13px;">${d.nomor_faktur_beli}</div>
+        <div style="font-size:12px;color:var(--gray-400);">📅 ${d.tanggal_jual} · 👤 ${d.konsumen} · ${d.jumlah_item} item</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--teal-800);">${fmtRp(d.grand_total)}</span>
+        <button class="btn-tool btn-search" style="padding:5px 12px;font-size:12px;"
+          onclick="loadFromHistory('${d.nomor_faktur_beli}')">
+          <i class="bi bi-folder-symlink"></i> Buka
+        </button>
+        <button style="background:none;border:none;color:var(--coral-400);cursor:pointer;font-size:14px;" title="Hapus"
+          onclick="hapusHistory(${d.id}, '${d.nomor_faktur_beli}')">
+          <i class="bi bi-trash3"></i>
+        </button>
+      </div>
+    </div>`).join("");
+}
+
+async function loadFromHistory(faktur) {
+  document.getElementById("nota_beli").value = faktur;
+  await cariNota();
+  // Scroll ke atas
+  window.scrollTo({top: 0, behavior:"smooth"});
+}
+
+async function hapusHistory(id, faktur) {
+  if (!confirm(`Hapus data penjualan RAB untuk faktur ${faktur}?`)) return;
+  await fetch(`/api/penjualan_rab/hapus/${id}`, {method:"POST"});
+  showToast("Data berhasil dihapus.");
+  loadHistory();
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function resetForm() {
+  if (!confirm("Reset semua data di form?")) return;
+  document.getElementById("nota_beli").value = "";
+  document.getElementById("konsumen").value  = "";
+  document.getElementById("catatan").value   = "";
+  document.getElementById("splitRows").innerHTML =
+    `<div class="empty-state" id="emptyState">
+       <i class="bi bi-inbox"></i>
+       Masukkan nomor nota pembelian lalu klik <strong>Cari Nota</strong>.
+     </div>`;
+  document.getElementById("splitHeader").style.display   = "none";
+  document.getElementById("panelTitleRow").style.display = "none";
+  document.getElementById("totalSection").style.display  = "none";
+  document.getElementById("addItemBar").style.display    = "none";
+  document.getElementById("savedBadge").style.display    = "none";
+  setExportButtons(false);
+  document.getElementById("extraRows").innerHTML = "";
+  extraCount = 0; extraItems = [];
+  rowData = [];
+  updateStats();
+}
+
+// ============================================================
+// EXPORT FUNCTIONS
+// ============================================================
+function getFaktur() {
+  return document.getElementById("nota_beli").value.trim();
+}
+
+function exportPdfRAB() {
+  const f = getFaktur();
+  if (!f) return alert("Cari nota pembelian terlebih dahulu!");
+  window.open(`/export_rab_pdf/${encodeURIComponent(f)}`, "_blank");
+}
+
+function exportExcelRAB() {
+  const f = getFaktur();
+  if (!f) return alert("Cari nota pembelian terlebih dahulu!");
+  window.location.href = `/export_rab_excel/${encodeURIComponent(f)}`;
+}
+
+function exportBlankoRAB() {
+  const f = getFaktur();
+  if (!f) return alert("Cari nota pembelian terlebih dahulu!");
+  window.open(`/export_rab_blanko/${encodeURIComponent(f)}`, "_blank");
+}
+
+function setExportButtons(enabled) {
+  ["btnExportExcel","btnExportPdf","btnExportBlanko"].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled = !enabled;
+    btn.title    = enabled ? "" : "Simpan dulu sebelum export";
+    btn.style.opacity = enabled ? "1" : "0.45";
+  });
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById("tanggal").value = "{{ today }}";
+
+// Pilih nota dari dropdown
+document.getElementById("lanjut_nota").addEventListener("change", function() {
+  if (!this.value) return;
+  document.getElementById("nota_beli").value = this.value;
+  cariNota();
+});
+
+// Enter di nota_beli → cari
+document.getElementById("nota_beli").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") { e.preventDefault(); cariNota(); }
+});
+</script>
+</body>
+</html>

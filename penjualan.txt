@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>🧾 Input Penjualan</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+  /* === GLOBAL === */
+  body {
+    background: linear-gradient(135deg, #dfe9f3 0%, #f7f9fc 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    min-height: 100vh;
+    padding: 40px 15px;
+  }
+
+  h3 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #0d6efd;
+  }
+
+  h3::before {
+    content: "📘";
+    font-size: 1.9rem;
+  }
+
+  /* === CARD GLASS === */
+  .container-glass {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    border-radius: 22px;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    padding: 35px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255,255,255,0.45);
+  }
+
+  .container-glass:hover {
+    box-shadow: 0 15px 36px rgba(0,0,0,0.12);
+  }
+
+  /* === FORM === */
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .form-control, .form-select {
+    border-radius: 12px;
+    padding: 10px 14px;
+    border: 1px solid #d0d7de;
+    transition: all 0.2s ease;
+  }
+
+  .form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.18rem rgba(13,110,253,0.25);
+  }
+
+  /* === TOOLBAR === */
+  .toolbar-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  .toolbar-left, .toolbar-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .btn {
+    padding: 10px 18px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    border-radius: 12px !important;
+    letter-spacing: 0.3px;
+    transition: all 0.25s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .btn-primary {
+    background: linear-gradient(90deg,#007bff,#00b4d8);
+    border: none;
+  }
+
+  .btn-warning {
+    background: linear-gradient(90deg,#fbb034,#ffdd00);
+    border: none;
+    color: #333;
+  }
+
+  .btn-outline-success,
+  .btn-outline-primary,
+  .btn-outline-danger {
+    border-width: 2px !important;
+    font-weight: 700 !important;
+  }
+
+  .btn-success {
+    background: linear-gradient(90deg,#198754,#20c997);
+    border: none;
+  }
+
+  /* === TABLE === */
+  table.table {
+    border-radius: 14px;
+    overflow: hidden;
+    background: white;
+  }
+
+  thead.table-secondary {
+    background: linear-gradient(90deg,#eef1f5,#f8f9fa);
+    font-weight: 700;
+    font-size: 0.92rem;
+  }
+
+  tbody tr:hover {
+    background-color: #f1f7ff;
+  }
+
+  .highlight-biru {
+    background-color: #d0ebff !important;
+    border-color: #74c0fc !important;
+  }
+
+  tfoot {
+    background-color: #f8f9fa;
+    font-size: 1.05rem;
+  }
+
+  #grand-total {
+    font-size: 1.15rem;
+    color: #0d6efd;
+  }
+
+  /* === MODAL === */
+  .modal-content {
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .modal-header {
+    background: linear-gradient(90deg,#00b4d8,#0096c7);
+    color: white;
+  }
+
+  /* === RESPONSIVE === */
+  @media(max-width: 768px) {
+    h3 {
+      font-size: 1.4rem;
+    }
+    .toolbar-wrapper {
+      flex-direction: column;
+    }
+    .toolbar-left, .toolbar-right {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* === TABLE COLUMN WIDTH CONTROL === */
+
+  /* === TABEL RIWAYAT (Modal) === */
+  .table-riwayat {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .table-riwayat th:nth-child(1), /* Tanggal */
+  .table-riwayat td:nth-child(1) {
+    width: 22%;
+    min-width: 130px;
+  }
+
+  .table-riwayat th:nth-child(2), /* Jenis */
+  .table-riwayat td:nth-child(2) {
+    width: 18%;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .table-riwayat th:nth-child(3), /* Pihak */
+  .table-riwayat td:nth-child(3) {
+    width: 18%;
+    min-width: 100px;
+    text-align: center;
+  }
+
+  .table-riwayat th:nth-child(4), /* Harga Beli */
+  .table-riwayat td:nth-child(4),
+  .table-riwayat th:nth-child(5),
+  .table-riwayat td:nth-child(5) { /* Harga Jual */
+    width: 21%;
+    min-width: 120px;
+    text-align: right;
+  }
+
+</style>
+
+</head>
+<body>
+  <div class="container">
+    <div class="container-glass">
+      <h3 class="mb-4">🧾 Input Penjualan</h3>
+
+      <form method="POST" action="/simpan_penjualan" onkeydown="return event.key != 'Enter';">
+        <div class="row mb-3">
+          <div class="col-md-3">
+            <label for="tanggal" class="form-label">Tanggal Jual</label>
+            <input type="date" id="tanggal" name="tanggal" class="form-control" required>
+          </div>
+          <div class="col-md-3">
+            <label for="konsumen" class="form-label">Konsumen</label>
+            <input type="text" id="konsumen" name="konsumen" class="form-control" required>
+          </div>
+          <div class="col-md-3">
+            <label for="nota_beli" class="form-label">Nomor Faktur Pembelian</label>
+            <input type="text" id="nota_beli" name="nota_beli" class="form-control" placeholder="Cari nota..." required>
+          </div>
+          <div class="col-md-3">
+            <label for="lanjut_nota" class="form-label">Lanjutkan Nota Lama</label>
+            <select id="lanjut_nota" class="form-select" onchange="isiDariNotaLama()">
+              <option value="">-- Pilih Nota Penjualan --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="toolbar-wrapper">
+
+          <!-- LEFT GROUP -->
+          <div class="toolbar-left">
+            <button type="button" class="btn btn-primary" onclick="cariNota()">🔍 Cari Nota</button>
+            <button type="button" class="btn btn-warning" onclick="suggestHarga()">💡 Suggest Harga</button>
+          </div>
+
+          <!-- RIGHT GROUP -->
+          <div class="toolbar-right">
+            <a href="/export_penjualan_excel" class="btn btn-outline-success">📤 Export Semua</a>
+            <button type="button" class="btn btn-outline-success" onclick="exportExcelByFaktur()">📑 Export Faktur</button>
+            <button type="button" class="btn btn-outline-danger" onclick="exportPdfByFaktur()">📄 PDF</button>
+            <button type="button" class="btn btn-outline-primary" onclick="exportExcelTemplate()">📊 Blanko</button>
+            <button type="submit" class="btn btn-success">💾 Simpan</button>
+          </div>
+
+        </div>
+
+
+
+        <table class="table table-bordered align-middle text-center shadow-sm">
+          <thead class="table-secondary">
+            <tr>
+              <th>Nama Barang</th>
+              <th>Jumlah</th>
+              <th>Satuan</th>
+              <th>Harga Beli</th>
+              <th>Harga Jual</th>
+              <th>Riwayat</th>
+              <th>Total Jual</th>
+            </tr>
+          </thead>
+          <tbody id="tabel-barang"></tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6" class="text-end">GRAND TOTAL</td>
+              <td id="grand-total" class="text-end text-primary fw-bold">Rp 0</td>
+            </tr>
+          </tfoot>
+        </table>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Riwayat -->
+  <div class="modal fade" id="riwayatModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header text-white">
+          <h5 class="modal-title">📊 Riwayat Harga Barang</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <h6 id="judul-barang" class="fw-bold mb-3"></h6>
+          <table class="table table-bordered table-striped text-center">
+            <thead class="table-light">
+              <tr>
+                <th>Tanggal</th>
+                <th>Jenis</th>
+                <th>Pihak</th>
+                <th>Harga Beli</th>
+                <th>Harga Jual</th>
+              </tr>
+            </thead>
+            <tbody id="tabel-riwayat"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    async function loadNotaLama() {
+      const res = await fetch('/get_all_nota');
+      const data = await res.json();
+      const select = document.getElementById('lanjut_nota');
+      if (data.status === 'ok') {
+        data.notas.forEach(n => {
+          const opt = document.createElement('option');
+          opt.value = n.nomor_faktur;
+          opt.textContent = `${n.nomor_faktur} - ${n.konsumen || ''}`;
+          select.appendChild(opt);
+        });
+      }
+    }
+
+    async function isiDariNotaLama() {
+      const faktur = document.getElementById('lanjut_nota').value;
+      if (!faktur) return;
+      document.getElementById('nota_beli').value = faktur;
+      cariNota();
+    }
+
+    function cariNota() {
+      const nota = document.getElementById('nota_beli').value.trim();
+      if (!nota) return alert("Masukkan nomor nota pembelian!");
+
+      fetch(`/cari_faktur_penjualan?nomor_faktur=${encodeURIComponent(nota)}`)
+        .then(r => r.json())
+        .then(res => {
+          const tbody = document.getElementById('tabel-barang');
+          tbody.innerHTML = '';
+          if (res.status !== "ok") {
+            alert("Nota tidak ditemukan di pembelian!");
+            return;
+          }
+
+          if (res.tanggal) document.getElementById('tanggal').value = res.tanggal;
+          if (res.konsumen) document.getElementById('konsumen').value = res.konsumen;
+
+          res.items.forEach((item, i) => {
+            const total = (item.harga_jual || 0) * (item.jumlah || 0);
+            const row = document.createElement('tr');
+            row.innerHTML = `
+              <td><input type="text" name="nama_${i}" class="form-control" value="${item.nama_barang}" readonly></td>
+              <td><input type="number" name="jumlah_${i}" class="form-control text-end" value="${item.jumlah}" readonly></td>
+              <td><input type="text" name="satuan_${i}" class="form-control text-center" value="${item.satuan}" readonly></td>
+              <td><input type="number" name="harga_beli_${i}" class="form-control text-end" value="${item.harga_beli}" readonly></td>
+              <td><input type="number" name="harga_jual_${i}" class="form-control text-end"
+                        value="${item.harga_jual || ''}" onfocus="selectOnFocus(this)" oninput="updateTotal(this)" onkeypress="handleEnter(event, this)"></td>
+              <td><button type="button" class="btn btn-sm btn-outline-info" onclick="lihatRiwayat('${item.nama_barang}')">📊</button></td>
+              <td class="text-end total-jual">Rp ${total.toLocaleString('id-ID')}</td>
+            `;
+            tbody.appendChild(row);
+            // Tambahan: langsung beri highlight biru saat load nota
+            document.querySelectorAll('#tabel-barang tr').forEach(tr => {
+              const beli = parseInt(tr.querySelector('[name^="harga_beli_"]').value) || 0;
+              const jual = parseInt(tr.querySelector('[name^="harga_jual_"]').value) || 0;
+              const inputJual = tr.querySelector('[name^="harga_jual_"]');
+              if (jual <= beli && jual > 0) {
+                inputJual.classList.add('highlight-biru');
+              } else {
+                inputJual.classList.remove('highlight-biru');
+              }
+            });
+
+          });
+
+          // Tambahan: langsung beri highlight biru saat load nota
+          document.querySelectorAll('#tabel-barang tr').forEach(tr => {
+            const beli = parseInt(tr.querySelector('[name^="harga_beli_"]').value) || 0;
+            const jual = parseInt(tr.querySelector('[name^="harga_jual_"]').value) || 0;
+            const inputJual = tr.querySelector('[name^="harga_jual_"]');
+            if (jual <= beli && jual > 0) {
+              inputJual.classList.add('highlight-biru');
+            } else {
+              inputJual.classList.remove('highlight-biru');
+            }
+          });
+
+          updateGrandTotal();
+        });
+    }
+
+    function handleEnter(e, el) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const nama = el.closest('tr').querySelector('[name^="nama_"]').value;
+        lihatRiwayat(nama);
+      }
+    }
+
+    function selectOnFocus(el) { el.select(); }
+
+    function updateTotal(el) {
+      const row = el.closest('tr');
+      const jumlah = parseFloat(row.querySelector('[name^="jumlah_"]').value) || 0;
+      const hargaJual = parseInt(el.value) || 0;
+      const hargaBeli = parseInt(row.querySelector('[name^="harga_beli_"]').value) || 0;
+      const total = jumlah * hargaJual;
+      row.querySelector('.total-jual').textContent = 'Rp ' + total.toLocaleString('id-ID');
+
+      if (hargaJual <= hargaBeli && hargaJual > 0) {
+        el.classList.add('highlight-biru');
+      } else {
+        el.classList.remove('highlight-biru');
+      }
+      updateGrandTotal();
+    }
+
+    function updateGrandTotal() {
+      let total = 0;
+      document.querySelectorAll('.total-jual').forEach(td => {
+        const val = parseInt(td.textContent.replace(/[^0-9]/g, '')) || 0;
+        total += val;
+      });
+      document.getElementById('grand-total').textContent = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    async function suggestHarga() {
+      const rows = document.querySelectorAll('#tabel-barang tr');
+      if (rows.length === 0) return alert("⚠️ Tidak ada item di tabel!");
+
+      const items = [];
+      rows.forEach(row => {
+        const nama = row.querySelector('[name^="nama_"]').value;
+        const satuan = row.querySelector('[name^="satuan_"]').value;
+        items.push({ nama, satuan });
+      });
+
+      const res = await fetch('/suggest_harga', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items })
+      });
+      const data = await res.json();
+
+      if (data.status !== 'ok') return alert("Gagal mengambil data harga!");
+
+      data.saran.forEach((harga, i) => {
+        const hargaInput = document.querySelector(`[name="harga_jual_${i}"]`);
+        const hargaBeli = parseInt(document.querySelector(`[name="harga_beli_${i}"]`).value) || 0;
+        if (harga && hargaInput) {
+          hargaInput.value = harga;
+          updateTotal(hargaInput);
+          if (harga <= hargaBeli) hargaInput.classList.add('highlight-biru');
+        }
+      });
+      alert("✅ Harga jual disarankan berdasarkan riwayat penjualan.");
+    }
+
+    function exportPdfByFaktur() {
+      const faktur = document.getElementById('nota_beli').value.trim();
+      if (!faktur) {
+        alert('Masukkan nomor faktur pembelian dulu!');
+        return;
+      }
+      window.open(`/export_penjualan_pdf/${encodeURIComponent(faktur)}`, '_blank');
+    }
+    
+    function exportExcelTemplate() {
+      const faktur = document.getElementById('nota_beli').value.trim();
+      if (!faktur) {
+        alert('Masukkan nomor faktur dulu!');
+        return;
+      }
+      window.open(`/export_penjualan_excel_template/${encodeURIComponent(faktur)}`, '_blank');
+    }
+
+    function exportExcelByFaktur() {
+      const faktur = document.getElementById('nota_beli').value.trim();
+      if (!faktur) return alert('Masukkan nomor faktur pembelian dulu!');
+      window.location.href = `/export_penjualan_excel_by_faktur?nomor_faktur=${encodeURIComponent(faktur)}`;
+    }
+
+    async function lihatRiwayat(namaBarang) {
+      document.getElementById('judul-barang').textContent = namaBarang;
+      const tbody = document.getElementById('tabel-riwayat');
+      tbody.innerHTML = '<tr><td colspan="5">⏳ Memuat data...</td></tr>';
+
+      const res = await fetch(`/riwayat_harga?nama=${encodeURIComponent(namaBarang)}`);
+      const data = await res.json();
+
+      if (data.status !== 'ok' || data.data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5">Tidak ada riwayat harga.</td></tr>';
+      } else {
+        tbody.innerHTML = data.data.map(r => `
+          <tr>
+            <td>${r.tanggal || '-'}</td>
+            <td>${r.jenis}</td>
+            <td>${r.pihak || '-'}</td>
+            <td class="text-end">${r.harga_beli ? r.harga_beli.toLocaleString('id-ID') : '-'}</td>
+            <td class="text-end">${r.harga_jual ? r.harga_jual.toLocaleString('id-ID') : '-'}</td>
+          </tr>
+        `).join('');
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById('riwayatModal'));
+      modal.show();
+    }
+
+    loadNotaLama();
+  </script>
+</body>
+</html>

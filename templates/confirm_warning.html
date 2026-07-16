@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Konfirmasi Penyimpanan</title>
+</head>
+<body>
+    <h2>⚠️ Ditemukan kemungkinan kesalahan nama barang</h2>
+    <ul>
+        {% for f in fuzzy_warnings %}
+        <li>
+            <b>{{ f.input }}</b> mirip dengan <b>{{ f.suggest }}</b>
+            {% if f.score %} ({{ f.score }}%) {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+
+    <form method="POST" action="{{ url_for('confirm_save') }}">
+        <input type="hidden" name="tanggal" value="{{ tanggal }}">
+        <input type="hidden" name="supplier" value="{{ supplier }}">
+        {% for item in items %}
+        <input type="hidden" name="raw_{{ loop.index0 }}" value="{{ item.raw }}">
+        <input type="hidden" name="jumlah_{{ loop.index0 }}" value="{{ item.jumlah }}">
+        <input type="hidden" name="satuan_{{ loop.index0 }}" value="{{ item.satuan }}">
+        <input type="hidden" name="harga_{{ loop.index0 }}" value="{{ item.harga }}">
+        {% endfor %}
+        <button type="submit">✅ Lanjutkan Simpan</button>
+    </form>
+
+    <form method="GET" action="{{ url_for('index') }}">
+        <button type="submit">❌ Batalkan</button>
+    </form>
+</body>
+</html>

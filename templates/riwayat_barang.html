@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Riwayat Barang — KopMRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/static/lib/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/lib/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="/static/lib/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --purple-50:#EEEDFE;--purple-100:#CECBF6;--purple-200:#AFA9EC;
+      --purple-400:#7F77DD;--purple-600:#534AB7;--purple-800:#3C3489;
+      --teal-50:#E1F5EE;--teal-200:#5DCAA5;--teal-400:#1D9E75;
+      --teal-600:#0F6E56;--teal-800:#085041;
+      --amber-50:#FAEEDA;--amber-400:#EF9F27;--amber-600:#BA7517;--amber-800:#633806;
+      --coral-50:#FAECE7;--coral-400:#D85A30;--coral-600:#993C1D;
+      --gray-50:#F8F7F4;--gray-100:#EEECEA;--gray-200:#D3D1C7;
+      --gray-400:#888780;--gray-600:#5F5E5A;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:20px;
+      --font-main:'Plus Jakarta Sans',system-ui,sans-serif;
+      --font-mono:'DM Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;}
+    body{font-family:var(--font-main);background:var(--gray-50);color:#1a1a1a;margin:0;min-height:100vh;}
+
+    /* TOPBAR */
+    .topbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1.5px solid var(--gray-100);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+    .topbar-logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:#1a1a1a;text-decoration:none;}
+    .logo-bubble{width:30px;height:30px;border-radius:10px;background:var(--purple-600);display:flex;align-items:center;justify-content:center;}
+    .logo-bubble i{color:#fff;font-size:14px;}
+    .nav-links{display:flex;align-items:center;gap:2px;}
+    .nav-link-item{padding:6px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--gray-600);text-decoration:none;transition:background .15s,color .15s;white-space:nowrap;}
+    .nav-link-item:hover{background:var(--gray-100);color:#1a1a1a;}
+    .nav-link-item.active{background:var(--teal-50);color:var(--teal-800);}
+    .avatar-circle{width:32px;height:32px;border-radius:50%;background:var(--amber-50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--amber-800);}
+
+    /* PAGE */
+    .page-wrap{max-width:600px;margin:0 auto;padding:16px 16px 80px;}
+
+    /* SEARCH */
+    .search-wrap{position:sticky;top:56px;z-index:80;background:var(--gray-50);padding:12px 0 6px;}
+    .search-box{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--gray-200);border-radius:var(--radius-lg);padding:10px 14px;transition:border-color .18s,box-shadow .18s;}
+    .search-box:focus-within{border-color:var(--teal-400);box-shadow:0 0 0 3px rgba(29,158,117,.12);}
+    .search-box i.bi-search{color:var(--gray-400);font-size:16px;flex-shrink:0;}
+    .search-box input{flex:1;border:none;outline:none;font-size:14px;font-family:var(--font-main);color:#1a1a1a;background:transparent;}
+    .search-box input::placeholder{color:var(--gray-400);}
+    .search-clear{background:none;border:none;padding:0;color:var(--gray-300);cursor:pointer;font-size:16px;line-height:1;display:none;}
+    .search-clear.show{display:block;color:var(--gray-400);}
+
+    /* COUNT */
+    .count-bar{font-size:12px;color:var(--gray-400);padding:4px 2px 10px;font-weight:500;}
+
+    /* ITEM CARD */
+    .item-card{background:#fff;border-radius:var(--radius-lg);border:1.5px solid var(--gray-100);padding:14px 16px;margin-bottom:9px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:border-color .15s,box-shadow .15s,background .1s;-webkit-tap-highlight-color:transparent;user-select:none;}
+    .item-card:hover{border-color:var(--teal-200);box-shadow:0 2px 12px rgba(29,158,117,.08);}
+    .item-card:active{background:var(--gray-50);transform:scale(.99);}
+    .item-icon{width:40px;height:40px;border-radius:var(--radius-md);background:var(--purple-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+    .item-icon i{color:var(--purple-600);font-size:18px;}
+    .item-body{flex:1;min-width:0;}
+    .item-name{font-size:14px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+    .item-meta{font-size:12px;color:var(--gray-400);margin-bottom:7px;}
+    .item-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+    .item-price{font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--purple-800);}
+    .item-badges{display:flex;gap:4px;flex-wrap:wrap;}
+    .badge-pill{border-radius:20px;padding:2px 9px;font-size:10px;font-weight:600;letter-spacing:.02em;}
+    .badge-beli{background:var(--purple-50);color:var(--purple-800);}
+    .badge-jual{background:var(--teal-50);color:var(--teal-800);}
+    .badge-rab{background:var(--amber-50);color:var(--amber-800);}
+    .item-chevron{color:var(--gray-200);font-size:16px;align-self:center;flex-shrink:0;margin-left:2px;}
+
+    /* STATES */
+    .empty-state{text-align:center;padding:52px 24px;}
+    .empty-icon{font-size:48px;color:var(--gray-200);margin-bottom:12px;}
+    .empty-text{font-size:14px;color:var(--gray-400);line-height:1.6;}
+    .loading-state{text-align:center;padding:52px 24px;}
+    .spinner{width:32px;height:32px;border:3px solid var(--gray-100);border-top-color:var(--teal-400);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* MODAL */
+    #historyModal .modal-dialog{margin:0;max-width:100%;display:flex;align-items:flex-end;min-height:100%;}
+    #historyModal .modal-content{border-radius:20px 20px 0 0 !important;max-height:92vh;width:100%;overflow:hidden;display:flex;flex-direction:column;border:none;}
+    #historyModal .modal-header{background:var(--teal-400);padding:14px 18px 12px;flex-shrink:0;border:none;border-radius:0;}
+    #historyModal .modal-title{font-size:15px;font-weight:600;color:#fff;line-height:1.3;}
+    #historyModal .modal-title small{display:block;font-size:11px;font-weight:400;opacity:.75;margin-top:2px;}
+    #historyModal .btn-close{filter:brightness(0) invert(1);opacity:.85;}
+    #historyModal .modal-body{overflow-y:auto;padding:0;-webkit-overflow-scrolling:touch;flex:1;}
+
+    /* SUMMARY STRIP */
+    .summary-strip{display:grid;grid-template-columns:repeat(3,1fr);background:var(--gray-100);gap:1px;}
+    .summary-cell{background:#fff;padding:10px 8px 9px;text-align:center;}
+    .summary-label{font-size:9px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--gray-400);margin-bottom:4px;}
+    .summary-val{font-family:var(--font-mono);font-size:12px;font-weight:600;line-height:1.3;word-break:break-word;}
+    .sv-beli{color:var(--purple-800);}
+    .sv-jual{color:var(--teal-800);}
+    .sv-rab{color:var(--amber-800);}
+    .summary-na{font-size:11px;color:var(--gray-300);font-style:italic;font-family:var(--font-main);font-weight:400;}
+
+    /* TAB SWITCHER */
+    .tab-bar{display:flex;padding:10px 16px 0;gap:6px;border-bottom:1.5px solid var(--gray-100);background:#fff;flex-shrink:0;}
+    .tab-btn{flex:1;padding:8px 6px;border:none;background:none;font-family:var(--font-main);font-size:12px;font-weight:600;color:var(--gray-400);cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;transition:color .15s,border-color .15s;display:flex;align-items:center;justify-content:center;gap:5px;-webkit-tap-highlight-color:transparent;}
+    .tab-btn.active{color:var(--teal-800);border-bottom-color:var(--teal-400);}
+    .tab-btn i{font-size:14px;}
+
+    /* CHART PANEL */
+    .chart-panel{padding:0;display:none;}
+    .chart-panel.show{display:block;}
+    .chart-legend-row{display:flex;gap:12px;flex-wrap:wrap;padding:12px 16px 6px;}
+    .leg{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--gray-600);}
+    .leg-line{width:20px;height:3px;border-radius:2px;}
+    .chart-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding:8px 16px 16px;}
+    .chart-inner{position:relative;height:230px;}
+
+    /* TIMELINE PANEL */
+    .timeline-panel{display:none;}
+    .timeline-panel.show{display:block;}
+    .timeline-wrap{padding:14px 16px 28px;}
+    .tl-date-group{margin-bottom:18px;}
+    .tl-date-label{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gray-400);margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+    .tl-date-label::after{content:'';flex:1;height:1px;background:var(--gray-100);}
+    .tl-entry{background:var(--gray-50);border-radius:var(--radius-md);border:1px solid var(--gray-100);padding:10px 12px;margin-bottom:7px;display:flex;align-items:flex-start;gap:10px;}
+    .entry-dot{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:700;margin-top:1px;}
+    .dot-beli{background:var(--purple-100);color:var(--purple-800);}
+    .dot-jual{background:var(--teal-50);color:var(--teal-800);}
+    .dot-rab{background:var(--amber-50);color:var(--amber-800);}
+    .entry-body{flex:1;min-width:0;}
+    .entry-type{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;margin-bottom:3px;}
+    .type-beli{color:var(--purple-600);}
+    .type-jual{color:var(--teal-600);}
+    .type-rab{color:var(--amber-600);}
+    .entry-pihak{font-size:12px;color:var(--gray-600);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .entry-prices{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+    .price-chip{display:flex;flex-direction:column;gap:1px;}
+    .pc-label{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--gray-400);}
+    .pc-val{font-family:var(--font-mono);font-size:13px;font-weight:600;}
+    .pc-beli{color:var(--purple-800);}
+    .pc-jual{color:var(--teal-800);}
+    .pc-rab{color:var(--amber-800);}
+    .trend-badge{display:inline-flex;align-items:center;gap:2px;padding:1px 6px;border-radius:4px;font-size:10px;font-weight:600;vertical-align:middle;margin-left:5px;}
+    .t-up{background:#ffeaea;color:#c0392b;}
+    .t-down{background:var(--teal-50);color:var(--teal-600);}
+    .t-same{background:var(--gray-100);color:var(--gray-600);}
+
+    /* BOTTOM NAV */
+    .bottom-nav{display:none;}
+    .bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:12px;text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:600;min-width:52px;transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent;}
+    .bottom-nav-item i{font-size:22px;line-height:1;}
+    .bottom-nav-item span{display:none;}
+
+    @media (max-width: 768px) {
+      .topbar{padding:0 16px;height:52px;}
+      .nav-links{display:none;}
+      .page-wrap{padding:12px 12px calc(72px + env(safe-area-inset-bottom));}
+      .search-wrap{top:52px;padding:10px 0 4px;}
+      .search-box input{font-size:16px;}
+      .chart-inner{height:200px;}
+      .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--gray-100);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:150;justify-content:space-around;align-items:flex-start;box-shadow:0 -4px 20px rgba(0,0,0,0.07);}
+      .bottom-nav-item{color:var(--gray-400);background:transparent;}
+      .bottom-nav-item.active{color:var(--teal-800);background:var(--teal-50);}
+      .bottom-nav-item span{display:block;}
+    }
+  </style>
+  <link rel="stylesheet" href="/static/pastel.css">
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <a href="/" class="topbar-logo">
+      <div class="logo-bubble"><i class="bi bi-receipt"></i></div>
+      <span>KopMRM</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link-item"><i class="bi bi-house me-1"></i> Input Nota</a>
+      <a href="/penjualan" class="nav-link-item"><i class="bi bi-bag me-1"></i> Penjualan</a>
+      <a href="/penjualan_rab" class="nav-link-item"><i class="bi bi-arrow-left-right me-1"></i> Jual RAB</a>
+      <a href="/transaksi_rab" class="nav-link-item"><i class="bi bi-intersect me-1"></i> Transaksi RAB</a>
+      <a href="/report" class="nav-link-item"><i class="bi bi-bar-chart me-1"></i> Laporan</a>
+      <a href="/cek_harga_rab" class="nav-link-item"><i class="bi bi-table me-1"></i> Cek RAB</a>
+      <a href="/riwayat_barang" class="nav-link-item active"><i class="bi bi-clock-history me-1"></i> Riwayat</a>
+      <a href="/layout_wizard" class="nav-link-item"><i class="bi bi-sliders me-1"></i> Pengaturan</a>
+    </div>
+    <div class="avatar-circle">AD</div>
+  </nav>
+
+  <div class="page-wrap">
+
+    <!-- Search Bar -->
+    <div class="search-wrap">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" id="searchInput" placeholder="Cari nama barang..." autocomplete="off" autocorrect="off" spellcheck="false">
+        <button type="button" class="search-clear" id="searchClear" aria-label="Hapus pencarian">
+          <i class="bi bi-x-circle-fill"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="count-bar" id="countBar">&nbsp;</div>
+
+    <!-- Item List -->
+    <div id="itemList">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p style="color:var(--gray-400);font-size:13px;margin:0;">Memuat daftar barang...</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- History Bottom Sheet Modal -->
+  <div class="modal fade" id="historyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <div class="modal-title">
+            <span id="modalItemName">-</span>
+            <small id="modalItemSatuan"></small>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+
+        <div class="modal-body">
+
+          <!-- Summary strip (always visible) -->
+          <div id="historySummary" class="summary-strip"></div>
+
+          <!-- Tab bar -->
+          <div class="tab-bar">
+            <button class="tab-btn active" id="tabBtnGrafik" onclick="switchTab('grafik')">
+              <i class="bi bi-graph-up"></i> Grafik Harga
+            </button>
+            <button class="tab-btn" id="tabBtnRiwayat" onclick="switchTab('riwayat')">
+              <i class="bi bi-list-ul"></i> Riwayat Detail
+            </button>
+          </div>
+
+          <!-- CHART PANEL (default) -->
+          <div class="chart-panel show" id="panelGrafik">
+            <div id="chartLoadingState" class="loading-state" style="padding:36px 24px;">
+              <div class="spinner"></div>
+            </div>
+            <div id="chartContent" style="display:none;">
+              <div class="chart-legend-row" id="chartLegend"></div>
+              <div class="chart-scroll">
+                <div class="chart-inner" id="chartWrap">
+                  <canvas id="priceChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIMELINE PANEL -->
+          <div class="timeline-panel" id="panelRiwayat">
+            <div id="historyTimeline" class="timeline-wrap">
+              <div class="loading-state"><div class="spinner"></div></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="bottom-nav">
+    <a href="/" class="bottom-nav-item"><i class="bi bi-receipt"></i><span>Nota</span></a>
+    <a href="/penjualan" class="bottom-nav-item"><i class="bi bi-bag"></i><span>Jual</span></a>
+    <a href="/penjualan_rab" class="bottom-nav-item"><i class="bi bi-file-earmark-text"></i><span>RAB</span></a>
+    <a href="/report" class="bottom-nav-item"><i class="bi bi-bar-chart"></i><span>Laporan</span></a>
+    <a href="/riwayat_barang" class="bottom-nav-item active"><i class="bi bi-clock-history"></i><span>Riwayat</span></a>
+  </nav>
+
+  <script src="/static/lib/bootstrap.bundle.min.js"></script>
+  <script>
+    let allItems = [];
+    let filteredItems = [];
+    let priceChartInst = null;
+
+    // ===== HELPERS =====
+    function fmt(val) {
+      if (val == null || val === '') return '-';
+      return 'Rp ' + Number(val).toLocaleString('id-ID');
+    }
+    function fmtK(v) {
+      const n = Number(v || 0);
+      if (n >= 1e9) return 'Rp ' + (n/1e9).toFixed(1) + 'M';
+      if (n >= 1e6) return 'Rp ' + (n/1e6).toFixed(1) + 'jt';
+      if (n >= 1e3) return 'Rp ' + (n/1e3).toFixed(0) + 'rb';
+      return 'Rp ' + n;
+    }
+    function fmtDate(d) {
+      if (!d) return '-';
+      const p = d.split('-');
+      if (p.length !== 3) return d;
+      const m = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+      return parseInt(p[2]) + ' ' + m[parseInt(p[1]) - 1] + ' ' + p[0];
+    }
+    function fmtDateShort(d) {
+      if (!d) return d;
+      const p = d.split('-');
+      if (p.length !== 3) return d;
+      const m = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+      return parseInt(p[2]) + ' ' + m[parseInt(p[1])-1] + ' \'' + p[0].slice(2);
+    }
+    function esc(s) {
+      return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ===== TAB SWITCH =====
+    function switchTab(tab) {
+      const iG = tab === 'grafik';
+      document.getElementById('tabBtnGrafik').classList.toggle('active', iG);
+      document.getElementById('tabBtnRiwayat').classList.toggle('active', !iG);
+      document.getElementById('panelGrafik').classList.toggle('show', iG);
+      document.getElementById('panelRiwayat').classList.toggle('show', !iG);
+    }
+
+    // ===== RENDER ITEM CARDS =====
+    function renderItems(items) {
+      const el  = document.getElementById('itemList');
+      const bar = document.getElementById('countBar');
+      if (!items.length) {
+        bar.innerHTML = '&nbsp;';
+        el.innerHTML = `<div class="empty-state">
+          <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+          <p class="empty-text">Tidak ada barang ditemukan.<br>Coba kata kunci lain.</p>
+        </div>`;
+        return;
+      }
+      bar.textContent = items.length + ' barang';
+      el.innerHTML = items.map(it => `
+        <div class="item-card" data-nama="${esc(it.nama)}" data-satuan="${esc(it.satuan || '')}">
+          <div class="item-icon"><i class="bi bi-box-seam"></i></div>
+          <div class="item-body">
+            <div class="item-name">${esc(it.nama)}</div>
+            <div class="item-meta">${esc(it.satuan || '—')}&nbsp;·&nbsp;${fmtDate(it.tanggal_beli)}</div>
+            <div class="item-foot">
+              <span class="item-price">${fmt(it.harga_beli)}</span>
+              <div class="item-badges">
+                <span class="badge-pill badge-beli">Beli</span>
+                ${it.ada_jual ? '<span class="badge-pill badge-jual">Jual</span>' : ''}
+                ${it.ada_rab  ? '<span class="badge-pill badge-rab">RAB</span>'  : ''}
+              </div>
+            </div>
+          </div>
+          <i class="bi bi-chevron-right item-chevron"></i>
+        </div>
+      `).join('');
+      el.querySelectorAll('.item-card').forEach(card => {
+        card.addEventListener('click', () => openHistory(card.dataset.nama, card.dataset.satuan));
+      });
+    }
+
+    // ===== LOAD ITEMS =====
+    fetch('/api/daftar_barang')
+      .then(r => r.json())
+      .then(d => {
+        allItems = (d.items || []).slice().sort((a, b) =>
+          a.nama.localeCompare(b.nama, 'id', { sensitivity: 'base' })
+        );
+        filteredItems = allItems;
+        renderItems(filteredItems);
+      })
+      .catch(() => {
+        document.getElementById('itemList').innerHTML = `<div class="empty-state">
+          <div class="empty-icon"><i class="bi bi-wifi-off"></i></div>
+          <p class="empty-text">Gagal memuat data.<br>Coba refresh halaman.</p>
+        </div>`;
+      });
+
+    // ===== SEARCH =====
+    const searchInput = document.getElementById('searchInput');
+    const searchClear = document.getElementById('searchClear');
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.trim().toLowerCase();
+      searchClear.classList.toggle('show', q.length > 0);
+      filteredItems = q
+        ? allItems.filter(it => it.nama.toLowerCase().includes(q) || (it.satuan||'').toLowerCase().includes(q))
+        : allItems;
+      renderItems(filteredItems);
+    });
+    searchClear.addEventListener('click', () => {
+      searchInput.value = '';
+      searchClear.classList.remove('show');
+      filteredItems = allItems;
+      renderItems(filteredItems);
+      searchInput.focus();
+    });
+
+    // ===== OPEN MODAL =====
+    function openHistory(nama, satuan) {
+      // Reset modal state
+      document.getElementById('modalItemName').textContent = nama;
+      document.getElementById('modalItemSatuan').textContent = satuan ? 'Satuan: ' + satuan : '';
+      document.getElementById('historySummary').innerHTML = '';
+      document.getElementById('historyTimeline').innerHTML =
+        '<div class="loading-state"><div class="spinner"></div></div>';
+      document.getElementById('chartContent').style.display  = 'none';
+      document.getElementById('chartLoadingState').style.display = 'block';
+      document.getElementById('chartLegend').innerHTML = '';
+      switchTab('grafik');  // default tab = grafik
+
+      bootstrap.Modal.getOrCreateInstance(document.getElementById('historyModal')).show();
+
+      fetch('/riwayat_harga?nama=' + encodeURIComponent(nama))
+        .then(r => r.json())
+        .then(d => renderHistory(d.data || []))
+        .catch(() => {
+          document.getElementById('chartLoadingState').style.display = 'none';
+          document.getElementById('chartContent').innerHTML =
+            '<div class="empty-state"><p class="empty-text">Gagal memuat riwayat.</p></div>';
+          document.getElementById('chartContent').style.display = 'block';
+          document.getElementById('historyTimeline').innerHTML =
+            '<div class="empty-state"><p class="empty-text">Gagal memuat riwayat.</p></div>';
+        });
+    }
+
+    // ===== BUILD CHART =====
+    function buildPriceChart(allDates, beliMap, jualMap, rabMap) {
+      // Destroy old instance
+      if (priceChartInst) { priceChartInst.destroy(); priceChartInst = null; }
+
+      // Rebuild canvas
+      const wrap = document.getElementById('chartWrap');
+      const old  = document.getElementById('priceChart');
+      const canvas = document.createElement('canvas');
+      canvas.id = 'priceChart';
+      old.parentNode.replaceChild(canvas, old);
+
+      // Responsive width: at least 52px per date point
+      const minW = Math.max(allDates.length * 60, 300);
+      wrap.style.width  = minW + 'px';
+      wrap.style.height = '230px';
+
+      const labels = allDates.map(fmtDateShort);
+
+      const datasets = [];
+      const legendItems = [];
+
+      if (Object.keys(beliMap).length) {
+        datasets.push({
+          label: 'Harga Beli',
+          data: allDates.map(d => beliMap[d] != null ? beliMap[d] : null),
+          borderColor: '#534AB7',
+          backgroundColor: 'rgba(127,119,221,0.12)',
+          pointBackgroundColor: '#534AB7',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          borderWidth: 2.5,
+          tension: 0.3,
+          fill: false,
+          spanGaps: false,
+        });
+        legendItems.push({ label: 'Harga Beli', color: '#534AB7' });
+      }
+      if (Object.keys(jualMap).length) {
+        datasets.push({
+          label: 'Harga Jual',
+          data: allDates.map(d => jualMap[d] != null ? jualMap[d] : null),
+          borderColor: '#1D9E75',
+          backgroundColor: 'rgba(29,158,117,0.10)',
+          pointBackgroundColor: '#1D9E75',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          borderWidth: 2.5,
+          tension: 0.3,
+          fill: false,
+          spanGaps: false,
+        });
+        legendItems.push({ label: 'Harga Jual', color: '#1D9E75' });
+      }
+      if (Object.keys(rabMap).length) {
+        datasets.push({
+          label: 'Jual RAB',
+          data: allDates.map(d => rabMap[d] != null ? rabMap[d] : null),
+          borderColor: '#EF9F27',
+          backgroundColor: 'rgba(239,159,39,0.10)',
+          pointBackgroundColor: '#EF9F27',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          borderWidth: 2.5,
+          tension: 0.3,
+          fill: false,
+          spanGaps: false,
+        });
+        legendItems.push({ label: 'Jual RAB', color: '#EF9F27' });
+      }
+
+      if (!datasets.length) return;
+
+      // Legend HTML
+      document.getElementById('chartLegend').innerHTML = legendItems.map(li =>
+        `<div class="leg">
+           <div class="leg-line" style="background:${li.color};height:3px;width:20px;border-radius:2px;flex-shrink:0;"></div>
+           <span>${li.label}</span>
+         </div>`
+      ).join('');
+
+      priceChartInst = new Chart(canvas.getContext('2d'), {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(26,26,26,0.92)',
+              titleFont: { family: "'Plus Jakarta Sans',sans-serif", size: 12, weight: '600' },
+              bodyFont:  { family: "'DM Mono',monospace", size: 12 },
+              padding: 10,
+              callbacks: {
+                title: ctx => fmtDate(allDates[ctx[0].dataIndex]),
+                label: ctx => {
+                  if (ctx.parsed.y == null) return null;
+                  return '  ' + ctx.dataset.label + ': ' + fmt(ctx.parsed.y);
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                font: { size: 10, family: "'Plus Jakarta Sans',sans-serif" },
+                maxRotation: 45, minRotation: 30
+              }
+            },
+            y: {
+              beginAtZero: false,
+              grid: { color: 'rgba(0,0,0,0.05)' },
+              ticks: {
+                font: { size: 10, family: "'DM Mono',monospace" },
+                callback: v => fmtK(v)
+              }
+            }
+          }
+        }
+      });
+
+      document.getElementById('chartLoadingState').style.display = 'none';
+      document.getElementById('chartContent').style.display = 'block';
+    }
+
+    // ===== RENDER HISTORY (chart + timeline) =====
+    function renderHistory(data) {
+      // --- Summary strip ---
+      const lastBeli = data.find(d => d.jenis === 'BELI');
+      const lastJual = data.find(d => d.jenis === 'JUAL');
+      const lastRab  = data.find(d => d.jenis === 'JUAL_RAB');
+      document.getElementById('historySummary').innerHTML = `
+        <div class="summary-cell">
+          <div class="summary-label">Beli Terakhir</div>
+          <div class="summary-val sv-beli">${lastBeli ? fmt(lastBeli.harga_beli) : '<span class="summary-na">—</span>'}</div>
+        </div>
+        <div class="summary-cell">
+          <div class="summary-label">Jual Terakhir</div>
+          <div class="summary-val sv-jual">${lastJual ? fmt(lastJual.harga_jual) : '<span class="summary-na">—</span>'}</div>
+        </div>
+        <div class="summary-cell">
+          <div class="summary-label">Jual RAB</div>
+          <div class="summary-val sv-rab">${lastRab ? fmt(lastRab.harga_jual) : '<span class="summary-na">—</span>'}</div>
+        </div>`;
+
+      if (!data.length) {
+        document.getElementById('chartLoadingState').style.display = 'none';
+        document.getElementById('chartContent').innerHTML =
+          '<div class="empty-state" style="padding:36px 24px;"><div class="empty-icon"><i class="bi bi-inbox"></i></div><p class="empty-text">Belum ada riwayat harga.</p></div>';
+        document.getElementById('chartContent').style.display = 'block';
+        document.getElementById('historyTimeline').innerHTML =
+          '<div class="empty-state"><div class="empty-icon"><i class="bi bi-inbox"></i></div><p class="empty-text">Belum ada riwayat harga.</p></div>';
+        return;
+      }
+
+      // --- Prepare chart data (sorted ascending for chart) ---
+      // Build maps: date → price per jenis
+      const beliMap = {}, jualMap = {}, rabMap = {};
+      data.forEach(d => {
+        if (d.jenis === 'BELI'    && d.harga_beli != null) beliMap[d.tanggal] = d.harga_beli;
+        if (d.jenis === 'JUAL'    && d.harga_jual != null) jualMap[d.tanggal] = d.harga_jual;
+        if (d.jenis === 'JUAL_RAB'&& d.harga_jual != null) rabMap[d.tanggal]  = d.harga_jual;
+      });
+      const allDates = [...new Set(data.map(d => d.tanggal).filter(Boolean))].sort();
+      buildPriceChart(allDates, beliMap, jualMap, rabMap);
+
+      // --- Build timeline (descending, same as before) ---
+      const beliPrices = data.filter(d => d.jenis === 'BELI').map(d => d.harga_beli);
+      const jualPrices = data.filter(d => d.jenis === 'JUAL').map(d => d.harga_jual);
+      const rabPrices  = data.filter(d => d.jenis === 'JUAL_RAB').map(d => d.harga_jual);
+      const beliIdx = {v:0}, jualIdx = {v:0}, rabIdx = {v:0};
+
+      function trendBadge(prices, idx) {
+        const i = idx.v++;
+        if (i >= prices.length - 1 || prices[i] == null || prices[i+1] == null) return '';
+        if (prices[i] > prices[i+1]) return '<span class="trend-badge t-up">↑ Naik</span>';
+        if (prices[i] < prices[i+1]) return '<span class="trend-badge t-down">↓ Turun</span>';
+        return '<span class="trend-badge t-same">→ Stabil</span>';
+      }
+
+      const groups = {};
+      data.forEach(d => { const k = d.tanggal || ''; (groups[k] = groups[k] || []).push(d); });
+      const sortedDates = Object.keys(groups).sort((a, b) => b.localeCompare(a));
+
+      const html = sortedDates.map(tgl => {
+        const entries = groups[tgl].map(entry => {
+          let dot, typeLabel, prices;
+          if (entry.jenis === 'BELI') {
+            dot = '<div class="entry-dot dot-beli">B</div>';
+            typeLabel = '<span class="entry-type type-beli">Pembelian</span>';
+            prices = `<div class="price-chip"><span class="pc-label">Harga Beli</span>
+              <span class="pc-val pc-beli">${fmt(entry.harga_beli)}${trendBadge(beliPrices, beliIdx)}</span></div>`;
+          } else if (entry.jenis === 'JUAL') {
+            dot = '<div class="entry-dot dot-jual">J</div>';
+            typeLabel = '<span class="entry-type type-jual">Penjualan</span>';
+            prices = `<div class="price-chip"><span class="pc-label">Harga Jual</span>
+              <span class="pc-val pc-jual">${fmt(entry.harga_jual)}${trendBadge(jualPrices, jualIdx)}</span></div>`;
+          } else {
+            dot = '<div class="entry-dot dot-rab">R</div>';
+            typeLabel = '<span class="entry-type type-rab">Jual RAB</span>';
+            prices = `<div class="price-chip"><span class="pc-label">Harga Jual RAB</span>
+              <span class="pc-val pc-rab">${fmt(entry.harga_jual)}${trendBadge(rabPrices, rabIdx)}</span></div>`;
+          }
+          return `<div class="tl-entry">${dot}
+            <div class="entry-body">${typeLabel}
+              <div class="entry-pihak">${esc(entry.pihak || '—')}</div>
+              <div class="entry-prices">${prices}</div>
+            </div></div>`;
+        }).join('');
+        return `<div class="tl-date-group">
+          <div class="tl-date-label">${fmtDate(tgl) || 'Tanpa Tanggal'}</div>
+          ${entries}</div>`;
+      }).join('');
+
+      document.getElementById('historyTimeline').innerHTML = html;
+    }
+
+    // Reset chart when modal closes
+    document.getElementById('historyModal').addEventListener('hidden.bs.modal', () => {
+      if (priceChartInst) { priceChartInst.destroy(); priceChartInst = null; }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Validasi Nama Barang</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background-color: #f9f9f9; }
+    .warning-box {
+      background: #fff3cd;
+      border: 1px solid #ffeeba;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+    th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
+    th { background-color: #eee; }
+    .buttons { margin-top: 20px; }
+    button { padding: 8px 14px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+    .continue { background-color: #007bff; color: white; }
+    .cancel { background-color: #aaa; color: white; }
+  </style>
+</head>
+<body>
+  <h2>⚠️ Ditemukan Nama Barang yang Mirip</h2>
+
+  <div class="warning-box">
+    <p>
+      Sistem mendeteksi beberapa nama barang yang mirip atau hampir sama dengan data di <b>Master Barang</b>.
+      Silakan periksa kembali nama-nama berikut agar tidak terjadi duplikasi.
+    </p>
+  </div>
+
+  <table>
+    <tr><th>Nama Input</th><th>Disarankan Sebagai</th><th>Kemiripan</th></tr>
+    {% for w in fuzzy_warnings %}
+      <tr>
+        <td>{{w.input}}</td>
+        <td>{{w.suggest}}</td>
+        <td>{{w.score}}%</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <div class="buttons">
+    <form method="post" action="/confirm_save">
+      <input type="hidden" name="tanggal" value="{{tanggal}}">
+      <input type="hidden" name="supplier" value="{{supplier}}">
+      <input type="hidden" name="nomor_faktur" value="{{nomor_faktur}}">
+      {% for it in items %}
+        <input type="hidden" name="raw_{{loop.index0}}" value="{{it.raw}}">
+        <input type="hidden" name="jumlah_{{loop.index0}}" value="{{it.jumlah}}">
+        <input type="hidden" name="satuan_{{loop.index0}}" value="{{it.satuan}}">
+        <input type="hidden" name="harga_{{loop.index0}}" value="{{it.harga}}">
+      {% endfor %}
+      <button class="continue" type="submit">Lanjutkan & Simpan</button>
+    </form>
+
+    <form method="get" action="/">
+      <button class="cancel" type="submit">Batal & Kembali</button>
+    </form>
+  </div>
+
+</body>
+</html>

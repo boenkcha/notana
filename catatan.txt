@@ -1,0 +1,125 @@
+from difflib import get_close_matches
+
+@app.route("/upload_pdf", methods=["POST"])
+def upload_pdf():
+    from PyPDF2 import PdfReader
+    import re, sqlite3
+    from difflib import SequenceMatcher
+
+    if "file" not in request.files:
+        return jsonify({"status": "error", "message": "File tidak ditemukan"})
+
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"status": "error", "message": "Tidak ada file yang dipilih"})
+
+    try:
+        reader = PdfReader(file)
+        text = ""
+
+        # === Ekstraksi teks dengan normalisasi ===
+        for page in reader.pages:
+            t = page.extract_text()
+            if not t:
+                continue
+            # Normalisasi ringan
+            t = re.sub(r"(\d)([A-Za-z])", r"\1 \2", t)          # 5beras → 5 beras
+            t = re.sub(r"([A-Za-z])(\d)", r"\1 \2", t)
+            t = re.sub(r"Rp\s*([\d])", r" Rp\1", t)             # Rp10000 → Rp 10000
+            t = re.sub(r"\b(kg|ltr|pcs|btl|sak|pack|dus|box|krat)(\d)", r"\1 \2", t, flags=re.IGNORECASE)
+            t = re.sub(r"\s{2,}", " ", t)
+            text += t + "\n"
+
+        # Bersihkan karakter carriage return
+        text = text.replace("\r", "\n")
+
+        # === Ambil hanya bagian daftar item ===
+        match = re.search(r"# ?Item(.+?)Info ?Pembayaran", text, re.DOTALL | re.IGNORECASE)
+        if not match:
+            return jsonify({"status": "error", "message": "Bagian daftar item tidak ditemukan di PDF."})
+        daftar = match.group(1)
+
+        # === Ambil daftar nama barang dari DB ===
+        conn = sqlite3.connect(DB_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT DISTINCT nama_barang FROM ItemPenjualan 
+            UNION 
+            SELECT DISTINCT nama_barang FROM ItemBelanja
+        """)
+        semua_nama_db = [r["nama_barang"].strip() for r in cur.fetchall()]
+        conn.close()
+
+        # === Pola regex item (versi lebih kuat) ===
+        pattern = re.compile(
+            r"(?:^|\n)\s*(\d+)\s*([A-Za-z][A-Za-z0-9\s/]+?)\s+([A-Za-z]{1,10})\s+([\d.,]+)\s+Rp\s*([\d.,]+)\s+Rp\s*([\d.,]+)",
+            re.IGNORECASE
+        )
+
+        def parse_num(val):
+            val = val.replace("Rp", "").replace(" ", "").replace(",", "")
+            if val.count(".") > 1:
+                val = val.replace(".", "", val.count(".") - 1)
+            try:
+                return float(val)
+            except:
+                return 0.0
+
+        def koreksi_nama_otomatis(nama_raw):
+            nama = nama_raw.strip().lower()
+            if not semua_nama_db:
+                return nama_raw
+
+            # 1️⃣ Fuzzy match langsung
+            cocok = get_close_matches(nama, [x.lower() for x in semua_nama_db], n=1, cutoff=0.55)
+            if cocok:
+                for x in semua_nama_db:
+                    if x.lower() == cocok[0]:
+                        return x
+
+            # 2️⃣ Substring / awalan
+            kandidat = [x for x in semua_nama_db if nama in x.lower() or x.lower().startswith(nama)]
+            if kandidat:
+                return kandidat[0]
+
+            # 3️⃣ Kata dasar fallback
+            kata_dasar = ["minyak", "beras", "cabe", "cabai", "telur", "daun", "gula", "garam", "tepung"]
+            for kata in kata_dasar:
+                if kata in nama:
+                    kandidat = [x for x in semua_nama_db if kata in x.lower()]
+                    if kandidat:
+                        best = max(kandidat, key=lambda x: SequenceMatcher(None, nama, x.lower()).ratio())
+                        return best
+
+            return nama_raw
+
+        items = []
+        for m in pattern.finditer(daftar):
+            nama_raw = m.group(2).strip()
+            nama_fix = koreksi_nama_otomatis(nama_raw)
+            in_db = any(nama_fix.lower() == x.lower() for x in semua_nama_db)
+
+            items.append({
+                "no": int(m.group(1)),
+                "nama_barang": nama_fix,
+                "satuan": m.group(3).strip(),
+                "jumlah": parse_num(m.group(4)),
+                "harga_satuan": parse_num(m.group(5)),
+                "total_harga": parse_num(m.group(6)),
+                "ada_di_db": in_db  # ✅ tambahan untuk highlight
+            })
+
+        if not items:
+            return jsonify({
+                "status": "error",
+                "message": "Tidak ada item berhasil dibaca dari PDF."
+            })
+
+        # Urutkan hasil berdasarkan nama
+        items.sort(key=lambda x: x["nama_barang"].lower())
+
+        return jsonify({"status": "ok", "data": items})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"Gagal membaca PDF: {str(e)}"})

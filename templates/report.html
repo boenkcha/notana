@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Laporan Harian — KopMRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/static/lib/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/lib/bootstrap-icons.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --purple-50:#EEEDFE;--purple-100:#CECBF6;--purple-200:#AFA9EC;
+      --purple-400:#7F77DD;--purple-600:#534AB7;--purple-800:#3C3489;
+      --teal-50:#E1F5EE;--teal-200:#5DCAA5;--teal-400:#1D9E75;
+      --teal-600:#0F6E56;--teal-800:#085041;
+      --amber-50:#FAEEDA;--amber-400:#EF9F27;--amber-600:#BA7517;--amber-800:#633806;
+      --coral-50:#FAECE7;--coral-400:#D85A30;--coral-600:#993C1D;
+      --gray-50:#F8F7F4;--gray-100:#EEECEA;--gray-200:#D3D1C7;
+      --gray-400:#888780;--gray-600:#5F5E5A;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:20px;
+      --font-main:'Plus Jakarta Sans',system-ui,sans-serif;
+      --font-mono:'DM Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;}
+    body{font-family:var(--font-main);background:var(--gray-50);color:#1a1a1a;margin:0;min-height:100vh;}
+
+    /* TOPBAR */
+    .topbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1.5px solid var(--gray-100);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+    .topbar-logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:#1a1a1a;text-decoration:none;}
+    .logo-bubble{width:30px;height:30px;border-radius:10px;background:var(--purple-600);display:flex;align-items:center;justify-content:center;}
+    .logo-bubble i{color:#fff;font-size:14px;}
+    .nav-links{display:flex;align-items:center;gap:2px;}
+    .nav-link-item{padding:6px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--gray-600);text-decoration:none;transition:background .15s,color .15s;white-space:nowrap;}
+    .nav-link-item:hover{background:var(--gray-100);color:#1a1a1a;}
+    .nav-link-item.active{background:var(--amber-50);color:var(--amber-800);}
+    .avatar-circle{width:32px;height:32px;border-radius:50%;background:var(--amber-50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--amber-800);}
+
+    /* PAGE */
+    .page-wrap{max-width:1000px;margin:0 auto;padding:24px 20px 60px;}
+
+    /* FILTER CARD */
+    .filter-card{background:#fff;border-radius:var(--radius-xl);border:1.5px solid var(--gray-100);padding:20px 24px;margin-bottom:18px;}
+    .filter-title{font-size:14px;font-weight:600;color:#1a1a1a;margin:0 0 14px;}
+    .field-label{font-size:12px;font-weight:600;color:var(--gray-600);letter-spacing:.03em;text-transform:uppercase;margin-bottom:5px;display:block;}
+    .field-input{width:100%;height:44px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:8px 12px;font-size:14px;font-family:var(--font-main);background:#fff;color:#1a1a1a;transition:border-color .18s;outline:none;}
+    .field-input:focus{border-color:var(--amber-400);box-shadow:0 0 0 3px rgba(239,159,39,.15);}
+
+    /* BUTTONS */
+    .btn-cari{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--radius-sm);border:none;background:var(--purple-600);color:#fff;font-family:var(--font-main);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s;}
+    .btn-cari:hover{background:var(--purple-800);}
+    .btn-excel{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:var(--radius-sm);border:1.5px solid var(--teal-400);background:var(--teal-50);color:var(--teal-800);font-family:var(--font-main);font-size:13px;font-weight:600;text-decoration:none;transition:background .15s;}
+    .btn-excel:hover{background:var(--teal-400);color:#fff;}
+
+    /* RESULT CARD */
+    .result-card{background:#fff;border-radius:var(--radius-xl);border:1.5px solid var(--gray-100);overflow:hidden;}
+    .result-header{padding:16px 24px;border-bottom:1.5px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+    .result-title{font-size:14px;font-weight:600;color:#1a1a1a;margin:0;}
+    .result-count{font-size:12px;color:var(--gray-400);}
+
+    /* TABLE */
+    .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .data-table{width:100%;border-collapse:collapse;font-size:13px;}
+    .data-table th{background:var(--purple-50);color:var(--purple-800);font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:10px 14px;text-align:left;white-space:nowrap;}
+    .data-table td{padding:10px 14px;border-bottom:1px solid var(--gray-100);vertical-align:middle;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tbody tr:hover{background:var(--gray-50);}
+    .data-table .num{font-family:var(--font-mono);font-size:13px;}
+
+    /* TOTAL ROW */
+    .total-row td,.total-row th{background:var(--purple-50);font-weight:600;color:var(--purple-800);border-top:2px solid var(--purple-100);}
+    .total-badge{background:var(--purple-600);color:#fff;border-radius:var(--radius-md);padding:14px 24px;display:inline-flex;align-items:center;gap:16px;margin:16px 24px;}
+    .total-label{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:rgba(255,255,255,0.7);}
+    .total-val{font-size:22px;font-weight:600;font-family:var(--font-mono);}
+
+    /* EMPTY STATE */
+    .empty-state{padding:48px 24px;text-align:center;}
+    .empty-icon{font-size:40px;color:var(--gray-200);margin-bottom:12px;}
+    .empty-text{font-size:14px;color:var(--gray-400);}
+
+    /* FLASH */
+    .flash-area{padding:12px 20px 0;}
+    .alert-custom{border-radius:var(--radius-md);padding:10px 16px;font-size:13px;border:none;display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+    .alert-success-c{background:var(--teal-50);color:var(--teal-800);}
+    .alert-warning-c{background:var(--amber-50);color:var(--amber-800);}
+    .alert-danger-c{background:var(--coral-50);color:var(--coral-600);}
+
+    /* BOTTOM NAV */
+    .bottom-nav{display:none;}
+    .bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:12px;text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:600;min-width:52px;transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent;}
+    .bottom-nav-item i{font-size:22px;line-height:1;}
+    .bottom-nav-item span{display:none;}
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .topbar{padding:0 16px;height:52px;}
+      .nav-links{display:none;}
+      .page-wrap{padding:14px 12px calc(72px + env(safe-area-inset-bottom));}
+      .flash-area{padding:10px 12px 0;}
+      .filter-card{padding:16px;}
+      .result-header{padding:14px 16px;}
+      .total-badge{margin:12px 16px;width:calc(100% - 32px);}
+      .field-input{font-size:16px;height:48px;}
+      .btn-cari,.btn-excel{width:100%;justify-content:center;min-height:48px;font-size:15px;}
+      .data-table{font-size:12px;}
+      .data-table th,.data-table td{padding:8px 10px;}
+      .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--gray-100);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:150;justify-content:space-around;align-items:flex-start;box-shadow:0 -4px 20px rgba(0,0,0,0.07);}
+      .bottom-nav-item{color:var(--gray-400);background:transparent;}
+      .bottom-nav-item.active{color:var(--amber-800);background:var(--amber-50);}
+      .bottom-nav-item span{display:block;}
+    }
+  </style>
+  <link rel="stylesheet" href="/static/pastel.css">
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <a href="/" class="topbar-logo">
+      <div class="logo-bubble"><i class="bi bi-receipt"></i></div>
+      <span>KopMRM</span>
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link-item"><i class="bi bi-house me-1"></i> Input Nota</a>
+      <a href="/penjualan" class="nav-link-item"><i class="bi bi-bag me-1"></i> Penjualan</a>
+      <a href="/penjualan_rab" class="nav-link-item"><i class="bi bi-arrow-left-right me-1"></i> Jual RAB</a>
+      <a href="/transaksi_rab" class="nav-link-item"><i class="bi bi-intersect me-1"></i> Transaksi RAB</a>
+      <a href="/report" class="nav-link-item active"><i class="bi bi-bar-chart me-1"></i> Laporan</a>
+      <a href="/cek_harga_rab" class="nav-link-item"><i class="bi bi-table me-1"></i> Cek RAB</a>
+      <a href="/riwayat_barang" class="nav-link-item"><i class="bi bi-clock-history me-1"></i> Riwayat</a>
+      <a href="/layout_wizard" class="nav-link-item"><i class="bi bi-sliders me-1"></i> Pengaturan</a>
+    </div>
+    <div class="avatar-circle">AD</div>
+  </nav>
+
+  <!-- FLASH -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-area">
+    {% for category, message in messages %}
+    <div class="alert-custom {% if category == 'success' %}alert-success-c{% elif category == 'danger' %}alert-danger-c{% else %}alert-warning-c{% endif %}">
+      <i class="bi {% if category == 'success' %}bi-check-circle{% elif category == 'danger' %}bi-x-circle{% else %}bi-exclamation-triangle{% endif %}"></i>
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <div class="page-wrap">
+
+    <!-- Filter -->
+    <div class="filter-card">
+      <p class="filter-title"><i class="bi bi-funnel me-2" style="color:var(--purple-400);"></i>Filter Laporan</p>
+      <form method="get" action="/report">
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <label class="field-label">Tanggal</label>
+            <input type="date" name="tanggal" value="{{ tanggal }}" class="field-input">
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="field-label">Nomor Faktur</label>
+            <input type="text" name="nomor_faktur" value="{{ nomor_faktur }}" class="field-input" placeholder="Cari nomor faktur...">
+          </div>
+          <div class="col-12 col-md-4 d-flex flex-column justify-content-end gap-2">
+            <button type="submit" class="btn-cari"><i class="bi bi-search"></i> Cari</button>
+            <a href="/export_excel?tanggal={{ tanggal }}&nomor_faktur={{ nomor_faktur }}" class="btn-excel"><i class="bi bi-file-earmark-excel"></i> Export Excel</a>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Result -->
+    <div class="result-card">
+      <div class="result-header">
+        <p class="result-title"><i class="bi bi-table me-2" style="color:var(--purple-400);"></i>Daftar Pembelian</p>
+        {% if rows %}
+        <span class="result-count">{{ rows|length }} baris data</span>
+        {% endif %}
+      </div>
+
+      {% if rows %}
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>No. Faktur</th>
+              <th>Nama Barang</th>
+              <th>Jumlah</th>
+              <th>Satuan</th>
+              <th>Harga Satuan</th>
+              <th>Total Harga</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in rows %}
+            <tr>
+              <td>{{ r.nomor_faktur }}</td>
+              <td>{{ r.nama_barang }}</td>
+              <td class="num">{{ r.jumlah }}</td>
+              <td>{{ r.satuan }}</td>
+              <td class="num">Rp {{ "{:,.0f}".format(r.harga_satuan) }}</td>
+              <td class="num" style="font-weight:600;color:var(--purple-800);">Rp {{ "{:,.0f}".format(r.total_harga) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="total-badge">
+          <div>
+            <div class="total-label">Total Belanja</div>
+            <div class="total-val">Rp {{ "{:,.0f}".format(total) }}</div>
+          </div>
+          <i class="bi bi-calculator" style="font-size:28px;opacity:.6;"></i>
+        </div>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-inbox"></i></div>
+        <p class="empty-text">Tidak ada data untuk kriteria yang dipilih.<br>Coba ubah tanggal atau nomor faktur.</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <!-- Bottom Navigation (Mobile) -->
+  <nav class="bottom-nav">
+    <a href="/" class="bottom-nav-item">
+      <i class="bi bi-receipt"></i>
+      <span>Nota</span>
+    </a>
+    <a href="/penjualan" class="bottom-nav-item">
+      <i class="bi bi-bag"></i>
+      <span>Jual</span>
+    </a>
+    <a href="/penjualan_rab" class="bottom-nav-item">
+      <i class="bi bi-file-earmark-text"></i>
+      <span>RAB</span>
+    </a>
+    <a href="/report" class="bottom-nav-item active">
+      <i class="bi bi-bar-chart"></i>
+      <span>Laporan</span>
+    </a>
+    <a href="/riwayat_barang" class="bottom-nav-item">
+      <i class="bi bi-clock-history"></i>
+      <span>Riwayat</span>
+    </a>
+  </nav>
+
+  <script src="/static/lib/bootstrap.bundle.min.js"></script>
+</body>
+</html>

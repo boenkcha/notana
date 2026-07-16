@@ -1,0 +1,52 @@
+# Virtual environments
+venv/
+venv_mac/
+env/
+.venv/
+
+# Database (data sensitif)
+*.db
+*.sqlite
+*.sqlite3
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# File backup & temp
+app(*.py
+~$*
+*.zip
+files/
+files.zip
+
+# File Excel generated (bukan template)
+report_harian.xlsx
+
+# Folder Windows path artifact
+D:\Rekap Nota Koperasi/
+"D:\\Rekap Nota Koperasi/"
+
+# Claude Code settings
+.claude/
+
+# PDF arsip (data transaksi sensitif)
+static/arsip_penjualan/
+static/arsip_pdf/
+
+# File stray di root (bukan di templates/)
+/cek_harga_rab.html
+
+# Folder D:\ hasil Windows artifact
+D:\\*
+
+# IDE / OS
+.DS_Store
+.vscode/
+*.swp
+Thumbs.db
+
+# Log
+*.log

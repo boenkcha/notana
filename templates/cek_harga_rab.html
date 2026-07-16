@@ -1,0 +1,655 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Cek Harga RAB — KopMRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/static/lib/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/lib/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="/static/lib/jquery.min.js"></script>
+
+  <style>
+    :root {
+      --purple-50:  #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+      --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489;
+      --teal-50:  #E1F5EE;  --teal-200: #5DCAA5;   --teal-400: #1D9E75;
+      --teal-600: #0F6E56;  --teal-800: #085041;
+      --amber-50: #FAEEDA;  --amber-200: #FAC775;   --amber-400: #EF9F27;
+      --amber-600: #BA7517; --amber-800: #633806;
+      --coral-50: #FAECE7;  --coral-400: #D85A30;   --coral-600: #993C1D;
+      --green-50: #ECFDF5;  --green-400: #22C55E;   --green-600: #16A34A;
+      --red-50:   #FEF2F2;  --red-400:   #F87171;   --red-600:   #DC2626;
+      --gray-50:  #F8F7F4;  --gray-100: #EEECEA;    --gray-200: #D3D1C7;
+      --gray-400: #888780;  --gray-600: #5F5E5A;
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
+      --font-main: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: var(--font-main); background: var(--gray-50); color: #1a1a1a; margin: 0; }
+
+    /* TOPBAR */
+    .topbar {
+      position: sticky; top: 0; z-index: 100; background: #fff;
+      border-bottom: 1.5px solid var(--gray-100); padding: 0 24px;
+      height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: #1a1a1a; text-decoration: none; }
+    .logo-bubble { width: 30px; height: 30px; border-radius: 10px; background: var(--purple-600); display: flex; align-items: center; justify-content: center; }
+    .logo-bubble i { color: #fff; font-size: 14px; }
+    .nav-links { display: flex; align-items: center; gap: 2px; }
+    .nav-link-item { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: var(--gray-600); text-decoration: none; transition: background .15s, color .15s; white-space: nowrap; }
+    .nav-link-item:hover { background: var(--gray-100); color: #1a1a1a; }
+    .nav-link-item.active { background: var(--purple-50); color: var(--purple-600); }
+
+    /* LAYOUT */
+    .page-wrap { max-width: 1200px; margin: 0 auto; padding: 24px 20px 60px; }
+
+    /* HERO STATS */
+    .hero-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .hero-card { border-radius: var(--radius-lg); padding: 16px 18px; position: relative; overflow: hidden; }
+    .hc-purple { background: var(--purple-50); } .hc-teal { background: var(--teal-50); }
+    .hc-amber  { background: var(--amber-50); } .hc-green { background: var(--green-50); }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px; }
+    .hc-purple .hero-label { color: var(--purple-400); } .hc-teal .hero-label { color: var(--teal-400); }
+    .hc-amber  .hero-label { color: var(--amber-600); } .hc-green .hero-label { color: var(--green-600); }
+    .hero-val { font-size: 22px; font-weight: 600; line-height: 1; }
+    .hc-purple .hero-val { color: var(--purple-800); } .hc-teal .hero-val { color: var(--teal-800); }
+    .hc-amber  .hero-val { color: var(--amber-800); } .hc-green .hero-val { color: var(--green-600); }
+    .hero-sub { font-size: 11px; margin-top: 4px; color: var(--gray-400); }
+
+    /* CARD */
+    .main-card { background: #fff; border-radius: var(--radius-xl); border: 1.5px solid var(--gray-100); overflow: hidden; margin-bottom: 20px; }
+    .card-header-bar { padding: 16px 22px; display: flex; align-items: center; gap: 12px; border-bottom: 1.5px solid var(--gray-100); }
+    .header-icon { width: 38px; height: 38px; border-radius: var(--radius-md); background: var(--purple-50); display: flex; align-items: center; justify-content: center; }
+    .header-icon i { font-size: 16px; color: var(--purple-600); }
+    .header-icon.teal { background: var(--teal-50); }
+    .header-icon.teal i { color: var(--teal-600); }
+    .header-icon.amber { background: var(--amber-50); }
+    .header-icon.amber i { color: var(--amber-600); }
+    .header-title { font-size: 15px; font-weight: 600; margin: 0; }
+    .header-sub { font-size: 12px; color: var(--gray-400); margin: 1px 0 0; }
+    .card-body { padding: 20px 22px; }
+
+    /* UPLOAD ZONE */
+    .upload-zone {
+      border: 2px dashed var(--purple-200); border-radius: var(--radius-lg);
+      padding: 32px 24px; text-align: center; cursor: pointer;
+      transition: border-color .2s, background .2s; background: var(--purple-50);
+    }
+    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--purple-600); background: var(--purple-100); }
+    .upload-zone i { font-size: 32px; color: var(--purple-400); margin-bottom: 10px; display: block; }
+    .upload-zone p { font-size: 13px; color: var(--gray-600); margin: 0; }
+    .upload-zone strong { color: var(--purple-600); }
+
+    /* FILTER BAR */
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; padding: 16px 22px; background: var(--gray-50); border-bottom: 1.5px solid var(--gray-100); }
+    .filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .filter-label { font-size: 11px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: .04em; }
+    .filter-input { height: 36px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 6px 10px; font-size: 13px; font-family: var(--font-main); background: #fff; outline: none; transition: border-color .18s; min-width: 160px; }
+    .filter-input:focus { border-color: var(--purple-400); box-shadow: 0 0 0 3px rgba(127,119,221,.12); }
+    .filter-select { height: 36px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 0 10px; font-size: 13px; font-family: var(--font-main); background: #fff; outline: none; cursor: pointer; }
+
+    /* BUTTONS */
+    .btn-primary-c { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:var(--radius-sm); border:none; background:var(--purple-600); color:#fff; font-family:var(--font-main); font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
+    .btn-primary-c:hover { background: var(--purple-800); }
+    .btn-teal-c { display:inline-flex; align-items:center; gap:6px; padding:8px 18px; border-radius:var(--radius-sm); border:none; background:var(--teal-400); color:#fff; font-family:var(--font-main); font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; }
+    .btn-teal-c:hover { background: var(--teal-600); }
+    .btn-outline-c { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:var(--radius-sm); border:1.5px solid var(--gray-200); background:#fff; color:var(--gray-600); font-family:var(--font-main); font-size:13px; font-weight:500; cursor:pointer; transition:background .15s; }
+    .btn-outline-c:hover { background: var(--gray-100); }
+    .btn-danger-c { display:inline-flex; align-items:center; gap:6px; padding:8px 16px; border-radius:var(--radius-sm); border:none; background:var(--coral-50); color:var(--coral-600); font-family:var(--font-main); font-size:13px; font-weight:600; cursor:pointer; transition:background .15s; border:1.5px solid var(--coral-400); }
+    .btn-danger-c:hover { background: var(--coral-400); color: #fff; }
+
+    /* COMPARISON TABLE */
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .compare-table th { background: var(--gray-50); padding: 10px 14px; font-size: 11px; font-weight: 600; color: var(--gray-600); text-transform: uppercase; letter-spacing: .04em; border-bottom: 1.5px solid var(--gray-100); white-space: nowrap; }
+    .compare-table td { padding: 11px 14px; border-bottom: 1px solid var(--gray-100); vertical-align: middle; }
+    .compare-table tr:last-child td { border-bottom: none; }
+    .compare-table tr:hover td { background: var(--gray-50); }
+
+    /* TABLE SECTION HEADERS */
+    .tbl-section { background: var(--purple-50) !important; }
+    .tbl-section td { padding: 8px 14px !important; font-size: 11px; font-weight: 600; color: var(--purple-600); text-transform: uppercase; letter-spacing: .05em; border-bottom: 1px solid var(--purple-100) !important; }
+
+    /* BADGES */
+    .badge-match   { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; background:var(--green-50);  color:var(--green-600);  font-size:11px; font-weight:600; }
+    .badge-nomatch { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; background:var(--gray-100);  color:var(--gray-600);   font-size:11px; font-weight:600; }
+    .badge-lebih   { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; background:var(--red-50);   color:var(--red-600);    font-size:11px; font-weight:600; }
+    .badge-hemat   { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; background:var(--teal-50);  color:var(--teal-600);   font-size:11px; font-weight:600; }
+    .badge-sama    { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:20px; background:var(--amber-50); color:var(--amber-600);  font-size:11px; font-weight:600; }
+
+    .harga-rab  { font-family: var(--font-mono); font-size: 13px; color: var(--purple-800); font-weight: 600; }
+    .harga-kop  { font-family: var(--font-mono); font-size: 13px; color: var(--teal-800);   font-weight: 600; }
+    .harga-sel-pos { font-family: var(--font-mono); font-size: 12px; color: var(--red-600);   }
+    .harga-sel-neg { font-family: var(--font-mono); font-size: 12px; color: var(--teal-600); }
+    .harga-sel-zero{ font-family: var(--font-mono); font-size: 12px; color: var(--gray-400); }
+
+    .nama-rab { font-weight: 600; color: #1a1a1a; }
+    .nama-kop { font-size: 12px; color: var(--gray-600); }
+    .tanggal-badge { display:inline-block; padding:2px 8px; background:var(--purple-50); color:var(--purple-600); border-radius:20px; font-size:11px; font-weight:600; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align:center; padding:48px 24px; color:var(--gray-400); }
+    .empty-state i { font-size:40px; margin-bottom:12px; display:block; }
+    .empty-state p { font-size:14px; margin:0; }
+
+    /* PROGRESS BAR */
+    .upload-progress { display:none; margin-top:12px; }
+    .progress-bar-wrap { height:6px; background:var(--gray-100); border-radius:10px; overflow:hidden; }
+    .progress-bar-fill { height:100%; background:var(--purple-600); border-radius:10px; transition:width .3s; }
+
+    /* MATCH DETAIL POPUP */
+    .match-list { list-style:none; padding:0; margin:0; }
+    .match-list li { padding:4px 0; font-size:12px; color:var(--gray-600); border-bottom:1px solid var(--gray-100); }
+    .match-list li:last-child { border:none; }
+
+    /* STICKY FILTER */
+    .filter-sticky { position: sticky; top: 56px; z-index: 50; background: #fff; border-bottom: 1.5px solid var(--gray-100); }
+
+    /* LOADING SPINNER */
+    .spinner-wrap { text-align:center; padding:40px; color:var(--gray-400); }
+
+    @media (max-width: 768px) {
+      .hero-row { grid-template-columns: repeat(2, 1fr); }
+      .filter-bar { flex-direction: column; }
+      .filter-input, .filter-select { min-width: 100%; }
+      .compare-table { font-size: 12px; }
+    }
+  </style>
+  <link rel="stylesheet" href="/static/pastel.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="topbar-logo" href="/">
+    <div class="logo-bubble"><i class="bi bi-shop"></i></div>
+    KopMRM
+  </a>
+  <nav class="nav-links">
+    <a href="/" class="nav-link-item">Input Nota</a>
+    <a href="/penjualan" class="nav-link-item">Penjualan</a>
+    <a href="/report" class="nav-link-item">Laporan</a>
+    <a href="/cek_harga_rab" class="nav-link-item active">Cek RAB</a>
+    <a href="/simulasi_harga_jual" class="nav-link-item">Simulasi</a>
+    <a href="/cari_item" class="nav-link-item">Cari Barang</a>
+  </nav>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <div style="width:32px;height:32px;border-radius:50%;background:var(--amber-50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--amber-800);">K</div>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+  <!-- HERO STATS -->
+  <div class="hero-row">
+    <div class="hero-card hc-purple">
+      <div class="hero-label">Total Item RAB</div>
+      <div class="hero-val" id="statTotalRab">—</div>
+      <div class="hero-sub" id="statSubRab">Belum ada data</div>
+    </div>
+    <div class="hero-card hc-teal">
+      <div class="hero-label">Match Koperasi</div>
+      <div class="hero-val" id="statMatch">—</div>
+      <div class="hero-sub" id="statSubMatch">Item ditemukan di DB</div>
+    </div>
+    <div class="hero-card hc-amber">
+      <div class="hero-label">Lebih Mahal</div>
+      <div class="hero-val" id="statMahal">—</div>
+      <div class="hero-sub">Harga koperasi > RAB</div>
+    </div>
+    <div class="hero-card hc-green">
+      <div class="hero-label">Lebih Murah</div>
+      <div class="hero-val" id="statMurah">—</div>
+      <div class="hero-sub">Harga koperasi < RAB</div>
+    </div>
+  </div>
+
+  <!-- UPLOAD CARD -->
+  <div class="main-card">
+    <div class="card-header-bar">
+      <div class="header-icon"><i class="bi bi-cloud-upload"></i></div>
+      <div>
+        <div class="header-title">Upload File RAB Excel</div>
+        <div class="header-sub">Format: .xlsx berisi sheet per hari, kolom NO / ITEM BARANG / JUMLAH / SATUAN / HARGA</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;">
+        <div style="flex:1;min-width:200px;">
+          <label class="filter-label" style="margin-bottom:4px;display:block;">Nama Sumber / Label</label>
+          <input type="text" id="inputSumber" class="filter-input" style="width:100%;" placeholder="Contoh: RAB April 2026 SPPG" value="RAB April 2026 SPPG">
+        </div>
+        <div style="flex:2;min-width:280px;">
+          <div id="uploadZone" class="upload-zone">
+            <i class="bi bi-file-earmark-spreadsheet"></i>
+            <p>Klik atau <strong>drag & drop</strong> file Excel RAB di sini</p>
+            <p style="font-size:11px;margin-top:4px;color:var(--gray-400);">Mendukung multi-sheet per hari</p>
+          </div>
+          <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;">
+          <div class="upload-progress" id="uploadProgress">
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+            <p style="font-size:12px;color:var(--gray-400);margin-top:6px;" id="progressText">Mengupload...</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:flex-end;">
+          <button class="btn-primary-c" id="btnUpload"><i class="bi bi-upload"></i> Upload & Simpan</button>
+          <button class="btn-danger-c" id="btnHapusSumber" title="Hapus data dari sumber ini"><i class="bi bi-trash3"></i> Hapus Data</button>
+        </div>
+      </div>
+      <div id="uploadResult" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+  <!-- COMPARISON CARD -->
+  <div class="main-card">
+    <div class="card-header-bar">
+      <div class="header-icon teal"><i class="bi bi-arrow-left-right"></i></div>
+      <div style="flex:1;">
+        <div class="header-title">Perbandingan Harga RAB vs Database Koperasi</div>
+        <div class="header-sub">Pencarian otomatis: token-matching (tiap kata dicari secara terpisah)</div>
+      </div>
+      <button class="btn-outline-c" id="btnRefresh"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-sticky">
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label">🔍 Cari Barang</span>
+          <input type="text" id="filterQ" class="filter-input" placeholder="Ketik nama barang...">
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">📁 Sumber</span>
+          <select id="filterSumber" class="filter-select">
+            <option value="">Semua Sumber</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">📅 Tanggal</span>
+          <select id="filterTanggal" class="filter-select">
+            <option value="">Semua Tanggal</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label">📊 Status</span>
+          <select id="filterStatus" class="filter-select">
+            <option value="">Semua</option>
+            <option value="match">Ada di Koperasi</option>
+            <option value="no_match">Tidak Ada</option>
+            <option value="lebih_mahal">Koperasi Lebih Mahal</option>
+            <option value="lebih_murah">Koperasi Lebih Murah</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-teal-c" id="btnCari"><i class="bi bi-search"></i> Cari</button>
+          <button class="btn-outline-c" id="btnReset"><i class="bi bi-x-circle"></i> Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div id="tableWrap" style="overflow-x:auto;">
+      <div class="empty-state" id="emptyState">
+        <i class="bi bi-table"></i>
+        <p>Belum ada data. Upload file RAB Excel terlebih dahulu.</p>
+      </div>
+      <div id="spinnerWrap" class="spinner-wrap" style="display:none;">
+        <div class="spinner-border text-secondary" role="status" style="width:28px;height:28px;"></div>
+        <p style="margin-top:10px;font-size:13px;">Memuat data...</p>
+      </div>
+      <table class="compare-table" id="compareTable" style="display:none;">
+        <thead>
+          <tr>
+            <th style="width:32px;">#</th>
+            <th>Tanggal / Menu</th>
+            <th>Nama Barang (RAB)</th>
+            <th>Qty</th>
+            <th>Sat</th>
+            <th>Harga RAB</th>
+            <th>Nama Barang (Koperasi)</th>
+            <th>Harga Koperasi</th>
+            <th>Selisih</th>
+            <th>%</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+
+    <!-- FOOTER INFO -->
+    <div id="tableFooter" style="display:none;padding:12px 22px;border-top:1.5px solid var(--gray-100);background:var(--gray-50);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+      <span style="font-size:12px;color:var(--gray-400);" id="footerInfo">—</span>
+      <div style="display:flex;gap:8px;">
+        <span class="badge-match"><i class="bi bi-check-circle"></i> Match</span>
+        <span class="badge-lebih"><i class="bi bi-arrow-up"></i> Kop Lebih Mahal</span>
+        <span class="badge-hemat"><i class="bi bi-arrow-down"></i> Kop Lebih Murah</span>
+        <span class="badge-nomatch"><i class="bi bi-question-circle"></i> Tidak Ditemukan</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page-wrap -->
+
+<!-- MODAL DETAIL MATCH -->
+<div class="modal fade" id="matchModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom:1.5px solid var(--gray-100);">
+        <h5 class="modal-title" style="font-size:15px;">🔎 Detail Pencarian: <span id="matchModalNama"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:12px;color:var(--gray-400);margin-bottom:12px;">Semua hasil yang cocok di database koperasi:</p>
+        <ul class="match-list" id="matchDetailList"></ul>
+      </div>
+      <div class="modal-footer" style="border-top:1.5px solid var(--gray-100);">
+        <button type="button" class="btn-outline-c" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/lib/bootstrap.bundle.min.js"></script>
+<script>
+const fmt = n => n != null ? "Rp " + Math.round(n).toLocaleString("id-ID") : "—";
+const fmtQty = n => n % 1 === 0 ? parseInt(n) : n;
+
+let allData = [];
+let fileReady = null;
+
+// ============================================================
+// UPLOAD ZONE
+// ============================================================
+const uploadZone = document.getElementById("uploadZone");
+const fileInput  = document.getElementById("fileInput");
+
+uploadZone.addEventListener("click", () => fileInput.click());
+uploadZone.addEventListener("dragover", e => { e.preventDefault(); uploadZone.classList.add("drag-over"); });
+uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("drag-over"));
+uploadZone.addEventListener("drop", e => {
+  e.preventDefault();
+  uploadZone.classList.remove("drag-over");
+  const f = e.dataTransfer.files[0];
+  if (f) handleFileSelect(f);
+});
+fileInput.addEventListener("change", () => { if (fileInput.files[0]) handleFileSelect(fileInput.files[0]); });
+
+function handleFileSelect(f) {
+  fileReady = f;
+  uploadZone.innerHTML = `<i class="bi bi-file-earmark-check" style="color:var(--teal-400);"></i>
+    <p><strong style="color:var(--teal-600);">${f.name}</strong> siap diupload</p>
+    <p style="font-size:11px;color:var(--gray-400);">${(f.size/1024).toFixed(1)} KB — klik <strong>Upload & Simpan</strong></p>`;
+}
+
+$("#btnUpload").on("click", function() {
+  if (!fileReady) { alert("Pilih file Excel RAB terlebih dahulu!"); return; }
+  const sumber = $("#inputSumber").val().trim() || "RAB";
+  const fd = new FormData();
+  fd.append("file", fileReady);
+  fd.append("sumber", sumber);
+
+  $("#uploadProgress").show();
+  $("#progressFill").css("width", "30%");
+  $("#progressText").text("Mengupload dan memproses...");
+  $("#btnUpload").prop("disabled", true);
+
+  $.ajax({
+    url: "/upload_rab_excel",
+    method: "POST",
+    data: fd,
+    processData: false,
+    contentType: false,
+    success: function(res) {
+      $("#progressFill").css("width", "100%");
+      if (res.status === "ok") {
+        $("#progressText").text(`✅ Berhasil: ${res.total} item dari ${res.sheets.length} sheet`);
+        let html = `<div style="margin-top:10px;padding:12px 16px;background:var(--teal-50);border-radius:var(--radius-md);font-size:13px;color:var(--teal-800);">
+          <strong>✅ Upload berhasil!</strong> ${res.total} item tersimpan dari ${res.sheets.length} hari.<br>
+          <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;">`;
+        res.sheets.forEach(s => {
+          html += `<span style="background:#fff;border:1px solid var(--teal-200);border-radius:6px;padding:3px 10px;font-size:11px;">
+            📅 ${s.tanggal || s.sheet} — ${s.items} item</span>`;
+        });
+        html += `</div></div>`;
+        $("#uploadResult").html(html);
+        loadMeta();
+        loadComparison();
+      } else {
+        $("#progressText").text("❌ Gagal: " + res.message);
+        $("#uploadResult").html(`<div style="color:var(--coral-600);font-size:13px;margin-top:8px;">❌ ${res.message}</div>`);
+      }
+    },
+    error: function() {
+      $("#progressText").text("❌ Gagal terhubung ke server.");
+    },
+    complete: function() {
+      $("#btnUpload").prop("disabled", false);
+    }
+  });
+});
+
+// Hapus data sumber
+$("#btnHapusSumber").on("click", function() {
+  const sumber = $("#filterSumber").val() || $("#inputSumber").val().trim();
+  if (!sumber) { alert("Pilih sumber yang ingin dihapus di filter Sumber."); return; }
+  if (!confirm(`Hapus semua data RAB dari sumber "${sumber}"?`)) return;
+  $.post("/api/hapus_rab", { sumber }, function(res) {
+    if (res.status === "ok") {
+      loadMeta();
+      loadComparison();
+    }
+  });
+});
+
+// ============================================================
+// LOAD META (sumber & tanggal dropdown)
+// ============================================================
+function loadMeta() {
+  $.getJSON("/api/rab_meta", function(res) {
+    if (res.status !== "ok") return;
+    const $s = $("#filterSumber").empty().append('<option value="">Semua Sumber</option>');
+    res.sumber.forEach(s => $s.append(`<option value="${s}">${s}</option>`));
+
+    const $t = $("#filterTanggal").empty().append('<option value="">Semua Tanggal</option>');
+    res.tanggal.forEach(t => {
+      const label = t.tanggal ? `${t.tanggal}${t.menu ? " — " + t.menu.substring(0,30) : ""}` : "(kosong)";
+      $t.append(`<option value="${t.tanggal}">${label}</option>`);
+    });
+  });
+}
+
+// ============================================================
+// LOAD & RENDER COMPARISON
+// ============================================================
+function loadComparison() {
+  const q       = $("#filterQ").val().trim();
+  const sumber  = $("#filterSumber").val();
+  const tanggal = $("#filterTanggal").val();
+
+  $("#spinnerWrap").show();
+  $("#emptyState").hide();
+  $("#compareTable").hide();
+  $("#tableFooter").hide();
+
+  $.getJSON("/api/bandingkan_rab", { q, sumber, tanggal }, function(res) {
+    $("#spinnerWrap").hide();
+    if (res.status !== "ok" || !res.data.length) {
+      $("#emptyState").show();
+      $("#emptyState").html(`<i class="bi bi-search"></i><p>Tidak ada data yang cocok dengan filter.</p>`);
+      updateStats([]);
+      return;
+    }
+
+    allData = res.data;
+    renderTable(allData);
+  }).fail(function() {
+    $("#spinnerWrap").hide();
+    $("#emptyState").show().html(`<i class="bi bi-exclamation-triangle"></i><p>Gagal memuat data dari server.</p>`);
+  });
+}
+
+function applyClientFilter(data) {
+  const status = $("#filterStatus").val();
+  if (!status) return data;
+  return data.filter(d => {
+    if (status === "match")       return d.status === "match";
+    if (status === "no_match")    return d.status === "no_match";
+    if (status === "lebih_mahal") return d.selisih !== null && d.selisih > 0;
+    if (status === "lebih_murah") return d.selisih !== null && d.selisih < 0;
+    return true;
+  });
+}
+
+function renderTable(data) {
+  const filtered = applyClientFilter(data);
+
+  if (!filtered.length) {
+    $("#compareTable").hide();
+    $("#tableFooter").hide();
+    $("#emptyState").show().html(`<i class="bi bi-filter-circle"></i><p>Tidak ada data untuk filter yang dipilih.</p>`);
+    updateStats(filtered);
+    return;
+  }
+
+  $("#emptyState").hide();
+  $("#tableFooter").show().css("display", "flex");
+
+  // Group by tanggal
+  const grouped = {};
+  filtered.forEach(d => {
+    const key = d.rab.tanggal || "—";
+    if (!grouped[key]) grouped[key] = { tanggal: key, menu: d.rab.menu, siswa: d.rab.jumlah_siswa, items: [] };
+    grouped[key].items.push(d);
+  });
+
+  let html = "";
+  let no = 1;
+
+  Object.values(grouped).forEach(grp => {
+    // Section header per tanggal
+    html += `<tr class="tbl-section">
+      <td colspan="11">
+        📅 ${grp.tanggal || "Tanpa Tanggal"}
+        ${grp.menu ? `<span style="font-weight:400;color:var(--purple-400);margin-left:8px;">${grp.menu}</span>` : ""}
+        ${grp.siswa ? `<span style="background:var(--purple-100);color:var(--purple-600);padding:1px 8px;border-radius:10px;margin-left:8px;">${parseInt(grp.siswa).toLocaleString("id-ID")} siswa</span>` : ""}
+      </td>
+    </tr>`;
+
+    grp.items.forEach(d => {
+      const r = d.rab;
+      const k = d.koperasi;
+      const statusBadge = statusToHtml(d);
+      const selisihHtml = selisihToHtml(d);
+      const persenHtml  = persenToHtml(d);
+      const hargaKop    = k.harga != null ? `<span class="harga-kop">${fmt(k.harga)}</span>` : `<span style="color:var(--gray-400);font-size:12px;">—</span>`;
+      const namaKopHtml = k.nama ? `<span class="nama-kop">${k.nama}</span>` : `<span style="color:var(--gray-400);font-size:12px;">Tidak ditemukan</span>`;
+
+      // Detail matches button
+      const hasMatches = k.matches && k.matches.length > 0;
+      const detailBtn  = hasMatches ? `<button class="btn-detail-match" data-nama="${r.nama_barang}" data-matches='${JSON.stringify(k.matches)}' style="background:none;border:none;color:var(--purple-400);cursor:pointer;font-size:11px;padding:0;margin-left:4px;" title="Lihat semua hasil"><i class="bi bi-list-ul"></i></button>` : "";
+
+      html += `<tr>
+        <td style="color:var(--gray-400);font-size:12px;">${no++}</td>
+        <td><span class="tanggal-badge">${r.tanggal || "—"}</span></td>
+        <td><span class="nama-rab">${r.nama_barang}</span></td>
+        <td style="font-family:var(--font-mono);font-size:12px;">${fmtQty(r.jumlah)}</td>
+        <td style="font-size:12px;color:var(--gray-600);">${r.satuan || "—"}</td>
+        <td><span class="harga-rab">${fmt(r.harga_satuan)}</span></td>
+        <td>${namaKopHtml}${detailBtn}</td>
+        <td>${hargaKop}</td>
+        <td>${selisihHtml}</td>
+        <td>${persenHtml}</td>
+        <td>${statusBadge}</td>
+      </tr>`;
+    });
+  });
+
+  $("#tableBody").html(html);
+  $("#compareTable").show();
+  updateStats(filtered);
+
+  const totalRab = filtered.reduce((s, d) => s + (d.rab.total_harga || 0), 0);
+  $("#footerInfo").text(`${filtered.length} item ditampilkan — Total RAB: ${fmt(totalRab)}`);
+
+  // Bind detail button
+  $(document).off("click", ".btn-detail-match").on("click", ".btn-detail-match", function() {
+    const nama = $(this).data("nama");
+    const matches = $(this).data("matches");
+    $("#matchModalNama").text(nama);
+    const listHtml = matches.map(m =>
+      `<li>
+        <strong>${m.nama_barang}</strong> — ${m.satuan} — <span style="font-family:var(--font-mono);color:var(--teal-800);">${fmt(m.harga_satuan)}</span>
+      </li>`
+    ).join("");
+    $("#matchDetailList").html(listHtml);
+    new bootstrap.Modal(document.getElementById("matchModal")).show();
+  });
+}
+
+function statusToHtml(d) {
+  if (d.status === "no_match") return `<span class="badge-nomatch"><i class="bi bi-question-circle"></i> Tidak Ada</span>`;
+  if (d.selisih === null) return `<span class="badge-match"><i class="bi bi-check-circle"></i> Ada</span>`;
+  if (d.selisih > 0) return `<span class="badge-lebih"><i class="bi bi-arrow-up"></i> Kop Mahal</span>`;
+  if (d.selisih < 0) return `<span class="badge-hemat"><i class="bi bi-arrow-down"></i> Kop Murah</span>`;
+  return `<span class="badge-sama"><i class="bi bi-dash"></i> Sama</span>`;
+}
+
+function selisihToHtml(d) {
+  if (d.selisih === null) return `<span class="harga-sel-zero">—</span>`;
+  const s = d.selisih;
+  if (s > 0) return `<span class="harga-sel-pos">+${fmt(s)}</span>`;
+  if (s < 0) return `<span class="harga-sel-neg">${fmt(s)}</span>`;
+  return `<span class="harga-sel-zero">0</span>`;
+}
+
+function persenToHtml(d) {
+  if (d.persen === null) return `<span class="harga-sel-zero">—</span>`;
+  const p = d.persen;
+  if (p > 0) return `<span class="harga-sel-pos">+${p}%</span>`;
+  if (p < 0) return `<span class="harga-sel-neg">${p}%</span>`;
+  return `<span class="harga-sel-zero">0%</span>`;
+}
+
+function updateStats(data) {
+  const total  = data.length;
+  const match  = data.filter(d => d.status === "match").length;
+  const mahal  = data.filter(d => d.selisih !== null && d.selisih > 0).length;
+  const murah  = data.filter(d => d.selisih !== null && d.selisih < 0).length;
+
+  $("#statTotalRab").text(total || "—");
+  $("#statSubRab").text(total ? `${total} baris data` : "Belum ada data");
+  $("#statMatch").text(match || "—");
+  $("#statSubMatch").text(total ? `${Math.round(match/total*100)}% cocok` : "—");
+  $("#statMahal").text(mahal || "—");
+  $("#statMurah").text(murah || "—");
+}
+
+// ============================================================
+// EVENT BINDINGS
+// ============================================================
+$("#btnCari").on("click", loadComparison);
+$("#btnRefresh").on("click", loadComparison);
+$("#filterStatus").on("change", () => renderTable(allData));
+$("#btnReset").on("click", function() {
+  $("#filterQ, #filterSumber, #filterTanggal, #filterStatus").val("");
+  loadComparison();
+});
+
+// Enter to search
+$("#filterQ").on("keydown", function(e) { if (e.key === "Enter") loadComparison(); });
+
+// Auto-search on dropdown change
+$("#filterSumber, #filterTanggal").on("change", loadComparison);
+
+// ============================================================
+// INIT
+// ============================================================
+$(document).ready(function() {
+  loadMeta();
+  loadComparison();
+});
+</script>
+</body>
+</html>

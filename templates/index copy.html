@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Input Nota Belanja</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <style>
+    body { background-color: #f0f2f5; font-family: "Segoe UI", sans-serif; }
+    .container-box { background: #fff; border-radius: 12px; padding: 25px 30px;
+                     box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-top: 30px; max-width: 950px; }
+    h2 { font-weight: 600; color: #343a40; }
+    .item { display: flex; flex-wrap: nowrap; align-items: center; gap: 10px;
+            margin-bottom: 10px; background-color: #fafafa; border: 1px solid #dee2e6;
+            border-radius: 8px; padding: 8px; }
+    .item input { height: 38px; }
+    .col-nama { flex: 3; position: relative; }
+    .col-qty { flex: 0.8; }
+    .col-satuan { flex: 1; }
+    .col-harga { flex: 1.5; }
+    .col-subtotal { flex: 1.3; }
+    .col-aksi { width: 70px; text-align: center; display:flex; justify-content:center; gap:4px;}
+    .btn-hapus {
+      border: none; background: transparent; color: #dc3545;
+      font-weight: bold; font-size: 18px; cursor: pointer;
+    }
+    .btn-hapus:hover { color: #a00; }
+    .btn-riwayat {
+      border: none; background: transparent; color: #0dcaf0;
+      font-size: 18px; cursor: pointer;
+    }
+    .btn-riwayat:hover { color: #0aa0c8; }
+    #grand_total { font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+<div class="container container-box">
+  <h2 class="mb-4">🧾 Input Nota Belanja</h2>
+
+  <form id="notaForm" method="post" action="/prepare">
+    <div class="row mb-3">
+      <div class="col-md-4">
+        <label class="form-label">Tanggal</label>
+        <input type="date" class="form-control" name="tanggal" value="{{today}}" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Supplier</label>
+        <input type="text" class="form-control" name="supplier" id="supplier" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Nomor Faktur / Nota</label>
+        <input type="text" class="form-control" name="nomor_faktur" id="nomor_faktur" placeholder="cth: INV-2025-010" required>
+      </div>
+    </div>
+
+    <h5 class="mt-4 mb-3">Daftar Barang</h5>
+    <div id="items">
+      <div class="item" id="row_0">
+        <div class="col-nama">
+          <input type="text" class="form-control nama-barang" name="nama_0" id="nama_0" placeholder="Nama Barang" required autocomplete="off">
+          <div id="suggestions_0" class="list-group position-absolute w-100" style="z-index:1000;"></div>
+        </div>
+        <div class="col-qty">
+          <input type="number" class="form-control" name="jumlah_0" id="jumlah_0" step="any" value="1" placeholder="Qty" required>
+        </div>
+        <div class="col-satuan">
+          <input type="text" class="form-control" name="satuan_0" id="satuan_0" placeholder="Satuan" required>
+        </div>
+        <div class="col-harga">
+          <input type="number" class="form-control harga-barang" name="harga_0" id="harga_0" step="any" value="0" placeholder="Harga Satuan" required>
+        </div>
+        <div class="col-subtotal">
+          <input type="number" class="form-control subtotal-barang" name="subtotal_0" id="subtotal_0" step="any" value="0" placeholder="Subtotal" readonly>
+        </div>
+        <div class="col-aksi">
+          <button type="button" class="btn-riwayat" title="Riwayat Harga">📊</button>
+          <button type="button" class="btn-hapus" onclick="hapusBarang(0)">✕</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-2 me-3">
+      <strong>Total: <span id="grand_total">0</span></strong>
+    </div>
+
+    <input type="hidden" id="count" name="count" value="1">
+
+    <div class="mt-3 d-flex gap-2">
+      <button type="button" id="tambahBarangBtn" class="btn btn-outline-primary">+ Tambah Barang</button>
+      <button type="submit" class="btn btn-success">💾 Simpan Nota</button>
+
+      <select id="lanjutkanNota" class="form-select w-auto ms-auto">
+        <option value="">🧾 Lanjutkan Nota Lama...</option>
+      </select>
+    </div>
+
+  </form>
+
+  <hr>
+  <a href="/report" class="btn btn-outline-secondary mt-2">📊 Lihat Report Harian</a>
+</div>
+
+<!-- Modal Riwayat Harga -->
+<div class="modal fade" id="riwayatModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Riwayat Harga: <span id="riwayatNama"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div id="riwayatContainer"><p class="text-muted">Memuat data...</p></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // === Fungsi global untuk update subtotal dan grand total ===
+  function updateSubtotal() {
+    let total = 0;
+    $(".item").each(function() {
+      const jumlah = parseFloat($(this).find("[id^='jumlah_']").val()) || 0;
+      const harga = parseFloat($(this).find(".harga-barang").val()) || 0;
+      const subtotal = jumlah * harga;
+      $(this).find(".subtotal-barang").val(subtotal.toFixed(0));
+      total += subtotal;
+    });
+    $("#grand_total").text(total.toLocaleString());
+  }
+
+  // Fungsi hapus baris
+  function hapusBarang(idx) {
+    $("#row_" + idx).remove();
+    updateSubtotal();
+  }
+
+  $(document).on("focus", "input[type='text'], input[type='number']", function() {
+    $(this).select();
+  });
+
+  $(document).on("mouseup", "input[type='text'], input[type='number']", function(e) {
+    e.preventDefault();
+  });
+
+  $(document).ready(function() {
+    // Hitung total otomatis
+    $(document).on("input", ".harga-barang, .nama-barang, [id^='jumlah_']", function() {
+      updateSubtotal();
+    });
+
+    function tambahBarangBaru() {
+      const idx = $(".item").length;
+      const row = `
+        <div class="item" id="row_${idx}">
+          <div class="col-nama">
+            <input type="text" class="form-control nama-barang" name="nama_${idx}" id="nama_${idx}" placeholder="Nama Barang" required autocomplete="off">
+            <div id="suggestions_${idx}" class="list-group position-absolute w-100" style="z-index:1000;"></div>
+          </div>
+          <div class="col-qty">
+            <input type="number" class="form-control" name="jumlah_${idx}" id="jumlah_${idx}" step="any" value="1" placeholder="Qty" required>
+          </div>
+          <div class="col-satuan">
+            <input type="text" class="form-control" name="satuan_${idx}" id="satuan_${idx}" placeholder="Satuan" required>
+          </div>
+          <div class="col-harga">
+            <input type="number" class="form-control harga-barang" name="harga_${idx}" id="harga_${idx}" step="any" value="0" placeholder="Harga Satuan" required>
+          </div>
+          <div class="col-subtotal">
+            <input type="number" class="form-control subtotal-barang" name="subtotal_${idx}" id="subtotal_${idx}" step="any" value="0" placeholder="Subtotal" readonly>
+          </div>
+          <div class="col-aksi">
+            <button type="button" class="btn-riwayat" title="Riwayat Harga">📊</button>
+            <button type="button" class="btn-hapus" onclick="hapusBarang(${idx})">✕</button>
+          </div>
+        </div>`;
+      $("#items").append(row);
+      $("#count").val(idx + 1);
+      $(`#nama_${idx}`).focus();
+    }
+
+    function cekFuzzyDanTambah(idx) {
+      const nama = $(`#nama_${idx}`).val().trim();
+      if (nama === "") return alert("Nama barang belum diisi!");
+      $.getJSON(`/cek_fuzzy_barang?q=${encodeURIComponent(nama)}`, function(res) {
+        if (res.match && res.match.toLowerCase() !== nama.toLowerCase()) {
+          const yakin = confirm(`⚠️ Nama barang mirip dengan "${res.match}". Apakah tetap ingin menambahkan?`);
+          if (!yakin) { $(`#nama_${idx}`).focus().select(); return; }
+        }
+        tambahBarangBaru();
+      });
+    }
+
+    $("#tambahBarangBtn").on("click", function() {
+      const idx = $(".item").length - 1;
+      cekFuzzyDanTambah(idx);
+    });
+
+    $(document).on("keydown", "input", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const id = $(this).attr("id");
+        if (id && id.startsWith("harga_")) {
+          const idx = id.split("_")[1];
+          cekFuzzyDanTambah(idx);
+        }
+      }
+    });
+
+    // === Autocomplete & Harga otomatis ===
+    $(document).on("input", ".nama-barang", function() {
+      let input = $(this);
+      let term = input.val().trim();
+      let idx = input.attr("id").split("_")[1];
+      let sugBox = $("#suggestions_" + idx);
+      if (term.length < 2) { sugBox.hide(); return; }
+
+      $.getJSON("/cari_barang", { q: term }, function(data) {
+        let list = data.results;
+        if (list.length === 0) { sugBox.hide(); return; }
+
+        let html = list.map(item =>
+          `<button type="button" class="list-group-item list-group-item-action"
+              data-nama="${item.nama}" data-satuan="${item.satuan}" data-harga="${item.harga}">
+              ${item.nama}
+          </button>`
+        ).join("");
+        sugBox.html(html).show();
+      });
+    });
+
+    $(document).on("click", ".list-group-item", function() {
+      let btn = $(this);
+      let parent = btn.closest(".item");
+      let nama = btn.data("nama");
+      parent.find(".nama-barang").val(nama);
+      parent.find("input[id^='satuan_']").val(btn.data("satuan"));
+      btn.parent().hide();
+
+      $.getJSON(`/get_harga_terbanyak?nama=${encodeURIComponent(nama)}`, function(res) {
+        let hargaInput = parent.find("input[id^='harga_']");
+        if (res.harga) {
+          hargaInput.val(res.harga);
+        } else {
+          hargaInput.val(btn.data("harga"));
+        }
+        hargaInput.css({"background-color": "#fff6a0", "transition": "background-color 0.5s ease"});
+        setTimeout(() => { hargaInput.css("background-color", ""); }, 1000);
+        parent.find("input[id^='jumlah_']").focus();
+        updateSubtotal();
+      });
+    });
+
+    $(document).click(function(e) {
+      if (!$(e.target).closest(".nama-barang, .list-group").length) {
+        $(".list-group").hide();
+      }
+    });
+
+    // === FITUR LANJUTKAN NOTA LAMA ===
+    $.getJSON("/get_all_nota", function(res) {
+      if (res.status === "ok") {
+        res.notas.forEach(n => {
+          $("#lanjutkanNota").append(
+            `<option value="${n.nomor_faktur}">${n.nomor_faktur} - ${n.supplier}</option>`
+          );
+        });
+      }
+    });
+
+    $("#lanjutkanNota").on("change", function() {
+      const faktur = $(this).val();
+      if (!faktur) return;
+
+      $.getJSON(`/get_nota_detail?nomor_faktur=${encodeURIComponent(faktur)}`, function(res) {
+        if (res.status !== "ok") return alert("Nota tidak ditemukan!");
+
+        $("input[name='tanggal']").val(res.tanggal);
+        $("input[name='supplier']").val(res.supplier);
+        $("input[name='nomor_faktur']").val(res.nomor_faktur);
+        $("#items").empty();
+
+        res.items.forEach((it, i) => {
+          const row = `
+            <div class="item" id="row_${i}">
+              <div class="col-nama">
+                <input type="text" class="form-control nama-barang" name="nama_${i}" id="nama_${i}" value="${it.nama_barang}" required autocomplete="off">
+                <div id="suggestions_${i}" class="list-group position-absolute w-100" style="z-index:1000;"></div>
+              </div>
+              <div class="col-qty">
+                <input type="number" class="form-control" name="jumlah_${i}" id="jumlah_${i}" step="any" value="${it.jumlah}" required>
+              </div>
+              <div class="col-satuan">
+                <input type="text" class="form-control" name="satuan_${i}" id="satuan_${i}" value="${it.satuan}" required>
+              </div>
+              <div class="col-harga">
+                <input type="number" class="form-control harga-barang" name="harga_${i}" id="harga_${i}" step="any" value="${it.harga_satuan}" required>
+              </div>
+              <div class="col-subtotal">
+                <input type="number" class="form-control subtotal-barang" name="subtotal_${i}" id="subtotal_${i}" value="${it.total_harga}" readonly>
+              </div>
+              <div class="col-aksi">
+                <button type="button" class="btn-riwayat" title="Riwayat Harga">📊</button>
+                <button type="button" class="btn-hapus" onclick="hapusBarang(${i})">✕</button>
+              </div>
+            </div>`;
+          $("#items").append(row);
+        });
+
+        $("#count").val(res.items.length);
+        updateSubtotal();
+        alert(`Nota ${res.nomor_faktur} berhasil dimuat.`);
+      });
+    });
+
+    // === Handler Tombol Riwayat Harga ===
+    $(document).on("click", ".btn-riwayat", function() {
+      const $row = $(this).closest(".item");
+      const nama = $row.find(".nama-barang").val().trim();
+      if (!nama) { alert("Isi nama barang dulu sebelum lihat riwayat!"); return; }
+
+      $("#riwayatNama").text(nama);
+      $("#riwayatContainer").html("<p class='text-muted'>Memuat data...</p>");
+      const modal = new bootstrap.Modal(document.getElementById("riwayatModal"));
+      modal.show();
+
+      $.getJSON(`/riwayat_harga?nama=${encodeURIComponent(nama)}`, function(res) {
+        if (!res || res.status !== "ok" || !res.data || res.data.length === 0) {
+          $("#riwayatContainer").html("<p class='text-muted'>Tidak ada riwayat harga.</p>");
+          return;
+        }
+        let rows = res.data.map(r => `
+          <tr>
+            <td>${r.tanggal || '-'}</td>
+            <td>${r.pihak || '-'}</td>
+            <td class='text-end'>${r.harga_beli ? Number(r.harga_beli).toLocaleString() : '-'}</td>
+            <td class='text-end'>${r.harga_jual ? Number(r.harga_jual).toLocaleString() : '-'}</td>
+            <td>${r.jenis}</td>
+          </tr>`).join("");
+        $("#riwayatContainer").html(`
+          <table class="table table-sm table-bordered">
+            <thead class="table-light"><tr>
+              <th>Tanggal</th><th>Pihak</th><th>Harga Beli</th><th>Harga Jual</th><th>Jenis</th>
+            </tr></thead><tbody>${rows}</tbody>
+          </table>`);
+      });
+    });
+  });
+</script>
+
+</body>
+</html>

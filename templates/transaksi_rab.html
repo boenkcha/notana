@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Transaksi RAB (Beli + Jual) — KopMRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/static/lib/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/lib/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="/static/lib/jquery.min.js"></script>
+
+  <style>
+    :root {
+      --purple-50:#EEEDFE;--purple-100:#CECBF6;--purple-200:#AFA9EC;
+      --purple-400:#7F77DD;--purple-600:#534AB7;--purple-800:#3C3489;
+      --teal-50:#E1F5EE;--teal-200:#5DCAA5;--teal-400:#1D9E75;
+      --teal-600:#0F6E56;--teal-800:#085041;
+      --amber-50:#FAEEDA;--amber-200:#FAC775;--amber-400:#EF9F27;
+      --amber-600:#BA7517;--amber-800:#633806;
+      --coral-50:#FAECE7;--coral-200:#F0997B;--coral-400:#D85A30;--coral-600:#993C1D;
+      --gray-50:#F8F7F4;--gray-100:#EEECEA;--gray-200:#D3D1C7;
+      --gray-400:#888780;--gray-600:#5F5E5A;
+      --radius-sm:8px;--radius-md:12px;--radius-lg:16px;--radius-xl:20px;
+      --font-main:'Plus Jakarta Sans',system-ui,sans-serif;
+      --font-mono:'DM Mono',monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;}
+    body{font-family:var(--font-main);background:var(--gray-50);color:#1a1a1a;margin:0;min-height:100vh;}
+
+    /* TOPBAR */
+    .topbar{position:sticky;top:0;z-index:100;background:#fff;border-bottom:1.5px solid var(--gray-100);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+    .topbar-logo{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:#1a1a1a;text-decoration:none;}
+    .logo-bubble{width:30px;height:30px;border-radius:10px;background:var(--purple-600);display:flex;align-items:center;justify-content:center;}
+    .logo-bubble i{color:#fff;font-size:14px;}
+    .nav-links{display:flex;align-items:center;gap:2px;}
+    .nav-link-item{padding:6px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--gray-600);text-decoration:none;transition:background .15s,color .15s;white-space:nowrap;}
+    .nav-link-item:hover{background:var(--gray-100);color:#1a1a1a;}
+    .nav-link-item.active{background:var(--amber-50);color:var(--amber-600);}
+    .avatar-circle{width:32px;height:32px;border-radius:50%;background:var(--amber-50);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--amber-800);}
+
+    /* PAGE */
+    .page-wrap{max-width:1400px;margin:0 auto;padding:20px 20px 60px;}
+
+    /* HERO */
+    .hero-row{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px;}
+    .hero-card{border-radius:var(--radius-lg);padding:16px 18px;position:relative;overflow:hidden;}
+    .hc-teal{background:var(--teal-50);} .hc-amber{background:var(--amber-50);}
+    .hc-purple{background:var(--purple-50);} .hc-coral{background:var(--coral-50);}
+    .hero-label{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px;}
+    .hc-teal .hero-label{color:var(--teal-400);} .hc-amber .hero-label{color:var(--amber-600);}
+    .hc-purple .hero-label{color:var(--purple-400);} .hc-coral .hero-label{color:var(--coral-600);}
+    .hero-val{font-size:20px;font-weight:600;line-height:1;font-family:var(--font-mono);}
+    .hc-teal .hero-val{color:var(--teal-800);} .hc-amber .hero-val{color:var(--amber-800);}
+    .hc-purple .hero-val{color:var(--purple-800);} .hc-coral .hero-val{color:var(--coral-600);}
+    .hero-sub{font-size:11px;margin-top:4px;color:var(--gray-400);}
+
+    /* MAIN CARD */
+    .main-card{background:#fff;border-radius:var(--radius-xl);border:1.5px solid var(--gray-100);overflow:visible;}
+    .card-header-bar{padding:16px 22px;display:flex;align-items:center;gap:12px;border-bottom:1.5px solid var(--gray-100);flex-wrap:wrap;}
+    .header-icon{width:40px;height:40px;border-radius:var(--radius-md);background:var(--amber-50);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .header-icon i{font-size:18px;color:var(--amber-600);}
+    .header-title{font-size:15px;font-weight:600;margin:0;}
+    .header-sub{font-size:12px;color:var(--gray-400);margin:1px 0 0;}
+
+    /* FORM SECTION */
+    .form-section{padding:18px 22px;border-bottom:1.5px solid var(--gray-100);}
+    .field-label{font-size:12px;font-weight:600;color:var(--gray-600);letter-spacing:.03em;text-transform:uppercase;margin-bottom:5px;display:block;}
+    .field-input{width:100%;height:40px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:8px 12px;font-size:13px;font-family:var(--font-main);background:#fff;color:#1a1a1a;transition:border-color .18s,box-shadow .18s;outline:none;}
+    .field-input:focus{border-color:var(--teal-400);box-shadow:0 0 0 3px rgba(29,158,117,0.15);}
+    .field-input::placeholder{color:var(--gray-400);}
+
+    /* TOOLBAR */
+    .toolbar-section{padding:12px 22px;border-bottom:1.5px solid var(--gray-100);display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:var(--gray-50);}
+    .btn-tool{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-family:var(--font-main);font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap;}
+    .btn-tool:hover{filter:brightness(0.93);}
+    .btn-add-row{background:var(--purple-600);color:#fff;}
+    .btn-suggest{background:var(--amber-50);color:var(--amber-800);border:1.5px solid var(--amber-200);}
+    .btn-save{background:var(--teal-400);color:#fff;margin-left:auto;}
+    .btn-reset{background:var(--coral-50);color:var(--coral-600);border:1.5px solid var(--coral-200);}
+    .btn-excel {background:var(--teal-50);color:var(--teal-800);border:1.5px solid var(--teal-200);}
+    .btn-pdf   {background:var(--coral-50);color:var(--coral-600);border:1.5px solid var(--coral-200);}
+    .btn-blanko{background:var(--purple-50);color:var(--purple-600);border:1.5px solid var(--purple-100);}
+    .btn-master{background:#f0fdf4;color:#166534;border:1.5px solid #bbf7d0;}
+    .btn-master:hover{background:#dcfce7;}
+    .toolbar-sep{width:1px;height:28px;background:var(--gray-200);margin:0 2px;}
+
+    /* SPLIT TABLE — sama persis dengan penjualan_rab */
+    .split-header{
+      display:grid;grid-template-columns:18px 1fr;gap:0;
+      background:var(--gray-50);border-bottom:2px solid var(--gray-200);
+      position:sticky;top:56px;z-index:40;
+    }
+    .split-header-num{background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gray-400);border-right:1px solid var(--gray-200);padding:0 4px;}
+    .split-header-panels{display:grid;grid-template-columns:1fr 1fr;width:100%;}
+    .panel-header{padding:10px 16px;display:grid;gap:6px;border-right:2px solid var(--gray-200);}
+    .panel-header.beli-panel{grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr;background:var(--gray-50);}
+    .panel-header.jual-panel{grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr 1.4fr 36px;background:var(--teal-50);border-right:none;}
+    .ph-label{font-size:10px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;}
+    .ph-label.teal{color:var(--teal-600);}
+
+    .panel-title-row{display:grid;grid-template-columns:1fr 1fr;border-bottom:1.5px solid var(--gray-200);}
+    .panel-title{padding:8px 16px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;}
+    .panel-title.beli{background:var(--gray-100);color:var(--gray-600);border-right:2px solid var(--gray-200);}
+    .panel-title.jual{background:var(--teal-50);color:var(--teal-700);}
+
+    /* SPLIT ROW */
+    .split-row{display:grid;grid-template-columns:18px 1fr;border-bottom:1px solid var(--gray-100);transition:background .12s;animation:fadeInUp .18s ease both;}
+    .split-row:hover{background:rgba(29,158,117,0.03);}
+    .split-row:focus-within{background:rgba(29,158,117,0.05);}
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+    .row-num{background:var(--gray-50);border-right:1px solid var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--gray-400);min-height:52px;}
+    .row-panels{display:grid;grid-template-columns:1fr 1fr;width:100%;}
+
+    /* BELI PANEL (kiri) — editable di form ini */
+    .beli-side{display:grid;grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr;gap:6px;padding:8px 12px;background:var(--gray-50);border-right:2px solid var(--gray-200);align-items:center;}
+
+    /* JUAL PANEL (kanan) — sama dengan penjualan_rab */
+    .jual-side{display:grid;grid-template-columns:2.8fr 0.7fr 0.8fr 1.3fr 1.4fr 36px;gap:6px;padding:8px 12px;background:#fff;align-items:center;}
+    .jual-side:focus-within{background:rgba(29,158,117,0.04);}
+
+    /* INPUT BELI — editable tapi tampil seperti beli (abu) */
+    .cell-beli{width:100%;height:34px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:4px 8px;font-size:12px;font-family:var(--font-mono);background:#fff;color:#1a1a1a;outline:none;transition:border-color .15s,box-shadow .15s;}
+    .cell-beli:focus{border-color:var(--gray-400);box-shadow:0 0 0 2px rgba(136,135,128,0.15);}
+    .cell-beli.nama-beli-input{font-family:var(--font-main);font-size:12px;}
+    .cell-beli::placeholder{color:var(--gray-400);}
+
+    /* INPUT JUAL — sama dengan penjualan_rab */
+    .cell-rw{width:100%;height:34px;border:1.5px solid var(--gray-200);border-radius:var(--radius-sm);padding:4px 8px;font-size:12px;font-family:var(--font-mono);background:#fff;color:#1a1a1a;outline:none;transition:border-color .15s,box-shadow .15s;}
+    .cell-rw:focus{border-color:var(--teal-400);box-shadow:0 0 0 2px rgba(29,158,117,0.15);}
+    .cell-rw.nama-jual-input{font-family:var(--font-main);font-size:12px;}
+    .cell-rw::placeholder{color:var(--gray-400);}
+    .cell-total-jual{font-size:12px;font-weight:600;font-family:var(--font-mono);color:var(--teal-800);text-align:right;padding-right:2px;white-space:nowrap;}
+
+    /* SYNC BADGE */
+    .sync-badge{display:none;position:absolute;top:-6px;left:0;font-size:9px;padding:1px 5px;border-radius:4px;background:var(--amber-50);color:var(--amber-600);border:1px solid var(--amber-200);white-space:nowrap;z-index:1;}
+
+    /* AUTOCOMPLETE DROPDOWN */
+    .ac-dropdown{position:fixed;z-index:9000;background:#fff;border:1.5px solid var(--purple-100);border-radius:var(--radius-md);box-shadow:0 8px 24px rgba(0,0,0,.14);max-height:200px;overflow-y:auto;display:none;min-width:220px;}
+    .ac-item{padding:8px 12px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--gray-100);display:flex;flex-direction:column;gap:2px;transition:background .1s;}
+    .ac-item:last-child{border-bottom:none;}
+    .ac-item:hover,.ac-item.ac-active{background:var(--purple-50);}
+    .ac-item-name{font-weight:600;color:#1a1a1a;}
+    .ac-item-meta{font-size:11px;color:var(--gray-400);font-family:var(--font-mono);}
+
+    /* ICON BUTTONS */
+    .icon-btn-sm{width:32px;height:32px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;border:1.5px solid var(--coral-200);background:var(--coral-50);color:var(--coral-400);font-size:12px;cursor:pointer;transition:all .15s;flex-shrink:0;}
+    .icon-btn-sm:hover{background:var(--coral-400);color:#fff;border-color:var(--coral-400);}
+
+    /* ADD ROW BAR */
+    .add-item-bar{display:flex;align-items:center;gap:10px;padding:10px 22px;border-top:1px dashed var(--purple-200);background:var(--purple-50);}
+    .btn-add-item{display:inline-flex;align-items:center;gap:6px;padding:7px 16px;border-radius:var(--radius-sm);border:1.5px dashed var(--purple-400);background:var(--purple-50);color:var(--purple-600);font-family:var(--font-main);font-size:13px;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s;}
+    .btn-add-item:hover{background:var(--purple-100);border-color:var(--purple-600);}
+
+    /* GRAND TOTAL */
+    .laba-bar{display:flex;align-items:center;gap:16px;padding:10px 22px;border-top:1.5px solid var(--gray-100);background:#fff;flex-wrap:wrap;}
+    .laba-chip{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;}
+    .laba-chip.green{background:var(--teal-50);color:var(--teal-800);}
+    .laba-chip.amber{background:var(--amber-50);color:var(--amber-800);}
+    .grand-total-bar{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-top:1.5px solid var(--gray-100);background:var(--teal-50);}
+    .grand-label{font-size:12px;font-weight:600;color:var(--teal-600);letter-spacing:.04em;text-transform:uppercase;}
+    .grand-value{font-size:22px;font-weight:600;color:var(--teal-800);font-family:var(--font-mono);}
+
+    /* RIWAYAT BUTTON — kecil, inline di sebelah input nama */
+    .nama-beli-wrap,.nama-jual-wrap{display:flex;gap:4px;align-items:center;position:relative;}
+    .riwayat-mini{width:28px;height:34px;border-radius:var(--radius-sm);border:1.5px solid var(--gray-200);background:var(--gray-50);color:var(--gray-400);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all .15s;padding:0;}
+    .riwayat-mini:hover{background:var(--purple-50);color:var(--purple-600);border-color:var(--purple-200);}
+
+    /* RIWAYAT MODAL */
+    .riwayat-row{display:grid;grid-template-columns:1fr 70px 1fr 1fr 1fr;gap:8px;padding:10px 16px;border-bottom:1px solid var(--gray-100);font-size:13px;align-items:center;}
+    .riwayat-row:last-child{border-bottom:none;}
+    .riwayat-row:hover{background:var(--gray-50);}
+    .badge-beli{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;background:var(--purple-50);color:var(--purple-600);font-weight:600;}
+    .badge-jual{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;background:var(--teal-50);color:var(--teal-600);font-weight:600;}
+    .badge-jual-rab{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;background:var(--amber-50);color:var(--amber-800);font-weight:600;}
+    .modal-header-custom{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:var(--purple-600);border-radius:var(--radius-lg) var(--radius-lg) 0 0;}
+    .modal-header-custom .modal-title{font-size:14px;font-weight:600;color:#fff;margin:0;}
+    .modal-header-custom .btn-close{filter:brightness(0) invert(1);}
+
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:56px 20px;color:var(--gray-400);font-size:14px;}
+    .empty-state i{font-size:44px;display:block;margin-bottom:14px;color:var(--gray-200);}
+
+    /* TOAST */
+    .toast-flash{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-12px);background:#fff;border:1.5px solid var(--teal-200);border-radius:var(--radius-md);padding:10px 20px;font-size:13px;font-weight:500;color:var(--teal-800);box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:999;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none;}
+    .toast-flash.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* BOTTOM NAV */
+    .bottom-nav{display:none;}
+    .bottom-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;border-radius:12px;text-decoration:none;color:var(--gray-400);font-size:10px;font-weight:600;min-width:52px;transition:color .15s,background .15s;-webkit-tap-highlight-color:transparent;}
+    .bottom-nav-item i{font-size:22px;line-height:1;}
+    .bottom-nav-item span{display:none;}
+
+    @media(max-width:900px){
+      .nav-links{display:none;}
+      .hero-row{grid-template-columns:1fr 1fr;}
+      .page-wrap{padding:12px 12px 90px;}
+      .hero-card{padding:14px 16px;}
+      .hero-val{font-size:18px;}
+      .form-section,.card-header-bar,.toolbar-section{padding:12px 16px;}
+      .bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--gray-100);padding:6px 4px calc(6px + env(safe-area-inset-bottom));z-index:150;justify-content:space-around;align-items:flex-start;box-shadow:0 -4px 20px rgba(0,0,0,0.07);}
+      .bottom-nav-item{color:var(--gray-400);background:transparent;}
+      .bottom-nav-item.active{color:var(--amber-600);background:var(--amber-50);}
+      .bottom-nav-item span{display:block;}
+      .split-header,.panel-title-row,.split-row{min-width:680px;}
+      .main-card{overflow-x:auto;}
+    }
+  </style>
+  <link rel="stylesheet" href="/static/pastel.css">
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <a href="/" class="topbar-logo">
+    <div class="logo-bubble"><i class="bi bi-receipt"></i></div>
+    KopMRM
+  </a>
+  <div class="nav-links">
+    <a href="/" class="nav-link-item"><i class="bi bi-house me-1"></i>Input Nota</a>
+    <a href="/penjualan" class="nav-link-item"><i class="bi bi-bag me-1"></i>Penjualan</a>
+    <a href="/penjualan_rab" class="nav-link-item"><i class="bi bi-arrow-left-right me-1"></i>Jual RAB</a>
+    <a href="/transaksi_rab" class="nav-link-item active"><i class="bi bi-intersect me-1"></i>Transaksi RAB</a>
+    <a href="/report" class="nav-link-item"><i class="bi bi-bar-chart me-1"></i>Laporan</a>
+    <a href="/cek_harga_rab" class="nav-link-item"><i class="bi bi-table me-1"></i>Cek RAB</a>
+    <a href="/riwayat_barang" class="nav-link-item"><i class="bi bi-clock-history me-1"></i>Riwayat</a>
+    <a href="/layout_wizard" class="nav-link-item"><i class="bi bi-sliders me-1"></i>Pengaturan</a>
+  </div>
+  <div class="avatar-circle">AD</div>
+</nav>
+
+<!-- TOAST -->
+<div class="toast-flash" id="toastFlash">
+  <i class="bi bi-check-circle-fill" style="color:var(--teal-400);font-size:16px;"></i>
+  <span id="toastMsg">Berhasil disimpan!</span>
+</div>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="hero-row">
+    <div class="hero-card hc-amber">
+      <div class="hero-label">Total Beli</div>
+      <div class="hero-val" id="statTotalBeli">Rp 0</div>
+      <div class="hero-sub">HPP dari input</div>
+    </div>
+    <div class="hero-card hc-teal">
+      <div class="hero-label">Total Jual</div>
+      <div class="hero-val" id="statTotalJual">Rp 0</div>
+      <div class="hero-sub" id="statItemCount">0 item</div>
+    </div>
+    <div class="hero-card hc-purple">
+      <div class="hero-label">Laba Kotor</div>
+      <div class="hero-val" id="statLaba">Rp 0</div>
+      <div class="hero-sub" id="statMargin">Margin 0%</div>
+    </div>
+    <div class="hero-card hc-coral">
+      <div class="hero-label">Item Diubah</div>
+      <div class="hero-val" id="statDiubah">0</div>
+      <div class="hero-sub">nama jual ≠ nama beli</div>
+    </div>
+  </div>
+
+  <!-- MAIN CARD -->
+  <div class="main-card">
+
+    <!-- HEADER -->
+    <div class="card-header-bar">
+      <div class="header-icon"><i class="bi bi-intersect"></i></div>
+      <div style="flex:1;">
+        <div class="header-title">Transaksi Beli & Jual RAB</div>
+        <div class="header-sub">Input data pembelian langsung di kolom kiri · Kolom kanan = data jual yang bisa diedit nama, qty & harga</div>
+      </div>
+    </div>
+
+    <!-- FORM HEADER -->
+    <div class="form-section">
+      <div class="row g-3">
+        <div class="col-12 col-md-2">
+          <label class="field-label">📅 Tanggal Beli</label>
+          <input type="date" id="tanggalBeli" class="field-input">
+        </div>
+        <div class="col-12 col-md-2">
+          <label class="field-label">📅 Tanggal Jual</label>
+          <input type="date" id="tanggalJual" class="field-input">
+        </div>
+        <div class="col-12 col-md-2">
+          <label class="field-label">🏭 Supplier</label>
+          <input type="text" id="supplier" class="field-input" placeholder="Nama supplier...">
+        </div>
+        <div class="col-12 col-md-3">
+          <label class="field-label">🔖 Nomor Faktur Beli</label>
+          <div style="display:flex;gap:6px;">
+            <input type="text" id="nomorFaktur" class="field-input" placeholder="Misal: INV-001" style="flex:1;">
+            <button type="button" class="btn-tool" style="background:var(--gray-100);color:var(--gray-600);border:1.5px solid var(--gray-200);padding:7px 10px;white-space:nowrap;" onclick="genFaktur()" title="Buat nomor otomatis">
+              <i class="bi bi-magic"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-12 col-md-3">
+          <label class="field-label">👤 Konsumen / SPPG</label>
+          <input type="text" id="konsumen" class="field-input" placeholder="Nama konsumen atau SPPG">
+        </div>
+        <div class="col-12 col-md-8">
+          <label class="field-label">📝 Catatan (opsional)</label>
+          <input type="text" id="catatan" class="field-input" placeholder="Catatan pengiriman, perihal, dsb.">
+        </div>
+        <div class="col-12 col-md-4">
+          <label class="field-label">🔄 Load Transaksi Lama</label>
+          <div style="display:flex;gap:6px;">
+            <select id="pilihanTransaksi" class="field-input" style="height:40px;flex:1;font-size:12px;"
+              onchange="if(this.value) loadTransaksi(this.value)">
+              <option value="">-- Pilih transaksi sebelumnya --</option>
+            </select>
+            <button type="button" class="btn-tool"
+              style="background:var(--gray-100);color:var(--gray-600);border:1.5px solid var(--gray-200);padding:7px 10px;flex-shrink:0;"
+              onclick="loadTransaksiList()" title="Refresh daftar">
+              <i class="bi bi-arrow-clockwise"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar-section">
+      <button type="button" class="btn-tool btn-add-row" onclick="addRow()">
+        <i class="bi bi-plus-circle"></i> Tambah Baris
+      </button>
+      <button type="button" class="btn-tool btn-suggest" onclick="suggestSemuaHargaJual()">
+        <i class="bi bi-lightbulb"></i> Suggest Harga Jual
+      </button>
+      <button type="button" class="btn-tool btn-reset" onclick="resetForm()">
+        <i class="bi bi-arrow-counterclockwise"></i> Reset
+      </button>
+      <div class="toolbar-sep"></div>
+      <button type="button" class="btn-tool btn-excel" id="btnExportExcel" onclick="exportExcelRAB()" disabled title="Simpan dulu sebelum export" style="opacity:.45;">
+        <i class="bi bi-file-excel"></i> Export Excel
+      </button>
+      <button type="button" class="btn-tool btn-pdf" id="btnExportPdf" onclick="exportPdfRAB()" disabled title="Simpan dulu sebelum export" style="opacity:.45;">
+        <i class="bi bi-file-pdf"></i> PDF Faktur
+      </button>
+      <button type="button" class="btn-tool btn-blanko" id="btnExportBlanko" onclick="exportBlankoRAB()" disabled title="Simpan dulu sebelum export" style="opacity:.45;">
+        <i class="bi bi-file-earmark-spreadsheet"></i> Blanko
+      </button>
+      <button type="button" class="btn-tool btn-master" id="btnSalinMaster" onclick="salinMaster()" disabled title="Simpan dulu sebelum menyalin" style="opacity:.45;">
+        <i class="bi bi-folder-symlink"></i> Blanko Kop
+      </button>
+      <div class="toolbar-sep"></div>
+      <button type="button" class="btn-tool btn-save" id="btnSimpan" onclick="simpan()">
+        <i class="bi bi-cloud-check"></i> Simpan Transaksi RAB
+      </button>
+    </div>
+
+    <!-- PANEL TITLE -->
+    <div class="panel-title-row" id="panelTitleRow" style="display:none;">
+      <div class="panel-title beli">
+        <i class="bi bi-box-seam" style="color:var(--gray-400);"></i>
+        DATA PEMBELIAN
+        <span style="font-size:11px;color:var(--gray-400);margin-left:4px;">✏️ input langsung</span>
+      </div>
+      <div class="panel-title jual">
+        <i class="bi bi-bag-check" style="color:var(--teal-400);"></i>
+        DATA PENJUALAN RAB — edit bebas nama, qty & harga
+      </div>
+    </div>
+
+    <!-- SPLIT TABLE HEADER -->
+    <div class="split-header" id="splitHeader" style="display:none;">
+      <div class="split-header-num">#</div>
+      <div class="split-header-panels">
+        <div class="panel-header beli-panel">
+          <span class="ph-label">Nama Barang Beli ✏️</span>
+          <span class="ph-label" style="text-align:center;">Qty</span>
+          <span class="ph-label" style="text-align:center;">Sat</span>
+          <span class="ph-label" style="text-align:right;">Harga Beli</span>
+        </div>
+        <div class="panel-header jual-panel">
+          <span class="ph-label teal">Nama Barang Jual ✏️</span>
+          <span class="ph-label teal" style="text-align:center;">Qty ✏️</span>
+          <span class="ph-label teal" style="text-align:center;">Sat</span>
+          <span class="ph-label teal" style="text-align:right;">Harga Jual ✏️</span>
+          <span class="ph-label teal" style="text-align:right;">Total Jual</span>
+          <span class="ph-label teal"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROWS CONTAINER -->
+    <div id="splitRows">
+      <div class="empty-state" id="emptyState">
+        <i class="bi bi-inbox"></i>
+        Klik <strong>Tambah Baris</strong> untuk mulai input item.<br>
+        <span style="font-size:13px;margin-top:6px;display:block;color:var(--gray-400);">
+          Kolom kiri = ketik data beli · Kolom kanan = otomatis terisi & bisa diedit
+        </span>
+      </div>
+    </div>
+
+    <!-- ADD ROW BAR (muncul setelah ada baris) -->
+    <div class="add-item-bar" id="addItemBar" style="display:none;">
+      <button type="button" class="btn-add-item" onclick="addRow()">
+        <i class="bi bi-plus-lg"></i> Tambah Baris Baru
+      </button>
+    </div>
+
+    <!-- LABA & GRAND TOTAL -->
+    <div id="totalSection" style="display:none;">
+      <div class="laba-bar">
+        <div class="laba-chip green"><i class="bi bi-graph-up-arrow"></i> Laba: <span id="chipLaba">Rp 0</span></div>
+        <div class="laba-chip amber"><i class="bi bi-percent"></i> <span id="chipMargin">Margin 0%</span></div>
+        <div style="margin-left:auto;font-size:12px;color:var(--gray-400);" id="infoItemDiubah"></div>
+      </div>
+      <div class="grand-total-bar">
+        <div>
+          <div class="grand-label">Grand Total Penjualan RAB</div>
+          <div style="font-size:11px;color:var(--teal-600);margin-top:2px;" id="grandFaktur">—</div>
+        </div>
+        <div class="grand-value" id="grandTotal">Rp 0</div>
+      </div>
+    </div>
+
+  </div><!-- /main-card -->
+</div><!-- /page-wrap -->
+
+<!-- MODAL RIWAYAT HARGA -->
+<div class="modal fade" id="riwayatModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header-custom">
+        <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Riwayat Harga: <span id="judulRiwayat" style="color:var(--purple-100);"></span></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" style="padding:0;background:var(--gray-50);">
+        <div class="riwayat-row" style="background:var(--gray-100);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--gray-600);">
+          <span>Tanggal</span><span>Jenis</span><span>Pihak</span>
+          <span style="text-align:right;">Harga Beli</span><span style="text-align:right;">Harga Jual</span>
+        </div>
+        <div id="tabelRiwayat"></div>
+      </div>
+      <div class="modal-footer" style="background:#fff;">
+        <button type="button" class="btn-tool btn-reset" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a href="/" class="bottom-nav-item"><i class="bi bi-receipt"></i><span>Nota</span></a>
+  <a href="/penjualan" class="bottom-nav-item"><i class="bi bi-bag"></i><span>Jual</span></a>
+  <a href="/penjualan_rab" class="bottom-nav-item"><i class="bi bi-file-earmark-text"></i><span>Jual RAB</span></a>
+  <a href="/transaksi_rab" class="bottom-nav-item active"><i class="bi bi-intersect"></i><span>Transaksi</span></a>
+  <a href="/report" class="bottom-nav-item"><i class="bi bi-bar-chart"></i><span>Laporan</span></a>
+  <a href="/riwayat_barang" class="bottom-nav-item"><i class="bi bi-clock-history"></i><span>Riwayat</span></a>
+</nav>
+
+<script src="/static/lib/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// STATE
+// ============================================================
+const fmtRp = n => "Rp " + Math.round(n||0).toLocaleString("id-ID");
+let rows      = [];   // array of rid
+let rowCount  = 0;
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg, ok=true) {
+  const t = document.getElementById("toastFlash");
+  document.getElementById("toastMsg").textContent = msg;
+  t.style.borderColor = ok ? "var(--teal-200)" : "var(--coral-200)";
+  t.style.color       = ok ? "var(--teal-800)" : "var(--coral-600)";
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3200);
+}
+
+// ============================================================
+// GENERATE NOMOR FAKTUR — format INVDDMMYYNNN (urut otomatis)
+// ============================================================
+async function genFaktur() {
+  const d  = new Date();
+  const dd = String(d.getDate()).padStart(2,'0');
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const yy = String(d.getFullYear()).slice(-2);
+  try {
+    const res = await fetch("/api/next_faktur_seq").then(r => r.json());
+    const seq = String(res.next || 1).padStart(3,'0');
+    document.getElementById("nomorFaktur").value = `INV${dd}${mm}${yy}${seq}`;
+  } catch(e) {
+    const rnd = String(Math.floor(Math.random()*900)+100);
+    document.getElementById("nomorFaktur").value = `INV${dd}${mm}${yy}${rnd}`;
+  }
+}
+
+// ============================================================
+// ADD ROW
+// ============================================================
+function addRow(init = {}) {
+  const rid = rowCount++;
+  rows.push(rid);
+
+  const emptyState = document.getElementById("emptyState");
+  if (emptyState) emptyState.style.display = "none";
+  document.getElementById("splitHeader").style.display   = "";
+  document.getElementById("panelTitleRow").style.display = "";
+  document.getElementById("addItemBar").style.display    = "";
+  document.getElementById("totalSection").style.display  = "";
+
+  const namaBeli = init.namaBeli || "";
+  const qBeli    = init.qBeli    ?? "";
+  const satBeli  = init.satBeli  || "";
+  const hBeli    = init.hBeli    ?? "";
+  const namaJual = init.namaJual || namaBeli;
+  const qJual    = init.qJual    ?? qBeli;
+  const satJual  = init.satJual  || satBeli;
+  const hJual    = init.hJual    ?? "";
+
+  const div = document.createElement("div");
+  div.className = "split-row";
+  div.id = `row_${rid}`;
+  div.innerHTML = `
+    <div class="row-num" id="rowNum_${rid}">${rows.length}</div>
+    <div class="row-panels">
+
+      <!-- SISI BELI (editable) -->
+      <div class="beli-side">
+        <div class="nama-beli-wrap">
+          <input class="cell-beli nama-beli-input" id="namaBeli_${rid}" type="text"
+            value="${escH(namaBeli)}" placeholder="Ketik nama barang..." autocomplete="off"
+            oninput="onBeliNamaChange(${rid}); updateStats();"
+            onkeydown="navBeliAC(event, ${rid})"
+            onblur="setTimeout(()=>hideBeliAC(${rid}), 180)">
+          <button type="button" class="riwayat-mini"
+            onclick="lihatRiwayat(document.getElementById('namaBeli_${rid}').value)"
+            title="Riwayat harga"><i class="bi bi-graph-up"></i></button>
+          <div class="ac-dropdown" id="acBeli_${rid}"></div>
+        </div>
+        <input class="cell-beli" id="qBeli_${rid}" type="number" step="any"
+          value="${qBeli}" placeholder="0" style="text-align:center;"
+          oninput="onBeliQtyChange(${rid}); updateStats();">
+        <input class="cell-beli" id="satBeli_${rid}" type="text"
+          value="${escH(satBeli)}" placeholder="sat" style="text-align:center;">
+        <input class="cell-beli" id="hBeli_${rid}" type="number" step="1"
+          value="${hBeli}" placeholder="0" style="text-align:right;"
+          oninput="updateStats();" onfocus="this.select()">
+      </div>
+
+      <!-- SISI JUAL (editable, sama dengan penjualan_rab) -->
+      <div class="jual-side">
+        <div class="nama-jual-wrap">
+          <span class="sync-badge" id="syncBadge_${rid}">≠ diubah</span>
+          <input class="cell-rw nama-jual-input" id="namaJual_${rid}" type="text"
+            value="${escH(namaJual)}" placeholder="Nama barang jual" autocomplete="off"
+            data-ori="${escH(namaBeli)}"
+            oninput="onJualNamaChange(${rid}); updateStats(); triggerJualAC(${rid});"
+            onkeydown="navJualAC(event, ${rid})"
+            onblur="setTimeout(()=>hideJualAC(${rid}), 180)">
+          <button type="button" class="riwayat-mini"
+            onclick="lihatRiwayat(document.getElementById('namaJual_${rid}').value)"
+            title="Riwayat harga"><i class="bi bi-graph-up"></i></button>
+          <div class="ac-dropdown" id="acJual_${rid}"></div>
+        </div>
+        <input class="cell-rw" id="qJual_${rid}" type="number" step="any"
+          value="${qJual}" style="text-align:center;"
+          oninput="onHargaChange(${rid}); updateStats();" placeholder="0">
+        <input class="cell-rw" id="satJual_${rid}" type="text"
+          value="${escH(satJual)}" style="text-align:center;" placeholder="sat">
+        <input class="cell-rw" id="hJual_${rid}" type="number" step="1"
+          value="${hJual}" style="text-align:right;"
+          oninput="onHargaChange(${rid}); updateStats();" onfocus="this.select()" placeholder="0">
+        <div class="cell-total-jual" id="totJual_${rid}">${fmtRp(parseFloat(qJual||0)*parseFloat(hJual||0))}</div>
+        <button type="button" class="icon-btn-sm" onclick="removeRow(${rid})" title="Hapus baris">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+    </div>`;
+
+  document.getElementById("splitRows").appendChild(div);
+  setTimeout(() => onJualNamaChange(rid), 10);
+  updateStats();
+
+  // Focus nama beli on empty row
+  if (!namaBeli) setTimeout(() => document.getElementById(`namaBeli_${rid}`)?.focus(), 50);
+}
+
+function escH(s){ return String(s||"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
+
+// ============================================================
+// REMOVE ROW
+// ============================================================
+function removeRow(rid) {
+  rows = rows.filter(r => r !== rid);
+  document.getElementById(`row_${rid}`)?.remove();
+  renumberRows();
+  updateStats();
+  if (!rows.length) {
+    document.getElementById("emptyState").style.display = "";
+    document.getElementById("splitHeader").style.display   = "none";
+    document.getElementById("panelTitleRow").style.display = "none";
+    document.getElementById("addItemBar").style.display    = "none";
+    document.getElementById("totalSection").style.display  = "none";
+  }
+}
+
+function renumberRows() {
+  rows.forEach((rid, i) => {
+    const el = document.getElementById(`rowNum_${rid}`);
+    if (el) el.textContent = i + 1;
+  });
+}
+
+// ============================================================
+// BELI SIDE HANDLERS
+// ============================================================
+// Ketika nama beli berubah → update data-ori jual, sync jual jika kosong, trigger AC
+function onBeliNamaChange(rid) {
+  const nb  = document.getElementById(`namaBeli_${rid}`)?.value || "";
+  const nj  = document.getElementById(`namaJual_${rid}`);
+  const ori = nj?.dataset.ori || "";
+  // Jika jual nama masih sama dengan ori beli lama → ikut berubah
+  if (nj && nj.value.toLowerCase() === ori.toLowerCase()) {
+    nj.value = nb; nj.dataset.ori = nb; onJualNamaChange(rid);
+  }
+  triggerBeliAC(rid);
+}
+
+// Ketika qty beli berubah → sync qty jual jika belum dimodifikasi, lalu hitung ulang total
+function onBeliQtyChange(rid) {
+  const qB = document.getElementById(`qBeli_${rid}`)?.value || "";
+  const qJ = document.getElementById(`qJual_${rid}`);
+  if (qJ && !qJ.dataset.modified) qJ.value = qB;
+  onHargaChange(rid);
+}
+
+// ============================================================
+// JUAL SIDE HANDLERS (sama dengan penjualan_rab)
+// ============================================================
+function onJualNamaChange(rid) {
+  const input = document.getElementById(`namaJual_${rid}`);
+  const badge = document.getElementById(`syncBadge_${rid}`);
+  if (!input || !badge) return;
+  const ori = (document.getElementById(`namaBeli_${rid}`)?.value || "").toLowerCase().trim();
+  const cur = input.value.toLowerCase().trim();
+  badge.style.display = (cur && cur !== ori) ? "inline-block" : "none";
+}
+
+function onHargaChange(rid) {
+  const q = parseFloat(document.getElementById(`qJual_${rid}`)?.value || 0);
+  const h = parseFloat(document.getElementById(`hJual_${rid}`)?.value || 0);
+  const el = document.getElementById(`totJual_${rid}`);
+  if (el) el.textContent = fmtRp(q * h);
+  // warn jika harga jual < harga beli
+  const hb  = parseFloat(document.getElementById(`hBeli_${rid}`)?.value || 0);
+  const inp = document.getElementById(`hJual_${rid}`);
+  if (h > 0 && hb > 0 && h < hb) inp?.classList.add("warn");
+  else inp?.classList.remove("warn");
+}
+
+// ============================================================
+// UPDATE HERO STATS
+// ============================================================
+function updateStats() {
+  let totalBeli=0, totalJual=0, diubah=0;
+  rows.forEach(rid => {
+    const qB = parseFloat(document.getElementById(`qBeli_${rid}`)?.value  || 0);
+    const hB = parseFloat(document.getElementById(`hBeli_${rid}`)?.value  || 0);
+    const qJ = parseFloat(document.getElementById(`qJual_${rid}`)?.value  || 0);
+    const hJ = parseFloat(document.getElementById(`hJual_${rid}`)?.value  || 0);
+    const nb = (document.getElementById(`namaBeli_${rid}`)?.value||"").toLowerCase().trim();
+    const nj = (document.getElementById(`namaJual_${rid}`)?.value||"").toLowerCase().trim();
+    totalBeli += qB * hB;
+    totalJual += qJ * hJ;
+    if (nj && nb && nj !== nb) diubah++;
+  });
+
+  const laba   = totalJual - totalBeli;
+  const margin = totalJual > 0 ? Math.round((laba/totalJual)*100) : 0;
+  const n      = rows.length;
+
+  document.getElementById("statTotalBeli").textContent    = fmtRp(totalBeli);
+  document.getElementById("statTotalJual").textContent    = fmtRp(totalJual);
+  document.getElementById("statLaba").textContent         = fmtRp(laba);
+  document.getElementById("statMargin").textContent       = "Margin " + margin + "%";
+  document.getElementById("statItemCount").textContent    = n + " item";
+  document.getElementById("statDiubah").textContent       = diubah;
+  document.getElementById("chipLaba").textContent         = fmtRp(laba);
+  document.getElementById("chipMargin").textContent       = "Margin " + margin + "%";
+  document.getElementById("grandTotal").textContent       = fmtRp(totalJual);
+  document.getElementById("infoItemDiubah").textContent   = diubah > 0 ? `⚠️ ${diubah} item nama berbeda` : "";
+  const faktur = document.getElementById("nomorFaktur").value.trim();
+  document.getElementById("grandFaktur").textContent      = faktur ? "Faktur: " + faktur : "—";
+}
+
+// ============================================================
+// POSISI DROPDOWN — fixed portal, pindah ke body dulu
+// (transform pada ancestor akan break position:fixed)
+// ============================================================
+function positionDrop(inputId, drop) {
+  const inp = document.getElementById(inputId);
+  if (!inp || !drop) return;
+  // Pindahkan ke body agar tidak di-clip oleh transform/overflow ancestor
+  if (drop.parentElement !== document.body) document.body.appendChild(drop);
+  const rect       = inp.getBoundingClientRect();
+  const spaceBelow = window.innerHeight - rect.bottom;
+  const spaceAbove = rect.top;
+  const maxH       = 200;
+  drop._acInputId  = inputId;
+  drop.style.width = Math.max(rect.width, 240) + "px";
+  drop.style.left  = rect.left + "px";
+  if (spaceBelow >= 110 || spaceBelow >= spaceAbove) {
+    drop.style.top       = (rect.bottom + 3) + "px";
+    drop.style.bottom    = "auto";
+    drop.style.maxHeight = Math.min(maxH, spaceBelow - 8) + "px";
+  } else {
+    drop.style.bottom    = (window.innerHeight - rect.top + 3) + "px";
+    drop.style.top       = "auto";
+    drop.style.maxHeight = Math.min(maxH, spaceAbove - 8) + "px";
+  }
+}
+
+["scroll","resize"].forEach(ev =>
+  window.addEventListener(ev, () => {
+    document.querySelectorAll(".ac-dropdown").forEach(drop => {
+      if (drop.style.display === "block" && drop._acInputId) positionDrop(drop._acInputId, drop);
+    });
+  }, { passive: true })
+);
+
+// ============================================================
+// AUTOCOMPLETE — BELI SIDE
+// ============================================================
+let beliACTimer = null;
+function triggerBeliAC(rid) {
+  clearTimeout(beliACTimer);
+  const q = (document.getElementById(`namaBeli_${rid}`)?.value || "").trim();
+  if (q.length < 2) { hideBeliAC(rid); return; }
+  beliACTimer = setTimeout(() => fetchBeliAC(rid, q), 220);
+}
+
+async function fetchBeliAC(rid, q) {
+  try {
+    const data = await fetch(`/cari_barang?q=${encodeURIComponent(q)}&mode=beli`).then(r=>r.json());
+    const dd   = document.getElementById(`acBeli_${rid}`);
+    const list = data.results || [];
+    if (!dd) return;
+    if (!list.length) { hideBeliAC(rid); return; }
+    dd.innerHTML = list.slice(0,8).map((it, idx) => `
+      <div class="ac-item" data-idx="${idx}"
+        data-nama="${escH(it.nama)}" data-satuan="${escH(it.satuan||'')}" data-harga="${parseFloat(it.harga||0)}"
+        onmousedown="pickBeliAC(${rid},${idx})">
+        <span class="ac-item-name">${escH(it.nama)}</span>
+        <span class="ac-item-meta">${escH(it.satuan||'')} · ${fmtRp(it.harga)}</span>
+      </div>`).join("");
+    positionDrop(`namaBeli_${rid}`, dd);
+    dd.style.display = "block";
+  } catch(e) {}
+}
+
+function hideBeliAC(rid) {
+  const dd = document.getElementById(`acBeli_${rid}`);
+  if (dd) { dd.style.display = "none"; dd.innerHTML = ""; }
+}
+
+async function pickBeliAC(rid, idx) {
+  const dd  = document.getElementById(`acBeli_${rid}`);
+  const itm = dd?.querySelectorAll(".ac-item")[idx];
+  if (!itm) return;
+  const nama   = itm.dataset.nama;
+  const satuan = itm.dataset.satuan;
+  const harga  = parseFloat(itm.dataset.harga) || 0;
+
+  const nb = document.getElementById(`namaBeli_${rid}`);
+  const sb = document.getElementById(`satBeli_${rid}`);
+  const hb = document.getElementById(`hBeli_${rid}`);
+  if (nb) nb.value = nama;
+  if (sb) sb.value = satuan;
+  if (hb) hb.value = harga || "";
+  hideBeliAC(rid);
+
+  // Sync ke sisi jual jika jual masih kosong / sama dengan ori
+  const nj = document.getElementById(`namaJual_${rid}`);
+  const sj = document.getElementById(`satJual_${rid}`);
+  if (nj && (!nj.value || nj.value === (nj.dataset.ori||""))) {
+    nj.value = nama; nj.dataset.ori = nama; onJualNamaChange(rid);
+  }
+  if (sj && !sj.value) sj.value = satuan;
+
+  // Auto-fetch harga jual terakhir dari riwayat RAB
+  try {
+    const data  = await fetch(`/cari_barang?q=${encodeURIComponent(nama)}&mode=jual`).then(r=>r.json());
+    const match = (data.results||[]).find(it => it.nama.toLowerCase() === nama.toLowerCase());
+    const hj    = document.getElementById(`hJual_${rid}`);
+    if (hj && !hj.value && match?.harga > 0) {
+      hj.value = match.harga;
+      hj.style.transition = "background .5s";
+      hj.style.background = "var(--teal-50)";
+      setTimeout(() => hj.style.background = "", 800);
+    }
+  } catch(e) {}
+
+  onHargaChange(rid);
+  updateStats();
+}
+
+function navBeliAC(e, rid) {
+  const dd = document.getElementById(`acBeli_${rid}`);
+  if (!dd || dd.style.display === "none") return;
+  const items = dd.querySelectorAll(".ac-item");
+  let cur = [...items].findIndex(el => el.classList.contains("ac-active"));
+  if (e.key === "ArrowDown") { e.preventDefault(); cur = Math.min(cur+1, items.length-1); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); cur = Math.max(cur-1, 0); }
+  else if (e.key === "Enter" && cur >= 0) { e.preventDefault(); items[cur].dispatchEvent(new MouseEvent("mousedown")); return; }
+  else if (e.key === "Escape" || e.key === "Tab") { hideBeliAC(rid); return; }
+  items.forEach((el,i) => el.classList.toggle("ac-active", i===cur));
+}
+
+// ============================================================
+// AUTOCOMPLETE — JUAL SIDE
+// ============================================================
+let jualACTimer = null;
+function triggerJualAC(rid) {
+  clearTimeout(jualACTimer);
+  const q = (document.getElementById(`namaJual_${rid}`)?.value || "").trim();
+  if (q.length < 2) { hideJualAC(rid); return; }
+  jualACTimer = setTimeout(() => fetchJualAC(rid, q), 220);
+}
+
+async function fetchJualAC(rid, q) {
+  try {
+    const data = await fetch(`/cari_barang?q=${encodeURIComponent(q)}&mode=jual`).then(r=>r.json());
+    const dd   = document.getElementById(`acJual_${rid}`);
+    const list = data.results || [];
+    if (!dd) return;
+    if (!list.length) { hideJualAC(rid); return; }
+    dd.innerHTML = list.slice(0,8).map((it, idx) => `
+      <div class="ac-item" data-idx="${idx}"
+        data-nama="${escH(it.nama)}" data-satuan="${escH(it.satuan||'')}" data-harga="${parseFloat(it.harga||0)}"
+        onmousedown="pickJualAC(${rid},${idx})">
+        <span class="ac-item-name">${escH(it.nama)}</span>
+        <span class="ac-item-meta">${escH(it.satuan||'')} · ${fmtRp(it.harga)}</span>
+      </div>`).join("");
+    positionDrop(`namaJual_${rid}`, dd);
+    dd.style.display = "block";
+  } catch(e) {}
+}
+
+function hideJualAC(rid) {
+  const dd = document.getElementById(`acJual_${rid}`);
+  if (dd) { dd.style.display = "none"; dd.innerHTML = ""; }
+}
+
+function pickJualAC(rid, idx) {
+  const dd  = document.getElementById(`acJual_${rid}`);
+  const itm = dd?.querySelectorAll(".ac-item")[idx];
+  if (!itm) return;
+  const nama   = itm.dataset.nama;
+  const satuan = itm.dataset.satuan;
+  const harga  = parseFloat(itm.dataset.harga) || 0;
+  const nj = document.getElementById(`namaJual_${rid}`);
+  const sj = document.getElementById(`satJual_${rid}`);
+  const hj = document.getElementById(`hJual_${rid}`);
+  if (nj) nj.value = nama;
+  if (sj) sj.value = satuan;
+  if (hj && harga > 0) {
+    hj.value = harga;
+    hj.style.transition = "background .5s";
+    hj.style.background = "var(--teal-50)";
+    setTimeout(() => hj.style.background = "", 800);
+  }
+  hideJualAC(rid);
+  onJualNamaChange(rid);
+  onHargaChange(rid);
+  updateStats();
+}
+
+function navJualAC(e, rid) {
+  const dd = document.getElementById(`acJual_${rid}`);
+  if (!dd || dd.style.display === "none") return;
+  const items = dd.querySelectorAll(".ac-item");
+  let cur = [...items].findIndex(el => el.classList.contains("ac-active"));
+  if (e.key === "ArrowDown") { e.preventDefault(); cur = Math.min(cur+1, items.length-1); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); cur = Math.max(cur-1, 0); }
+  else if (e.key === "Enter" && cur >= 0) { e.preventDefault(); items[cur].dispatchEvent(new MouseEvent("mousedown")); return; }
+  else if (e.key === "Escape" || e.key === "Tab") { hideJualAC(rid); return; }
+  items.forEach((el,i) => el.classList.toggle("ac-active", i===cur));
+}
+
+// ============================================================
+// SUGGEST SEMUA HARGA JUAL dari riwayat RAB
+// ============================================================
+async function suggestSemuaHargaJual() {
+  if (!rows.length) { showToast("Tambahkan baris item dulu!", false); return; }
+  const items = rows.map(rid => ({
+    nama:   (document.getElementById(`namaJual_${rid}`)?.value   || "").trim(),
+    satuan: (document.getElementById(`satJual_${rid}`)?.value    || "").trim(),
+    rid
+  })).filter(it => it.nama);
+
+  if (!items.length) { showToast("Isi nama barang jual terlebih dahulu!", false); return; }
+
+  try {
+    const res  = await fetch("/suggest_harga_rab", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({items: items.map(it=>({nama:it.nama,satuan:it.satuan})), nomor_faktur:""})
+    });
+    const data = await res.json();
+    if (data.status !== "ok") return;
+    let filled = 0;
+    data.saran.forEach((harga, i) => {
+      const {rid} = items[i];
+      const hj = document.getElementById(`hJual_${rid}`);
+      if (!hj || parseFloat(hj.value) > 0) return;
+      if (harga > 0) {
+        hj.value = harga;
+        hj.style.transition = "background .5s";
+        hj.style.background = "var(--teal-50)";
+        setTimeout(() => hj.style.background = "", 800);
+        onHargaChange(rid);
+        filled++;
+      }
+    });
+    updateStats();
+    showToast(filled > 0 ? `💡 ${filled} harga jual terisi dari riwayat RAB` : "Belum ada riwayat harga RAB untuk item ini", filled > 0);
+  } catch(e) {
+    showToast("Gagal mengambil saran harga!", false);
+  }
+}
+
+// ============================================================
+// SIMPAN
+// ============================================================
+async function simpan() {
+  const tanggalBeli = document.getElementById("tanggalBeli").value.trim();
+  const tanggalJual = document.getElementById("tanggalJual").value.trim();
+  const supplier    = document.getElementById("supplier").value.trim();
+  const faktur      = document.getElementById("nomorFaktur").value.trim();
+  const konsumen    = document.getElementById("konsumen").value.trim();
+  const catatan     = document.getElementById("catatan").value.trim();
+
+  if (!tanggalBeli || !faktur || !supplier) {
+    showToast("Tanggal beli, nomor faktur, dan supplier wajib diisi!", false); return;
+  }
+  if (!tanggalJual || !konsumen) {
+    showToast("Tanggal jual dan konsumen wajib diisi!", false); return;
+  }
+  if (!rows.length) {
+    showToast("Tambahkan minimal 1 item!", false); return;
+  }
+
+  const items = rows.map(rid => ({
+    nama_beli:   (document.getElementById(`namaBeli_${rid}`)?.value  || "").trim(),
+    jumlah_beli: parseFloat(document.getElementById(`qBeli_${rid}`)?.value  || 0),
+    satuan_beli: (document.getElementById(`satBeli_${rid}`)?.value   || "").trim(),
+    harga_beli:  parseFloat(document.getElementById(`hBeli_${rid}`)?.value  || 0),
+    nama_jual:   (document.getElementById(`namaJual_${rid}`)?.value  || "").trim(),
+    jumlah_jual: parseFloat(document.getElementById(`qJual_${rid}`)?.value  || 0),
+    satuan_jual: (document.getElementById(`satJual_${rid}`)?.value   || "").trim(),
+    harga_jual:  parseFloat(document.getElementById(`hJual_${rid}`)?.value  || 0),
+  })).filter(it => it.nama_beli || it.nama_jual);
+
+  if (!items.length) {
+    showToast("Tidak ada item valid (semua nama masih kosong)!", false); return;
+  }
+
+  const btn = document.getElementById("btnSimpan");
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span> Menyimpan...`;
+
+  try {
+    const res  = await fetch("/api/transaksi_rab/simpan", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({tanggal_beli:tanggalBeli, supplier, nomor_faktur:faktur,
+        tanggal_jual:tanggalJual, konsumen, catatan, items})
+    });
+    const data = await res.json();
+    if (data.status === "ok") {
+      showToast(`✅ ${data.message}`);
+      setExportButtons(true);
+    } else {
+      showToast(`❌ ${data.message}`, false);
+    }
+  } catch(e) {
+    showToast("Gagal terhubung ke server!", false);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<i class="bi bi-cloud-check"></i> Simpan Transaksi RAB`;
+  }
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function resetForm() {
+  if (rows.length && !confirm("Reset semua data di form?")) return;
+  rows = [];
+  rowCount = 0;
+  document.getElementById("splitRows").innerHTML =
+    `<div class="empty-state" id="emptyState">
+       <i class="bi bi-inbox"></i>
+       Klik <strong>Tambah Baris</strong> untuk mulai input item.<br>
+       <span style="font-size:13px;margin-top:6px;display:block;color:var(--gray-400);">
+         Kolom kiri = ketik data beli · Kolom kanan = otomatis terisi & bisa diedit
+       </span>
+     </div>`;
+  document.getElementById("splitHeader").style.display   = "none";
+  document.getElementById("panelTitleRow").style.display = "none";
+  document.getElementById("addItemBar").style.display    = "none";
+  document.getElementById("totalSection").style.display  = "none";
+  setExportButtons(false);
+  updateStats();
+}
+
+// ============================================================
+// RIWAYAT HARGA
+// ============================================================
+async function lihatRiwayat(nama) {
+  nama = (nama || "").trim();
+  if (!nama) { showToast("Isi nama barang dulu!", false); return; }
+  document.getElementById("judulRiwayat").textContent = nama;
+  document.getElementById("tabelRiwayat").innerHTML =
+    `<div style="padding:24px;text-align:center;color:var(--gray-400);font-size:13px;">⏳ Memuat...</div>`;
+  new bootstrap.Modal(document.getElementById("riwayatModal")).show();
+
+  try {
+    const res  = await fetch(`/riwayat_harga?nama=${encodeURIComponent(nama)}`);
+    const data = await res.json();
+    if (data.status !== "ok" || !data.data.length) {
+      document.getElementById("tabelRiwayat").innerHTML =
+        `<div style="padding:24px;text-align:center;color:var(--gray-400);font-size:13px;">Tidak ada riwayat harga.</div>`;
+      return;
+    }
+    document.getElementById("tabelRiwayat").innerHTML = data.data.map(r => `
+      <div class="riwayat-row">
+        <span style="font-size:12px;">${r.tanggal||"—"}</span>
+        <span><span class="${r.jenis==="BELI"?"badge-beli":r.jenis==="JUAL_RAB"?"badge-jual-rab":"badge-jual"}">${r.jenis==="JUAL_RAB"?"JUAL RAB":r.jenis}</span></span>
+        <span style="font-size:12px;">${r.pihak||"—"}</span>
+        <span style="text-align:right;font-family:var(--font-mono);font-size:12px;">${r.harga_beli ? fmtRp(r.harga_beli) : "—"}</span>
+        <span style="text-align:right;font-family:var(--font-mono);font-size:12px;">${r.harga_jual ? fmtRp(r.harga_jual) : "—"}</span>
+      </div>`).join("");
+  } catch(e) {
+    document.getElementById("tabelRiwayat").innerHTML =
+      `<div style="padding:24px;text-align:center;color:var(--coral-600);font-size:13px;">Gagal memuat riwayat.</div>`;
+  }
+}
+
+// ============================================================
+// EXPORT
+// ============================================================
+async function salinMaster() {
+  const f = getFaktur();
+  if (!f) { showToast("Simpan transaksi terlebih dahulu!", false); return; }
+  try {
+    const res = await fetch(`/api/salin_master/${encodeURIComponent(f)}`).then(r => r.json());
+    showToast(res.status === "ok" ? "✅ " + res.message : "❌ " + res.message, res.status === "ok");
+  } catch(e) {
+    showToast("❌ Gagal: " + e.message, false);
+  }
+}
+
+function setExportButtons(enabled) {
+  ["btnExportExcel","btnExportPdf","btnExportBlanko","btnSalinMaster"].forEach(id => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled      = !enabled;
+    btn.title         = enabled ? "" : "Simpan dulu sebelum export";
+    btn.style.opacity = enabled ? "1" : "0.45";
+  });
+}
+
+function getFaktur() {
+  return document.getElementById("nomorFaktur").value.trim();
+}
+
+function exportExcelRAB() {
+  const f = getFaktur();
+  if (!f) { showToast("Simpan transaksi terlebih dahulu!", false); return; }
+  window.location.href = `/export_rab_excel/${encodeURIComponent(f)}`;
+}
+
+function exportPdfRAB() {
+  const f = getFaktur();
+  if (!f) { showToast("Simpan transaksi terlebih dahulu!", false); return; }
+  window.open(`/export_trx_pdf/${encodeURIComponent(f)}`, "_blank");
+}
+
+function exportBlankoRAB() {
+  const f = getFaktur();
+  if (!f) { showToast("Simpan transaksi terlebih dahulu!", false); return; }
+  window.open(`/export_trx_blanko/${encodeURIComponent(f)}`, "_blank");
+}
+
+// ============================================================
+// LOAD TRANSAKSI LAMA
+// ============================================================
+async function loadTransaksiList() {
+  try {
+    const data = await fetch("/api/transaksi_rab/list").then(r => r.json());
+    const sel  = document.getElementById("pilihanTransaksi");
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">-- Pilih transaksi sebelumnya --</option>';
+    (data.data || []).forEach(t => {
+      const opt = document.createElement("option");
+      opt.value = t.nomor_faktur;
+      const total = t.grand_total ? " · " + fmtRp(t.grand_total) : "";
+      opt.textContent = `${t.nomor_faktur} — ${t.supplier} → ${t.konsumen} (${t.tanggal_beli}${total})`;
+      sel.appendChild(opt);
+    });
+    if (prev) sel.value = prev;
+  } catch(e) {}
+}
+
+async function loadTransaksi(faktur) {
+  if (!faktur) return;
+  if (rows.length > 0 && !confirm("Load transaksi ini? Data yang ada sekarang akan dihapus.")) {
+    document.getElementById("pilihanTransaksi").value = "";
+    return;
+  }
+  try {
+    const data = await fetch(`/api/transaksi_rab/get/${encodeURIComponent(faktur)}`).then(r => r.json());
+    if (data.status !== "ok") { showToast("Transaksi tidak ditemukan!", false); return; }
+
+    // Isi field header
+    document.getElementById("tanggalBeli").value  = data.tanggal_beli || "";
+    document.getElementById("tanggalJual").value  = data.tanggal_jual || "";
+    document.getElementById("supplier").value     = data.supplier     || "";
+    document.getElementById("nomorFaktur").value  = data.nomor_faktur || "";
+    document.getElementById("konsumen").value     = data.konsumen     || "";
+    document.getElementById("catatan").value      = data.catatan      || "";
+
+    // Reset baris
+    rows = []; rowCount = 0;
+    document.getElementById("splitRows").innerHTML =
+      `<div class="empty-state" id="emptyState">
+         <i class="bi bi-inbox"></i>
+         Klik <strong>Tambah Baris</strong> untuk mulai input item.
+       </div>`;
+    document.getElementById("splitHeader").style.display   = "none";
+    document.getElementById("panelTitleRow").style.display = "none";
+    document.getElementById("addItemBar").style.display    = "none";
+    document.getElementById("totalSection").style.display  = "none";
+
+    // Isi baris dari data tersimpan
+    (data.items || []).forEach(it => {
+      addRow({
+        namaBeli: it.nama_barang_beli || "",
+        qBeli:    it.jumlah_beli      ?? "",
+        satBeli:  it.satuan_beli      || "",
+        hBeli:    it.harga_beli       ?? "",
+        namaJual: it.nama_barang_jual || "",
+        qJual:    it.jumlah_jual      ?? "",
+        satJual:  it.satuan_jual      || "",
+        hJual:    it.harga_jual       ?? "",
+      });
+    });
+
+    // Hitung ulang semua total per baris
+    rows.forEach(rid => onHargaChange(rid));
+    updateStats();
+    setExportButtons(true);
+    showToast(`✅ ${data.items.length} item dimuat dari transaksi ${faktur}`);
+  } catch(e) {
+    showToast("Gagal memuat transaksi!", false);
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById("tanggalBeli").value = "{{ today }}";
+document.getElementById("tanggalJual").value = "{{ today }}";
+loadTransaksiList();
+</script>
+</body>
+</html>

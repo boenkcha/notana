@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Estimasi Bahan — KopMRM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="/static/lib/bootstrap.min.css" rel="stylesheet">
+  <link href="/static/lib/bootstrap-icons.min.css" rel="stylesheet">
+  <script src="/static/lib/jquery.min.js"></script>
+
+  <style>
+    :root {
+      --purple-50:  #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+      --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489;
+      --teal-50:  #E1F5EE; --teal-200: #5DCAA5; --teal-400: #1D9E75;
+      --teal-600: #0F6E56; --teal-800: #085041;
+      --amber-50:  #FAEEDA; --amber-200: #FAC775; --amber-400: #EF9F27;
+      --amber-600: #BA7517; --amber-800: #633806;
+      --coral-50:  #FAECE7; --coral-400: #D85A30; --coral-600: #993C1D;
+      --gray-50:  #F8F7F4; --gray-100: #EEECEA; --gray-200: #D3D1C7;
+      --gray-400: #888780; --gray-600: #5F5E5A;
+      --green-50: #EDFAF3; --green-200: #7DDBA8; --green-400: #2EB67D;
+      --green-600: #1A7A4E; --green-800: #0D4B2F;
+      --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px;
+      --font-main: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'DM Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { font-family: var(--font-main); background: var(--gray-50); color: #1a1a1a; margin: 0; padding: 0; min-height: 100vh; }
+
+    /* TOPBAR */
+    .topbar { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 1.5px solid var(--gray-100); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; color: #1a1a1a; text-decoration: none; }
+    .logo-bubble { width: 30px; height: 30px; border-radius: 10px; background: var(--green-600); display: flex; align-items: center; justify-content: center; }
+    .logo-bubble i { color: #fff; font-size: 14px; }
+    .nav-links { display: flex; align-items: center; gap: 2px; }
+    .nav-link-item { padding: 6px 14px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; color: var(--gray-600); text-decoration: none; transition: background .15s, color .15s; white-space: nowrap; }
+    .nav-link-item:hover { background: var(--gray-100); color: #1a1a1a; }
+    .nav-link-item.active { background: var(--green-50); color: var(--green-600); }
+
+    /* FLASH */
+    .flash-area { padding: 12px 24px 0; }
+    .alert-custom { border-radius: var(--radius-md); padding: 10px 16px; font-size: 13px; border: none; display: flex; align-items: center; gap: 10px; }
+    .alert-success-c { background: var(--teal-50); color: var(--teal-800); }
+    .alert-warning-c { background: var(--amber-50); color: var(--amber-800); }
+    .alert-danger-c  { background: var(--coral-50); color: var(--coral-600); }
+
+    /* LAYOUT */
+    .page-wrap { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+
+    /* HERO */
+    .hero-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .hero-card { border-radius: var(--radius-lg); padding: 18px 20px; position: relative; overflow: hidden; }
+    .hc-green  { background: var(--green-50); }
+    .hc-teal   { background: var(--teal-50); }
+    .hc-amber  { background: var(--amber-50); }
+    .hero-label { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px; }
+    .hc-green  .hero-label { color: var(--green-400); }
+    .hc-teal   .hero-label { color: var(--teal-400); }
+    .hc-amber  .hero-label { color: var(--amber-600); }
+    .hero-val { font-size: 26px; font-weight: 600; line-height: 1; }
+    .hc-green  .hero-val { color: var(--green-800); }
+    .hc-teal   .hero-val { color: var(--teal-800); }
+    .hc-amber  .hero-val { color: var(--amber-800); }
+    .hero-sub { font-size: 11px; margin-top: 5px; }
+    .hc-green  .hero-sub { color: var(--green-200); }
+    .hc-teal   .hero-sub { color: var(--teal-200); }
+    .hc-amber  .hero-sub { color: var(--amber-400); }
+    .hero-deco { position: absolute; right: -14px; bottom: -14px; width: 70px; height: 70px; border-radius: 50%; opacity: .15; }
+    .hc-green  .hero-deco { background: var(--green-600); }
+    .hc-teal   .hero-deco { background: var(--teal-600); }
+    .hc-amber  .hero-deco { background: var(--amber-600); }
+
+    /* MAIN CARD */
+    .main-card { background: #fff; border-radius: var(--radius-xl); border: 1.5px solid var(--gray-100); overflow: hidden; }
+    .main-card-header { padding: 20px 24px; display: flex; align-items: center; gap: 14px; border-bottom: 1.5px solid var(--gray-100); }
+    .header-icon { width: 42px; height: 42px; border-radius: var(--radius-md); background: var(--green-50); display: flex; align-items: center; justify-content: center; }
+    .header-icon i { font-size: 18px; color: var(--green-600); }
+    .header-title { font-size: 16px; font-weight: 600; color: #1a1a1a; margin: 0; }
+    .header-sub   { font-size: 12px; color: var(--gray-400); margin: 2px 0 0; }
+
+    /* FORM */
+    .form-section { padding: 24px; }
+    .field-label { font-size: 12px; font-weight: 600; color: var(--gray-600); letter-spacing: .03em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+    .field-input { width: 100%; height: 42px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 8px 12px; font-size: 14px; font-family: var(--font-main); background: #fff; color: #1a1a1a; transition: border-color .18s, box-shadow .18s; outline: none; }
+    .field-input:focus { border-color: var(--green-400); box-shadow: 0 0 0 3px rgba(46,182,125,0.15); }
+    .field-input::placeholder { color: var(--gray-400); }
+    .rp-wrap { position: relative; }
+    .rp-prefix { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--gray-400); font-family: var(--font-mono); pointer-events: none; }
+    .rp-wrap .field-input { padding-left: 38px; font-family: var(--font-mono); }
+    .divider { height: 1.5px; background: var(--gray-100); margin: 20px 0; border: none; }
+
+    /* ITEMS TABLE */
+    .items-header { display: grid; grid-template-columns: 3fr 1.2fr 1.2fr 2fr 80px; gap: 10px; padding: 10px 14px; background: var(--gray-50); border-radius: var(--radius-sm); margin-bottom: 8px; border: 1.5px solid var(--gray-100); }
+    .items-header span { font-size: 11px; font-weight: 600; color: var(--gray-400); letter-spacing: .04em; text-transform: uppercase; }
+    .item-row { display: grid; grid-template-columns: 3fr 1.2fr 1.2fr 2fr 80px; gap: 10px; align-items: center; padding: 10px 14px; border-radius: var(--radius-md); background: #fff; border: 1.5px solid var(--gray-100); margin-bottom: 8px; transition: border-color .18s, box-shadow .18s; position: relative; }
+    .item-row:hover { border-color: var(--green-200); box-shadow: 0 2px 12px rgba(46,182,125,0.08); }
+    .item-row:focus-within { border-color: var(--green-400); box-shadow: 0 0 0 3px rgba(46,182,125,0.12); }
+    .row-num { position: absolute; left: -11px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; background: var(--green-50); color: var(--green-800); font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+    /* SUGGESTIONS */
+    .suggestion-wrap { position: relative; }
+    .list-suggestions { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #fff; border: 1.5px solid var(--gray-200); border-radius: var(--radius-md); box-shadow: 0 8px 24px rgba(0,0,0,.10); z-index: 999; max-height: 280px; overflow-y: auto; }
+    .list-suggestions .list-group-item { display: flex; align-items: center; gap: 8px; padding: 10px 14px; cursor: pointer; border: none; border-bottom: 1px solid var(--gray-100); font-size: 13px; width: 100%; text-align: left; background: transparent; }
+    .list-suggestions .list-group-item:hover { background: var(--green-50); }
+
+    /* BUTTONS */
+    .btn-add  { height: 38px; padding: 0 16px; border-radius: var(--radius-sm); border: 1.5px dashed var(--green-400); background: var(--green-50); color: var(--green-600); font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
+    .btn-add:hover { background: var(--green-400); color: #fff; border-color: var(--green-400); }
+    .btn-save { height: 38px; padding: 0 20px; border-radius: var(--radius-sm); border: none; background: var(--green-600); color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
+    .btn-save:hover { background: var(--green-800); }
+    .btn-outline { height: 38px; padding: 0 16px; border-radius: var(--radius-sm); border: 1.5px solid var(--gray-200); background: #fff; color: var(--gray-600); font-size: 13px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; transition: all .15s; }
+    .btn-outline:hover { border-color: var(--green-400); color: var(--green-600); background: var(--green-50); }
+    .icon-btn { width: 32px; height: 32px; border-radius: var(--radius-sm); border: 1.5px solid; display: flex; align-items: center; justify-content: center; cursor: pointer; background: transparent; transition: all .15s; }
+    .icon-btn.info    { border-color: var(--teal-200); color: var(--teal-600); }
+    .icon-btn.info:hover { background: var(--teal-50); }
+    .icon-btn.danger  { border-color: #FECACA; color: var(--coral-400); }
+    .icon-btn.danger:hover { background: var(--coral-50); }
+    .action-cell { display: flex; gap: 6px; }
+
+    /* GRAND TOTAL */
+    .grand-box { background: var(--green-50); border: 1.5px solid var(--green-200); border-radius: var(--radius-lg); padding: 14px 20px; display: flex; align-items: center; gap: 20px; }
+    .grand-label { font-size: 11px; font-weight: 600; color: var(--green-400); text-transform: uppercase; letter-spacing: .04em; }
+    .grand-value { font-size: 28px; font-weight: 600; color: var(--green-800); font-family: var(--font-mono); }
+
+    /* NOTA SELECT */
+    .nota-select { height: 36px; border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm); padding: 0 12px; font-size: 13px; font-family: var(--font-main); color: var(--gray-600); background: #fff; cursor: pointer; outline: none; }
+    .nota-select:focus { border-color: var(--green-400); }
+
+    /* HARGA HIGHLIGHT */
+    .harga-highlight { background: #EDFAF3 !important; border-color: var(--green-400) !important; transition: background .4s, border-color .4s; }
+
+    /* BADGE */
+    .badge-naik   { background: #FEE2E2; color: #991B1B; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+    .badge-turun  { background: #E0F2FE; color: #075985; padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+    .badge-stabil { background: var(--gray-100); color: var(--gray-600); padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+
+    /* TIMELINE (riwayat harga) */
+    .timeline-item { position: relative; padding-left: 20px; margin-bottom: 14px; }
+    .timeline-item::before { content:''; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--gray-100); border-radius:2px; }
+    .timeline-card { background:#fff; border:1.5px solid var(--gray-100); border-radius:var(--radius-md); padding:14px 16px; }
+
+    /* HISTORY PANEL */
+    .history-panel { background: #fff; border: 1.5px solid var(--gray-100); border-radius: var(--radius-xl); margin-top: 20px; overflow: hidden; }
+    .history-header { padding: 14px 20px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1.5px solid transparent; transition: background .15s; }
+    .history-header:hover { background: var(--gray-50); }
+    .history-body { padding: 0; }
+    .hist-row { display: grid; grid-template-columns: 120px 1fr 1fr auto; gap: 10px; padding: 10px 20px; border-bottom: 1px solid var(--gray-100); font-size: 13px; align-items: center; }
+    .hist-row:last-child { border-bottom: none; }
+    .hist-row:hover { background: var(--gray-50); }
+
+    /* TOAST */
+    .toast-wrap { position: fixed; bottom: 24px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; }
+    .toast-item { background: #1a1a1a; color: #fff; padding: 12px 18px; border-radius: var(--radius-md); font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,.25); display: flex; align-items: center; gap: 10px; animation: slideIn .25s ease; max-width: 320px; }
+    .toast-item.ok   { background: var(--green-800); }
+    .toast-item.warn { background: var(--amber-600); }
+    .toast-item.err  { background: var(--coral-600); }
+    @keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    /* MODAL */
+    .modal-header-custom { background: var(--green-600); color: #fff; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+    .modal-header-custom .btn-close { filter: invert(1); }
+    .modal-title { font-size: 15px; font-weight: 600; margin: 0; }
+
+    /* char counter */
+    .char-count { font-size: 11px; color: var(--gray-400); text-align: right; margin-top: 3px; }
+    .char-count.warn { color: var(--amber-600); }
+    .char-count.danger { color: var(--coral-400); font-weight: 600; }
+
+    @media (max-width: 768px) {
+      .item-row { grid-template-columns: 1fr; gap: 8px; padding-left: 24px; }
+      .items-header { display: none; }
+      .hero-val { font-size: 18px; }
+      .hero-row { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <nav class="topbar">
+    <a href="/" class="topbar-logo">
+      <div class="logo-bubble"><i class="bi bi-bag-heart-fill"></i></div>
+      KopMRM
+    </a>
+    <div class="nav-links">
+      <a href="/" class="nav-link-item"><i class="bi bi-house me-1"></i> Input Nota</a>
+      <a href="/penjualan" class="nav-link-item"><i class="bi bi-bag me-1"></i> Penjualan</a>
+      <a href="/penjualan_rab" class="nav-link-item"><i class="bi bi-arrow-left-right me-1"></i> Jual RAB</a>
+      <a href="/transaksi_rab" class="nav-link-item"><i class="bi bi-intersect me-1"></i> Transaksi RAB</a>
+      <a href="/report" class="nav-link-item"><i class="bi bi-bar-chart me-1"></i> Laporan</a>
+      <a href="/cek_harga_rab" class="nav-link-item"><i class="bi bi-table me-1"></i> Cek RAB</a>
+      <a href="/riwayat_barang" class="nav-link-item"><i class="bi bi-clock-history me-1"></i> Riwayat</a>
+      <a href="/estimasi_bahan" class="nav-link-item active"><i class="bi bi-calculator me-1"></i> Estimasi Bahan</a>
+      <a href="/layout_wizard" class="nav-link-item"><i class="bi bi-sliders me-1"></i> Pengaturan</a>
+    </div>
+    <div class="topbar-right">
+      <div class="avatar-circle">ES</div>
+    </div>
+  </nav>
+
+  <!-- FLASH -->
+  <div class="flash-area" id="flashArea"></div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <div class="page-wrap">
+
+    <!-- HERO STATS -->
+    <div class="hero-row">
+      <div class="hero-card hc-green">
+        <div class="hero-label">Jumlah Item</div>
+        <div class="hero-val" id="statItemCount">0 item</div>
+        <div class="hero-sub" id="statItemSub">Belum ada data</div>
+        <div class="hero-deco"></div>
+      </div>
+      <div class="hero-card hc-teal">
+        <div class="hero-label">Total Estimasi</div>
+        <div class="hero-val" id="statTotal">Rp 0</div>
+        <div class="hero-sub" id="statTotalSub">Subtotal semua baris</div>
+        <div class="hero-deco"></div>
+      </div>
+      <div class="hero-card hc-amber">
+        <div class="hero-label">Tanggal</div>
+        <div class="hero-val" style="font-size:18px;" id="statDate">{{ today }}</div>
+        <div class="hero-sub">Hari ini</div>
+        <div class="hero-deco"></div>
+      </div>
+    </div>
+
+    <!-- MAIN CARD -->
+    <div class="main-card">
+      <div class="main-card-header">
+        <div class="header-icon"><i class="bi bi-calculator"></i></div>
+        <div>
+          <p class="header-title">Input Estimasi Bahan</p>
+          <p class="header-sub">Formulir estimasi kebutuhan bahan per menu / resep</p>
+        </div>
+        <div class="ms-auto d-none d-md-block">
+          <select id="lanjutkanEstimasi" class="nota-select" style="min-width:230px;">
+            <option value="">📋 Lanjutkan Estimasi Lama...</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section">
+
+        <!-- Header fields -->
+        <div class="row g-3">
+          <div class="col-12 col-md-3">
+            <label class="field-label" for="tanggal">📅 Tanggal</label>
+            <input id="tanggal" type="date" class="field-input" value="{{ today }}" required>
+          </div>
+          <div class="col-12 col-md-5">
+            <label class="field-label" for="nama_menu">🍽️ Nama Menu</label>
+            <input id="nama_menu" type="text" class="field-input" placeholder="cth: Nasi Goreng Spesial" maxlength="150" autocomplete="off" required>
+            <div class="char-count" id="menuCharCount">0 / 150</div>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="field-label" for="nomor_estimasi">🔖 Nomor Estimasi</label>
+            <input id="nomor_estimasi" type="text" class="field-input" placeholder="cth: EST-2025-001" required>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Items section -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <p style="font-size:14px;font-weight:600;margin:0;">📦 Daftar Bahan</p>
+        </div>
+
+        <!-- Table header -->
+        <div class="items-header d-none d-md-grid">
+          <span>Nama Barang / Bahan</span>
+          <span>Jumlah</span>
+          <span>Satuan</span>
+          <span>Harga Satuan</span>
+          <span></span>
+        </div>
+
+        <!-- Items container -->
+        <div id="items" style="position:relative; padding-left: 14px;">
+          <div class="item-row" id="row_0">
+            <div class="row-num">1</div>
+            <div class="suggestion-wrap col-name">
+              <label class="d-md-none field-label" style="text-transform:none;font-size:11px;">Nama Barang</label>
+              <input type="text" class="field-input nama-barang" id="nama_0" placeholder="Cari atau ketik nama bahan..." autocomplete="off">
+              <div id="suggestions_0" class="list-suggestions" style="display:none;"></div>
+            </div>
+            <div>
+              <label class="d-md-none field-label" style="text-transform:none;font-size:11px;">Jumlah</label>
+              <input type="number" class="field-input" id="jumlah_0" step="any" value="1" placeholder="Qty">
+            </div>
+            <div>
+              <label class="d-md-none field-label" style="text-transform:none;font-size:11px;">Satuan</label>
+              <input type="text" class="field-input" id="satuan_0" placeholder="pcs / kg / ltr">
+            </div>
+            <div class="rp-wrap">
+              <label class="d-md-none field-label" style="text-transform:none;font-size:11px;">Harga</label>
+              <span class="rp-prefix">Rp</span>
+              <input type="number" class="field-input harga-barang" id="harga_0" step="any" value="0" placeholder="0">
+            </div>
+            <div class="action-cell">
+              <button type="button" class="icon-btn info btn-riwayat" title="Riwayat Harga"><i class="bi bi-graph-up"></i></button>
+              <button type="button" class="icon-btn danger" onclick="hapusBarang(0)" title="Hapus Baris"><i class="bi bi-trash3"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls row -->
+        <div class="d-flex flex-wrap gap-2 mt-3 align-items-center">
+          <button type="button" id="tambahBarangBtn" class="btn-add">
+            <i class="bi bi-plus-lg"></i> Tambah Bahan
+          </button>
+          <button type="button" id="btnSimpan" class="btn-save">
+            <i class="bi bi-cloud-check"></i> Simpan Estimasi
+          </button>
+          <button type="button" id="btnExportExcel" class="btn-outline" style="display:none;">
+            <i class="bi bi-file-earmark-excel"></i> Export Excel
+          </button>
+          <div class="d-md-none ms-auto">
+            <select id="lanjutkanEstimasi_mobile" class="nota-select">
+              <option value="">📋 Estimasi Lama...</option>
+            </select>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Grand total -->
+        <div class="d-flex justify-content-end">
+          <div class="grand-box">
+            <div>
+              <div class="grand-label">Total Estimasi</div>
+              <div class="grand-value" id="grand_total">Rp 0</div>
+            </div>
+            <i class="bi bi-calculator" style="font-size:24px; color:var(--green-200);"></i>
+          </div>
+        </div>
+
+      </div><!-- /form-section -->
+    </div><!-- /main-card -->
+
+    <!-- HISTORY PANEL -->
+    <div class="history-panel">
+      <div class="history-header" onclick="toggleHistoryPanel()">
+        <i class="bi bi-clock-history" style="color:var(--green-600);"></i>
+        <span style="font-size:14px;font-weight:600;">Riwayat Estimasi Tersimpan</span>
+        <span id="histChevron" class="ms-auto"><i class="bi bi-chevron-up"></i></span>
+      </div>
+      <div class="history-body" id="historyBody" style="display:none;">
+        <!-- Filter bar -->
+        <div style="padding:12px 20px;border-bottom:1px solid var(--gray-100);display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+          <input type="date" id="filterTanggal" class="field-input" style="width:160px;height:36px;" placeholder="Filter tanggal">
+          <input type="text" id="filterMenu" class="field-input" style="width:200px;height:36px;" placeholder="Filter nama menu...">
+          <button type="button" class="btn-outline" style="height:36px;" onclick="loadHistory()"><i class="bi bi-search"></i> Cari</button>
+        </div>
+        <div id="historyList" style="max-height:380px;overflow-y:auto;">
+          <div style="text-align:center;padding:24px;color:var(--gray-400);font-size:13px;">Memuat...</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <!-- MODAL RIWAYAT HARGA -->
+  <div class="modal fade" id="riwayatModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header modal-header-custom">
+          <h5 class="modal-title">📊 Riwayat Harga: <span id="riwayatNama"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="background:var(--gray-50);">
+          <div id="riwayatContainer"><p style="color:var(--gray-400);font-size:13px;">Memuat data...</p></div>
+        </div>
+        <div class="modal-footer" style="background:#fff;">
+          <button type="button" class="btn-outline" data-bs-dismiss="modal">Tutup</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/lib/bootstrap.bundle.min.js"></script>
+
+  <script>
+  // ============================================================
+  //  HELPERS
+  // ============================================================
+  function formatRp(num) {
+    return "Rp " + Math.round(num).toLocaleString("id-ID");
+  }
+
+  function showToast(msg, type) {
+    const wrap = document.getElementById("toastWrap");
+    const div  = document.createElement("div");
+    div.className = "toast-item " + (type || "ok");
+    div.innerHTML = `<i class="bi bi-${type==="err"?"x-circle":type==="warn"?"exclamation-triangle":"check-circle"}"></i> ${msg}`;
+    wrap.appendChild(div);
+    setTimeout(() => { div.style.opacity = "0"; div.style.transition = "opacity .3s"; setTimeout(() => div.remove(), 350); }, 3500);
+  }
+
+  function updateSubtotal() {
+    let total = 0, count = 0;
+    $(".item-row").each(function() {
+      const jumlah = parseFloat($(this).find("[id^='jumlah_']").val()) || 0;
+      const harga  = parseFloat($(this).find(".harga-barang").val()) || 0;
+      total += jumlah * harga;
+      if ($(this).find(".nama-barang").val().trim()) count++;
+    });
+    $("#grand_total").text(formatRp(total));
+    $("#statTotal").text(formatRp(total));
+    $("#statTotalSub").text("Subtotal semua baris");
+    $("#statItemCount").text(count + " item");
+    $("#statItemSub").text(count > 0 ? "Terisi " + count + " baris" : "Belum ada data");
+  }
+
+  function hapusBarang(idx) {
+    const $row = $("#row_" + idx);
+    $row.css({ opacity: 0, transform: "translateY(-8px)", transition: "all .2s" });
+    setTimeout(function() {
+      $row.remove();
+      renumberRows();
+      updateSubtotal();
+    }, 200);
+  }
+
+  function renumberRows() {
+    $(".item-row").each(function(i) {
+      $(this).attr("id", "row_" + i);
+      $(this).find(".row-num").text(i + 1);
+      $(this).find("input[id^='nama_']").attr("id", "nama_" + i);
+      $(this).find("input[id^='jumlah_']").attr("id", "jumlah_" + i);
+      $(this).find("input[id^='satuan_']").attr("id", "satuan_" + i);
+      $(this).find("input[id^='harga_']").attr("id", "harga_" + i);
+      $(this).find("[id^='suggestions_']").attr("id", "suggestions_" + i);
+      $(this).find(".icon-btn.danger").attr("onclick", "hapusBarang(" + i + ")");
+    });
+  }
+
+  function addItemRow(prefill) {
+    const idx = $(".item-row").length;
+    const p = prefill || {};
+    const row = `
+      <div class="item-row" id="row_${idx}" style="opacity:0;transform:translateY(8px);">
+        <div class="row-num">${idx + 1}</div>
+        <div class="suggestion-wrap col-name">
+          <label class="d-md-none field-label" style="text-transform:none;font-size:11px;">Nama Barang</label>
+          <input type="text" class="field-input nama-barang" id="nama_${idx}" value="${p.nama_barang||''}" placeholder="Cari atau ketik nama bahan..." autocomplete="off">
+          <div id="suggestions_${idx}" class="list-suggestions" style="display:none;"></div>
+        </div>
+        <div>
+          <label class="d-md-none field-label" style="text-transform:none;font-size:11px;">Jumlah</label>
+          <input type="number" class="field-input" id="jumlah_${idx}" step="any" value="${p.jumlah||1}" placeholder="Qty">
+        </div>
+        <div>
+          <label class="d-md-none field-label" style="text-transform:none;font-size:11px;">Satuan</label>
+          <input type="text" class="field-input" id="satuan_${idx}" value="${p.satuan||''}" placeholder="pcs / kg / ltr">
+        </div>
+        <div class="rp-wrap">
+          <label class="d-md-none field-label" style="text-transform:none;font-size:11px;">Harga</label>
+          <span class="rp-prefix">Rp</span>
+          <input type="number" class="field-input harga-barang" id="harga_${idx}" step="any" value="${p.harga_satuan||0}" placeholder="0">
+        </div>
+        <div class="action-cell">
+          <button type="button" class="icon-btn info btn-riwayat" title="Riwayat Harga"><i class="bi bi-graph-up"></i></button>
+          <button type="button" class="icon-btn danger" onclick="hapusBarang(${idx})" title="Hapus Baris"><i class="bi bi-trash3"></i></button>
+        </div>
+      </div>
+    `;
+    $("#items").append(row);
+    requestAnimationFrame(() => {
+      const $r = $("#row_" + idx);
+      $r.css({ opacity:1, transform:"translateY(0)", transition:"all .22s ease" });
+    });
+    setTimeout(() => $("#nama_" + idx).focus(), 60);
+  }
+
+  // ============================================================
+  //  FUZZY CHECK
+  // ============================================================
+  function cekFuzzyDanTambah(idx) {
+    const nama = $("#nama_" + idx).val().trim();
+    if (!nama) { addItemRow(); return; }
+
+    $.getJSON(`/cek_fuzzy_barang?q=${encodeURIComponent(nama)}`, function(res) {
+      if (res.match && res.match.toLowerCase() !== nama.toLowerCase()) {
+        const konfirm = confirm(`Maksudnya "${res.match}"? (skor: ${res.score})\nTekan OK untuk ganti, Batal untuk tetap.`);
+        if (konfirm) {
+          $("#nama_" + idx).val(res.match);
+          $.getJSON(`/get_harga_terbaru?nama=${encodeURIComponent(res.match)}`, function(r) {
+            if (r.harga) $("#harga_" + idx).val(r.harga);
+            updateSubtotal();
+          });
+        }
+      }
+      addItemRow();
+    }).fail(function() { addItemRow(); });
+  }
+
+  // ============================================================
+  //  SIMPAN ESTIMASI
+  // ============================================================
+  async function simpanEstimasi() {
+    const tanggal       = $("#tanggal").val().trim();
+    const nama_menu     = $("#nama_menu").val().trim();
+    const nomor_estimasi= $("#nomor_estimasi").val().trim();
+
+    if (!tanggal || !nama_menu || !nomor_estimasi) {
+      showToast("⚠️ Lengkapi Tanggal, Nama Menu, dan Nomor Estimasi!", "warn");
+      return;
+    }
+    if (nama_menu.length > 150) {
+      showToast("⚠️ Nama menu maksimal 150 karakter!", "warn");
+      return;
+    }
+
+    const items = [];
+    $(".item-row").each(function() {
+      const nama   = $(this).find("[id^='nama_']").val().trim();
+      const jumlah = parseFloat($(this).find("[id^='jumlah_']").val()) || 0;
+      const satuan = $(this).find("[id^='satuan_']").val().trim();
+      const harga  = parseFloat($(this).find(".harga-barang").val()) || 0;
+      if (nama && harga > 0) items.push({ nama, jumlah, satuan, harga });
+    });
+
+    if (!items.length) {
+      showToast("⚠️ Tidak ada bahan yang diinputkan!", "warn");
+      return;
+    }
+
+    const btn = $("#btnSimpan");
+    btn.prop("disabled", true).html('<i class="bi bi-hourglass-split"></i> Menyimpan...');
+
+    try {
+      const res  = await fetch("/api/estimasi_bahan/simpan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tanggal, nama_menu, nomor_estimasi, items })
+      });
+      const data = await res.json();
+      if (data.status === "ok") {
+        showToast(`✅ ${data.message}`, "ok");
+        $("#btnExportExcel").show().data("nomor", nomor_estimasi);
+        if (histOpen) loadHistory();
+      } else {
+        showToast(`❌ ${data.message}`, "err");
+      }
+    } catch(e) {
+      showToast("❌ Gagal menghubungi server.", "err");
+    } finally {
+      btn.prop("disabled", false).html('<i class="bi bi-cloud-check"></i> Simpan Estimasi');
+    }
+  }
+
+  // ============================================================
+  //  HISTORY PANEL
+  // ============================================================
+  let histOpen = false;
+
+  function toggleHistoryPanel() {
+    histOpen = !histOpen;
+    const body = document.getElementById("historyBody");
+    body.style.display = histOpen ? "" : "none";
+    document.getElementById("histChevron").innerHTML = histOpen
+      ? '<i class="bi bi-chevron-down"></i>'
+      : '<i class="bi bi-chevron-up"></i>';
+    if (histOpen) loadHistory();
+  }
+
+  async function loadHistory() {
+    const list  = document.getElementById("historyList");
+    const tgl   = $("#filterTanggal").val();
+    const menu  = $("#filterMenu").val().trim().toLowerCase();
+
+    list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:13px;">Memuat...</div>`;
+
+    const res  = await fetch("/api/estimasi_bahan/list");
+    const data = await res.json();
+
+    if (!data.data || !data.data.length) {
+      list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:13px;">Belum ada riwayat estimasi.</div>`;
+      return;
+    }
+
+    let rows = data.data;
+    if (tgl)  rows = rows.filter(r => r.tanggal === tgl);
+    if (menu) rows = rows.filter(r => r.nama_menu.toLowerCase().includes(menu));
+
+    if (!rows.length) {
+      list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--gray-400);font-size:13px;">Tidak ada data sesuai filter.</div>`;
+      return;
+    }
+
+    // Header
+    list.innerHTML = `
+      <div class="hist-row" style="background:var(--gray-50);font-size:11px;font-weight:600;color:var(--gray-400);text-transform:uppercase;letter-spacing:.04em;">
+        <span>Tanggal</span>
+        <span>Nama Menu</span>
+        <span style="text-align:right;">Total</span>
+        <span></span>
+      </div>
+    ` + rows.map(r => `
+      <div class="hist-row">
+        <span style="font-size:12px;color:var(--gray-600);">${r.tanggal}</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;">${r.nama_menu}</div>
+          <div style="font-size:11px;color:var(--gray-400);">${r.nomor_estimasi} · ${r.jumlah_item} item</div>
+        </div>
+        <span style="font-family:var(--font-mono);font-size:13px;font-weight:600;color:var(--green-800);text-align:right;">
+          Rp ${Math.round(r.grand_total||0).toLocaleString("id-ID")}
+        </span>
+        <div style="display:flex;gap:6px;">
+          <button class="icon-btn info" title="Buka Estimasi" onclick="bukaDariHistory('${r.nomor_estimasi}')">
+            <i class="bi bi-folder2-open"></i>
+          </button>
+          <a class="icon-btn info" style="text-decoration:none;"
+             href="/export_estimasi_excel?nomor_estimasi=${encodeURIComponent(r.nomor_estimasi)}" title="Export Excel">
+            <i class="bi bi-file-earmark-excel"></i>
+          </a>
+          <button class="icon-btn danger" title="Hapus" onclick="hapusEstimasi(${r.id}, '${r.nomor_estimasi}')">
+            <i class="bi bi-trash3"></i>
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  async function bukaDariHistory(nomor) {
+    const res  = await fetch(`/api/estimasi_bahan/get/${encodeURIComponent(nomor)}`);
+    const data = await res.json();
+    if (data.status !== "ok") { showToast("❌ Data tidak ditemukan.", "err"); return; }
+
+    $("#tanggal").val(data.header.tanggal);
+    $("#nama_menu").val(data.header.nama_menu);
+    updateCharCount(data.header.nama_menu.length);
+    $("#nomor_estimasi").val(data.header.nomor_estimasi);
+    $("#items").empty();
+    data.items.forEach(it => addItemRow({
+      nama_barang: it.nama_barang,
+      jumlah: it.jumlah,
+      satuan: it.satuan,
+      harga_satuan: it.harga_satuan
+    }));
+    updateSubtotal();
+    $("#btnExportExcel").show().data("nomor", nomor);
+    showToast(`📋 Estimasi "${nomor}" dibuka.`, "ok");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function hapusEstimasi(id, nomor) {
+    if (!confirm(`Hapus estimasi "${nomor}"? Data tidak bisa dikembalikan.`)) return;
+    const res  = await fetch(`/api/estimasi_bahan/hapus/${id}`, { method: "POST" });
+    const data = await res.json();
+    if (data.status === "ok") {
+      showToast("🗑️ Estimasi dihapus.", "warn");
+      loadHistory();
+    } else {
+      showToast("❌ Gagal menghapus.", "err");
+    }
+  }
+
+  // ============================================================
+  //  CHAR COUNTER
+  // ============================================================
+  function updateCharCount(len) {
+    const el = document.getElementById("menuCharCount");
+    el.textContent = `${len} / 150`;
+    el.className = "char-count" + (len > 140 ? " danger" : len > 120 ? " warn" : "");
+  }
+
+  // ============================================================
+  //  DOCUMENT READY
+  // ============================================================
+  $(document).ready(function() {
+
+    updateSubtotal();
+
+    // Auto-select on focus
+    $(document).on("focus", "input[type='text'], input[type='number']", function() { $(this).select(); });
+    $(document).on("mouseup","input[type='text'], input[type='number']", function(e) { e.preventDefault(); });
+
+    // Recalc on change
+    $(document).on("input", ".harga-barang, [id^='jumlah_']", updateSubtotal);
+
+    // Char count for nama_menu
+    $("#nama_menu").on("input", function() { updateCharCount($(this).val().length); });
+
+    // Tambah bahan button
+    $("#tambahBarangBtn").on("click", function() {
+      const idx = $(".item-row").length - 1;
+      cekFuzzyDanTambah(idx);
+    });
+
+    // Enter on harga → next row
+    $(document).on("keydown", "input", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        const id = $(this).attr("id");
+        if (id && id.startsWith("harga_")) {
+          cekFuzzyDanTambah(id.split("_")[1]);
+        }
+      }
+    });
+
+    // Simpan
+    $("#btnSimpan").on("click", simpanEstimasi);
+
+    // Export Excel
+    $("#btnExportExcel").on("click", function() {
+      const nomor = $(this).data("nomor") || $("#nomor_estimasi").val().trim();
+      if (!nomor) { showToast("Simpan dulu sebelum export!", "warn"); return; }
+      window.location.href = `/export_estimasi_excel?nomor_estimasi=${encodeURIComponent(nomor)}`;
+    });
+
+    // ===== AUTOCOMPLETE =====
+    $(document).on("input", ".nama-barang", function() {
+      const input  = $(this);
+      const term   = input.val().trim();
+      const idx    = input.attr("id").split("_")[1];
+      const sugBox = $("#suggestions_" + idx);
+      if (term.length < 2) { sugBox.hide(); return; }
+
+      $.getJSON("/cari_barang", { q: term }, function(data) {
+        const list = data.results || [];
+        if (!list.length) { sugBox.hide(); return; }
+        const html = list.map(item =>
+          `<button type="button" class="list-group-item"
+            data-nama="${item.nama}" data-satuan="${item.satuan}" data-harga="${item.harga}">
+            <span style="font-weight:600;">${item.nama}</span>
+            <span style="color:var(--gray-400);font-size:11px;margin-left:8px;">${item.satuan} — Rp ${Math.round(item.harga).toLocaleString("id-ID")}</span>
+          </button>`
+        ).join("");
+        sugBox.html(html).show();
+      }).fail(() => sugBox.hide());
+    });
+
+    $(document).on("click", ".list-group-item", function() {
+      const btn    = $(this);
+      const parent = btn.closest(".item-row");
+      const nama   = btn.data("nama");
+      parent.find(".nama-barang").val(nama);
+      parent.find("[id^='satuan_']").val(btn.data("satuan"));
+      btn.parent().hide();
+
+      $.getJSON(`/get_harga_terbaru?nama=${encodeURIComponent(nama)}`, function(res) {
+        const hargaInput = parent.find("[id^='harga_']");
+        hargaInput.val(res.harga !== null && res.harga !== undefined ? res.harga : btn.data("harga"));
+        hargaInput.addClass("harga-highlight");
+        setTimeout(() => hargaInput.removeClass("harga-highlight"), 900);
+        parent.find("[id^='jumlah_']").focus();
+        updateSubtotal();
+      }).fail(function() {
+        parent.find("[id^='harga_']").val(btn.data("harga"));
+        updateSubtotal();
+      });
+    });
+
+    // Hide suggestions
+    $(document).on("click", function(e) {
+      if (!$(e.target).closest(".nama-barang, .list-suggestions").length) {
+        $(".list-suggestions").hide();
+      }
+    });
+
+    // ===== LANJUTKAN ESTIMASI LAMA =====
+    async function loadEstimasiList() {
+      const res  = await fetch("/api/estimasi_bahan/list");
+      const data = await res.json();
+      if (!data.data) return;
+      data.data.forEach(e => {
+        const opt = `<option value="${e.nomor_estimasi}">${e.nomor_estimasi} — ${e.nama_menu.substring(0,40)}</option>`;
+        $("#lanjutkanEstimasi").append(opt);
+        $("#lanjutkanEstimasi_mobile").append(opt);
+      });
+    }
+    loadEstimasiList();
+
+    $("#lanjutkanEstimasi, #lanjutkanEstimasi_mobile").on("change", function() {
+      const nomor = $(this).val();
+      if (!nomor) return;
+      bukaDariHistory(nomor);
+    });
+
+    // ===== RIWAYAT HARGA =====
+    $(document).on("click", ".btn-riwayat", function() {
+      const nama = $(this).closest(".item-row").find(".nama-barang").val().trim();
+      if (!nama) { alert("Isi nama barang dulu!"); return; }
+
+      $("#riwayatNama").text(nama);
+      $("#riwayatContainer").html("<p style='color:var(--gray-400);font-size:13px;'>Memuat data...</p>");
+      new bootstrap.Modal(document.getElementById("riwayatModal")).show();
+
+      $.getJSON(`/riwayat_harga?nama=${encodeURIComponent(nama)}`, function(res) {
+        if (!res || res.status !== "ok" || !res.data.length) {
+          $("#riwayatContainer").html("<p style='color:var(--gray-400);font-size:13px;'>Tidak ada riwayat harga.</p>");
+          return;
+        }
+
+        let arr = [...res.data].sort((a,b) => new Date(a.tanggal)-new Date(b.tanggal));
+        let lastBuy = null, lastSell = null, lastSellRAB = null;
+        arr.forEach(row => {
+          const harga = Number(row.harga_beli || row.harga_jual);
+          if (row.jenis === "BELI") {
+            row.change = lastBuy === null ? "STABIL" : harga > lastBuy ? "NAIK" : harga < lastBuy ? "TURUN" : "STABIL";
+            lastBuy = harga;
+          } else if (row.jenis === "JUAL") {
+            row.change = lastSell === null ? "STABIL" : harga > lastSell ? "NAIK" : harga < lastSell ? "TURUN" : "STABIL";
+            lastSell = harga;
+          } else {
+            row.change = lastSellRAB === null ? "STABIL" : harga > lastSellRAB ? "NAIK" : harga < lastSellRAB ? "TURUN" : "STABIL";
+            lastSellRAB = harga;
+          }
+        });
+
+        let grouped = {};
+        arr.forEach(r => {
+          if (!grouped[r.tanggal]) grouped[r.tanggal] = { tanggal: r.tanggal, beli: null, jual: null, jual_rab: null };
+          if (r.jenis === "BELI") grouped[r.tanggal].beli = r;
+          else if (r.jenis === "JUAL") grouped[r.tanggal].jual = r;
+          else grouped[r.tanggal].jual_rab = r;
+        });
+
+        const rows = Object.values(grouped)
+          .sort((a,b) => new Date(b.tanggal)-new Date(a.tanggal))
+          .map(g => {
+            const badgeClass = (c) => c === "NAIK" ? "badge-naik" : c === "TURUN" ? "badge-turun" : "badge-stabil";
+            const arrow = c => c === "NAIK" ? "↑" : c === "TURUN" ? "↓" : "→";
+
+            const beliHtml = g.beli
+              ? `<span style="font-weight:600;color:var(--purple-800);">Rp ${Number(g.beli.harga_beli).toLocaleString("id-ID")}</span>
+                 <span class="${badgeClass(g.beli.change)}">${arrow(g.beli.change)} ${g.beli.change}</span>
+                 <div style="font-size:11px;color:var(--gray-400);">${g.beli.pihak||""}</div>`
+              : `<span style="color:var(--gray-400);font-size:12px;">Tidak ada data</span>`;
+
+            const jualHtml = g.jual
+              ? `<span style="font-weight:600;color:var(--teal-800);">Rp ${Number(g.jual.harga_jual).toLocaleString("id-ID")}</span>
+                 <span class="${badgeClass(g.jual.change)}">${arrow(g.jual.change)} ${g.jual.change}</span>
+                 <div style="font-size:11px;color:var(--gray-400);">${g.jual.pihak||""}</div>`
+              : `<span style="color:var(--gray-400);font-size:12px;">—</span>`;
+
+            const jualRabHtml = g.jual_rab
+              ? `<span style="font-weight:600;color:#c05621;">Rp ${Number(g.jual_rab.harga_jual).toLocaleString("id-ID")}</span>
+                 <span class="${badgeClass(g.jual_rab.change)}">${arrow(g.jual_rab.change)} ${g.jual_rab.change}</span>
+                 <div style="font-size:11px;color:var(--gray-400);">${g.jual_rab.pihak||""}</div>`
+              : `<span style="color:var(--gray-400);font-size:12px;">—</span>`;
+
+            return `
+              <div class="timeline-item">
+                <div class="timeline-card">
+                  <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:10px;">📅 ${g.tanggal}</div>
+                  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+                    <div>
+                      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--purple-400);font-weight:600;margin-bottom:4px;">Pembelian</div>
+                      ${beliHtml}
+                    </div>
+                    <div>
+                      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--teal-400);font-weight:600;margin-bottom:4px;">Penjualan</div>
+                      ${jualHtml}
+                    </div>
+                    <div>
+                      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#ed8936;font-weight:600;margin-bottom:4px;">Penjualan RAB</div>
+                      ${jualRabHtml}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("");
+        $("#riwayatContainer").html(rows);
+
+      }).fail(() => $("#riwayatContainer").html("<p style='color:var(--coral-600);font-size:13px;'>Gagal memuat riwayat.</p>"));
+    });
+
+    // Live date
+    const d = new Date();
+    const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+    $("#statDate").text(days[d.getDay()] + ", " + d.toLocaleDateString("id-ID",{day:"2-digit",month:"short",year:"numeric"}));
+
+  });
+  </script>
+</body>
+</html>

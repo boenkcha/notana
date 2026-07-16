@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Wizard Layout Faktur</title>
+  <link href="/static/lib/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/pastel.css">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4 mb-5 p-4 bg-white rounded shadow-sm">
+  <h3 class="mb-3 text-center">🧾 Wizard Pengaturan Layout Faktur</h3>
+  <form method="POST">
+    <div class="mb-3">
+      <label class="form-label fw-bold">Nama Koperasi</label>
+      <input type="text" class="form-control" name="nama_koperasi" value="{{ setting.nama_koperasi if setting else '' }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-bold">Alamat</label>
+      <textarea class="form-control" name="alamat" rows="2" required>{{ setting.alamat if setting else '' }}</textarea>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-bold">Kontak (Telepon / HP)</label>
+      <input type="text" class="form-control" name="kontak" value="{{ setting.kontak if setting else '' }}" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label fw-bold">Posisi Header</label>
+      <select class="form-select" name="posisi_header">
+        <option value="CENTER" {% if setting and setting.posisi_header == 'CENTER' %}selected{% endif %}>Tengah</option>
+        <option value="LEFT" {% if setting and setting.posisi_header == 'LEFT' %}selected{% endif %}>Kiri</option>
+        <option value="RIGHT" {% if setting and setting.posisi_header == 'RIGHT' %}selected{% endif %}>Kanan</option>
+      </select>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col">
+        <label class="form-label fw-bold">Font Size Header</label>
+        <input type="number" class="form-control" name="font_size_header" value="{{ setting.font_size_header if setting else 11 }}" min="8" max="20">
+      </div>
+      <div class="col">
+        <label class="form-label fw-bold">Jarak antar baris header (pt)</label>
+        <input type="number" class="form-control" name="jarak_header" value="{{ setting.jarak_header if setting else 12 }}" min="6" max="20">
+      </div>
+    </div>
+
+    <hr class="my-4">
+        <h5 class="text-primary mb-3">📋 Pengaturan Tabel Barang</h5>
+
+        <div class="row mb-3">
+        <div class="col">
+            <label class="form-label fw-bold">Warna Header Tabel</label>
+            <select class="form-select" name="table_header_color">
+            <option value="lightgrey" {% if setting and setting.table_header_color == 'lightgrey' %}selected{% endif %}>Abu muda</option>
+            <option value="whitesmoke" {% if setting and setting.table_header_color == 'whitesmoke' %}selected{% endif %}>Putih keabu-abuan</option>
+            <option value="silver" {% if setting and setting.table_header_color == 'silver' %}selected{% endif %}>Perak</option>
+            </select>
+        </div>
+        <div class="col">
+            <label class="form-label fw-bold">Ukuran Font Isi Tabel</label>
+            <input type="number" class="form-control" name="font_size_table" value="{{ setting.font_size_table if setting else 9 }}" min="8" max="14">
+        </div>
+        </div>
+
+        <hr class="my-4">
+        <h5 class="text-primary mb-3">💰 Pengaturan Total & Footer</h5>
+
+        <div class="row mb-3">
+        <div class="col">
+            <label class="form-label fw-bold">Ukuran Font Bagian Total</label>
+            <input type="number" class="form-control" name="font_size_total" value="{{ setting.font_size_total if setting else 10 }}" min="9" max="14">
+        </div>
+        <div class="col">
+            <label class="form-label fw-bold">Jarak Setelah Tabel (pt)</label>
+            <input type="number" class="form-control" name="spacing_after_table" value="{{ setting.spacing_after_table if setting else 10 }}" min="5" max="25">
+        </div>
+        </div>
+
+        <div class="mb-3">
+        <label class="form-label fw-bold">Posisi Footer</label>
+        <select class="form-select" name="footer_align">
+            <option value="LEFT" {% if setting and setting.footer_align == 'LEFT' %}selected{% endif %}>Kiri</option>
+            <option value="CENTER" {% if setting and setting.footer_align == 'CENTER' %}selected{% endif %}>Tengah</option>
+            <option value="RIGHT" {% if setting and setting.footer_align == 'RIGHT' %}selected{% endif %}>Kanan</option>
+        </select>
+        </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary px-4">💾 Simpan Pengaturan</button>
+      <a href="/" class="btn btn-secondary px-4">⬅ Kembali</a>
+    </div>
+  </form>
+</div>
+
+</body>
+</html>
